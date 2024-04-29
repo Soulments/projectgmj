@@ -9,12 +9,13 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private Transform cameraArm;
 
-    bool isMove;
-
-    Vector2 moveInput;
-
     float horizontalAxis;
     float verticalAxis;
+
+    bool isMove;
+    public bool isDead;
+
+    Vector2 moveInput;
 
     Animator animator;
 
@@ -29,6 +30,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        GetInput();
         LookAround();
         Move();
         Attack();
@@ -36,16 +38,20 @@ public class PlayerController : MonoBehaviour
 
     private void GetInput()
     {
+        // Input값 정리
         horizontalAxis = Input.GetAxis("Horizontal");
         verticalAxis = Input.GetAxis("Vertical");
     }
 
     private void Move()
     {
+        // 플레이어 이동 값 가져오기
         //Vector2 moveInput = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
         moveInput = new Vector2(horizontalAxis, verticalAxis);
+        // 이동 수평 값 확인
         isMove = moveInput.magnitude != 0;
         animator.SetBool("isMove", isMove);
+        // isMove 값 true일 때 이동
         if(isMove)
         {
             Vector3 lookForward = new Vector3(cameraArm.forward.x, 0f, cameraArm.forward.z).normalized;
@@ -79,5 +85,15 @@ public class PlayerController : MonoBehaviour
     private void Attack()
     {
 
+    }
+
+    private void Skill()
+    {
+
+    }
+
+    private void OnDie()
+    {
+        animator.SetTrigger("doDie");
     }
 }
