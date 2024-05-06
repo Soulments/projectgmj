@@ -8,23 +8,37 @@ public class PlayerController : MonoBehaviour
     private Transform playerBody;
     [SerializeField]
     private Transform cameraArm;
+    [SerializeField]
+    private GameObject[] BigSword;
 
     float horizontalAxis;
     float verticalAxis;
 
+    bool jumpDown;
+    bool mouseLeft;
+    bool mouseRight;
+
     bool isMove;
-    public bool isDead;
+    bool isAttack;
+    bool isJump;
+    public bool isDead = false;
 
     Vector2 moveInput;
+    Vector3 lookForward;
+    Vector3 lookRight;
+    Vector3 moveDirection;
 
     Animator animator;
+    Rigidbody rb;
 
+    public float jumpForce = 30000;
     public float speed = 10;
 
     // Start is called before the first frame update
     void Start()
     {
         animator = playerBody.GetComponent<Animator>();
+        rb = this.GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
@@ -33,7 +47,9 @@ public class PlayerController : MonoBehaviour
         GetInput();
         LookAround();
         Move();
+        Jump();
         Attack();
+        Skill();
     }
 
     private void GetInput()
@@ -41,27 +57,9 @@ public class PlayerController : MonoBehaviour
         // Input값 정리
         horizontalAxis = Input.GetAxis("Horizontal");
         verticalAxis = Input.GetAxis("Vertical");
-    }
-
-    private void Move()
-    {
-        // 플레이어 이동 값 가져오기
-        //Vector2 moveInput = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
-        moveInput = new Vector2(horizontalAxis, verticalAxis);
-        // 이동 수평 값 확인
-        isMove = moveInput.magnitude != 0;
-        animator.SetBool("isMove", isMove);
-        // isMove 값 true일 때 이동
-        if(isMove)
-        {
-            Vector3 lookForward = new Vector3(cameraArm.forward.x, 0f, cameraArm.forward.z).normalized;
-            Vector3 lookRight = new Vector3(cameraArm.right.x, 0f, cameraArm.right.z).normalized;
-            Vector3 moveDirection = lookForward * moveInput.y + lookRight * moveInput.x;
-
-            playerBody.forward = moveDirection;
-            transform.position += moveDirection * Time.deltaTime * speed;
-        }
-        
+        jumpDown = Input.GetButtonDown("Jump");
+        mouseLeft = Input.GetMouseButtonDown(0);
+        mouseRight = Input.GetMouseButtonDown(1);
     }
 
     private void LookAround()
@@ -70,7 +68,7 @@ public class PlayerController : MonoBehaviour
         Vector3 cameraAngle = cameraArm.rotation.eulerAngles;
         float x = cameraAngle.x - mouseDelta.y;
 
-        if(x < 180f)
+        if (x < 180f)
         {
             x = Mathf.Clamp(x, -1f, 70f);
         }
@@ -82,18 +80,78 @@ public class PlayerController : MonoBehaviour
         cameraArm.rotation = Quaternion.Euler(x, cameraAngle.y + mouseDelta.x, cameraAngle.z);
     }
 
+    private void Move()
+    {
+        // 플레이어 이동 값 가져오기
+        //Vector2 moveInput = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+        moveInput = new Vector2(horizontalAxis, verticalAxis);
+        // 이동 수평 값 확인
+        isMove = moveInput.magnitude != 0;
+        animator.SetBool("isMove", isMove);
+        // isMove 값 true일 때 이동
+        if(isMove && !animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1"))
+        {
+            lookForward = new Vector3(cameraArm.forward.x, 0f, cameraArm.forward.z).normalized;
+            lookRight = new Vector3(cameraArm.right.x, 0f, cameraArm.right.z).normalized;
+            moveDirection = lookForward * moveInput.y + lookRight * moveInput.x;
+
+            playerBody.forward = moveDirection;
+            if (!isAttack) transform.position += moveDirection * Time.deltaTime * speed;
+            else moveDirection = Vector3.zero;
+        }
+        
+    }
+
+    private void Jump()
+    {
+        if (jumpDown && !isAttack && !animator.GetCurrentAnimatorStateInfo(0).IsName("Jump"))
+        {
+            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            animator.SetTrigger("doJump");
+        }
+    }
+
     private void Attack()
     {
-
+        if (mouseLeft)
+        {
+            if (animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1"))
+            {
+                animator.SetTrigger("doAttack2");
+            }
+            else
+            {
+                isAttack = true;
+                BigSword[0].SetActive(true);
+                BigSword[1].SetActive(false);
+                animator.SetTrigger("doAttack1");
+                StartCoroutine(Wait());
+            }
+        }
     }
 
     private void Skill()
     {
-
+        if(mouseRight)
+        {
+            animator.SetTrigger("doSkill1");
+            rb.velocity = moveDirection * 2f;
+            //transform.position += moveDirection * Time.deltaTime * speed * 1.3f;
+        }
     }
 
     private void OnDie()
     {
+        isDead = true;
         animator.SetTrigger("doDie");
+        animator.SetBool("isDead", isDead);
+    }
+
+    IEnumerator Wait()
+    {
+        yield return new WaitForSeconds(1.0f);
+        isAttack = false;
+        BigSword[0].SetActive(false);
+        BigSword[1].SetActive(true);
     }
 }
