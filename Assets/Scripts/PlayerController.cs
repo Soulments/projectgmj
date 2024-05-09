@@ -29,7 +29,7 @@ public class PlayerController : MonoBehaviour
     Vector3 moveDirection;
 
     Animator animator;
-    Rigidbody rb;
+    Rigidbody rigidbody;
 
     public float jumpForce = 30000;
     public float speed = 10;
@@ -38,7 +38,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         animator = playerBody.GetComponent<Animator>();
-        rb = this.GetComponent<Rigidbody>();
+        rigidbody = this.GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
@@ -83,7 +83,6 @@ public class PlayerController : MonoBehaviour
     private void Move()
     {
         // 플레이어 이동 값 가져오기
-        //Vector2 moveInput = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
         moveInput = new Vector2(horizontalAxis, verticalAxis);
         // 이동 수평 값 확인
         isMove = moveInput.magnitude != 0;
@@ -104,10 +103,12 @@ public class PlayerController : MonoBehaviour
 
     private void Jump()
     {
-        if (jumpDown && !isAttack && !animator.GetCurrentAnimatorStateInfo(0).IsName("Jump"))
+        if (jumpDown && !isJump && !isAttack && !animator.GetCurrentAnimatorStateInfo(0).IsName("Jump"))
         {
-            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            animator.SetBool("isJump", true);
             animator.SetTrigger("doJump");
+            isJump = true;
         }
     }
 
@@ -135,7 +136,7 @@ public class PlayerController : MonoBehaviour
         if(mouseRight)
         {
             animator.SetTrigger("doSkill1");
-            rb.velocity = moveDirection * 2f;
+            rigidbody.velocity = moveDirection * 2f;
             //transform.position += moveDirection * Time.deltaTime * speed * 1.3f;
         }
     }
@@ -145,6 +146,15 @@ public class PlayerController : MonoBehaviour
         isDead = true;
         animator.SetTrigger("doDie");
         animator.SetBool("isDead", isDead);
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if(collision.gameObject.tag == "Floor")
+        {
+            animator.SetBool("isJump", false);
+            isJump = false;
+        }    
     }
 
     IEnumerator Wait()

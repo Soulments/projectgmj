@@ -752,7 +752,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2371630881241235028
 Transform:
   m_ObjectHideFlags: 0
@@ -1857,8 +1857,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerBody: {fileID: -8679921383154817045}
   cameraArm: {fileID: 2153946209064226764}
+  BigSword:
+  - {fileID: -709807482782863824}
+  - {fileID: 2377818561400851178}
   isDead: 0
-  jumpForce: 500
+  jumpForce: 400
   speed: 10
 --- !u!54 &3048009103807717924
 Rigidbody:
