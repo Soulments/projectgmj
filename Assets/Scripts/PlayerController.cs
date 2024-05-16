@@ -123,10 +123,10 @@ public class PlayerController : MonoBehaviour
             else
             {
                 isAttack = true;
-                BigSword[0].SetActive(true);
-                BigSword[1].SetActive(false);
+                //BigSword[0].SetActive(true);
+                //BigSword[1].SetActive(false);
                 animator.SetTrigger("doAttack1");
-                StartCoroutine(Wait());
+                //StartCoroutine(Wait());
             }
         }
     }
@@ -139,6 +139,11 @@ public class PlayerController : MonoBehaviour
             rigidbody.velocity = moveDirection * 2f;
             //transform.position += moveDirection * Time.deltaTime * speed * 1.3f;
         }
+    }
+
+    private void OnHit()
+    {
+
     }
 
     private void OnDie()
