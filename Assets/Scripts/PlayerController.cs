@@ -126,7 +126,7 @@ public class PlayerController : MonoBehaviour
                 //BigSword[0].SetActive(true);
                 //BigSword[1].SetActive(false);
                 animator.SetTrigger("doAttack1");
-                //StartCoroutine(Wait());
+                StartCoroutine(Wait());
             }
         }
     }

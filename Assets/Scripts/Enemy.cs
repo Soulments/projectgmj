@@ -5,6 +5,8 @@ using UnityEngine.AI;
 
 public class Enemy : MonoBehaviour
 {
+    public Transform target;
+
     bool isChase;
     bool isAttackReady;
     bool isDead;
@@ -25,6 +27,12 @@ public class Enemy : MonoBehaviour
         animator = GetComponent<Animator>();
         isChase = true;
         animator.SetBool("isWalk", true);
+    }
+
+    private void Update()
+    {
+        navMeshAgent.SetDestination(target.position);
+        //float distance = Vector3.Distance(tr)
     }
 
     void LookAtMovingDirection()
