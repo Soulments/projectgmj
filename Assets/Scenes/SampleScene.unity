@@ -270,6 +270,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 638fd4ce56490f04396483e5d8882f06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  portals: []
+  enemies: []
 --- !u!4 &479398208
 Transform:
   m_ObjectHideFlags: 0
@@ -299,9 +301,29 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: d97a63d82b625544f96079b5395af9ae,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d97a63d82b625544f96079b5395af9ae,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d97a63d82b625544f96079b5395af9ae,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5231365535817018967, guid: d97a63d82b625544f96079b5395af9ae,
         type: 3}
       propertyPath: m_Name
+      value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 5231365535817018967, guid: d97a63d82b625544f96079b5395af9ae,
+        type: 3}
+      propertyPath: m_TagString
       value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 8384462666853061841, guid: d97a63d82b625544f96079b5395af9ae,
@@ -1033,7 +1055,7 @@ PrefabInstance:
     - target: {fileID: 8416393444976447017, guid: 6acfc91f6f6e6ae43a39eb2b21b198bb,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.5423045
+      value: 0.11
       objectReference: {fileID: 0}
     - target: {fileID: 8416393444976447017, guid: 6acfc91f6f6e6ae43a39eb2b21b198bb,
         type: 3}
@@ -1043,7 +1065,7 @@ PrefabInstance:
     - target: {fileID: 8416393444976447017, guid: 6acfc91f6f6e6ae43a39eb2b21b198bb,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 2.93746
+      value: 2.65
       objectReference: {fileID: 0}
     - target: {fileID: 8416393444976447017, guid: 6acfc91f6f6e6ae43a39eb2b21b198bb,
         type: 3}

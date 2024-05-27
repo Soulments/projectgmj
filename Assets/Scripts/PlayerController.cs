@@ -9,7 +9,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private Transform cameraArm;
     [SerializeField]
-    private GameObject[] BigSword;
+    //private GameObject[] BigSword;
 
     float horizontalAxis;
     float verticalAxis;
@@ -21,6 +21,7 @@ public class PlayerController : MonoBehaviour
     bool isMove;
     bool isAttack;
     bool isJump;
+    bool usingPortal;
     public bool isDead = false;
 
     Vector2 moveInput;
@@ -30,6 +31,11 @@ public class PlayerController : MonoBehaviour
 
     Animator animator;
     Rigidbody rigidbody;
+    public BoxCollider weaponArea;
+
+    public GameObject[] startPortals;
+    public GameObject[] endPortals;
+    public Material[] materials;
 
     public float jumpForce = 30000;
     public float speed = 10;
@@ -86,9 +92,10 @@ public class PlayerController : MonoBehaviour
         moveInput = new Vector2(horizontalAxis, verticalAxis);
         // 이동 수평 값 확인
         isMove = moveInput.magnitude != 0;
-        animator.SetBool("isMove", isMove);
+        if (usingPortal) animator.SetBool("isMove", false);
+        else animator.SetBool("isMove", isMove);
         // isMove 값 true일 때 이동
-        if(isMove && !animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1"))
+        if (isMove && !animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1") && !usingPortal)
         {
             lookForward = new Vector3(cameraArm.forward.x, 0f, cameraArm.forward.z).normalized;
             lookRight = new Vector3(cameraArm.right.x, 0f, cameraArm.right.z).normalized;
@@ -123,8 +130,6 @@ public class PlayerController : MonoBehaviour
             else
             {
                 isAttack = true;
-                //BigSword[0].SetActive(true);
-                //BigSword[1].SetActive(false);
                 animator.SetTrigger("doAttack1");
                 StartCoroutine(Wait());
             }
@@ -162,11 +167,34 @@ public class PlayerController : MonoBehaviour
         }    
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        int i = 0;
+        foreach(GameObject gameObject in startPortals)
+        {
+            if (other.gameObject == gameObject)
+            {
+                StartCoroutine(PortalMove(i));
+            }
+            i++;
+        }
+        
+    }
+
+    IEnumerator PortalMove(int i)
+    {
+        usingPortal = true; yield return new WaitForSeconds(1.5f);
+        transform.position = new Vector3(endPortals[i].transform.position.x, 0, endPortals[i].transform.position.z);
+        yield return new WaitForSeconds(1.5f);
+        usingPortal = false;
+    }
+
     IEnumerator Wait()
     {
+        yield return new WaitForSeconds(0.6f);
+        weaponArea.enabled = true;
         yield return new WaitForSeconds(1.0f);
+        weaponArea.enabled = false;
         isAttack = false;
-        BigSword[0].SetActive(false);
-        BigSword[1].SetActive(true);
     }
 }
