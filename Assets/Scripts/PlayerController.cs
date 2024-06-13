@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -9,7 +11,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private Transform cameraArm;
     [SerializeField]
-    //private GameObject[] BigSword;
+    private GameObject[] BigSword;
+
+    int attackNum;
 
     float horizontalAxis;
     float verticalAxis;
@@ -31,7 +35,7 @@ public class PlayerController : MonoBehaviour
 
     Animator animator;
     Rigidbody rigidbody;
-    public BoxCollider weaponArea;
+    public Collider[] weaponArea;
 
     public GameObject[] startPortals;
     public GameObject[] endPortals;
@@ -40,6 +44,9 @@ public class PlayerController : MonoBehaviour
     public float jumpForce = 30000;
     public float speed = 10;
 
+    private bool bComboExist = false;
+    private bool bComboEnable = false;
+    private int comboIndex;
     // Start is called before the first frame update
     void Start()
     {
@@ -55,7 +62,8 @@ public class PlayerController : MonoBehaviour
         Move();
         Jump();
         Attack();
-        Skill();
+        //End_Attack();
+        Weapon();
     }
 
     private void GetInput()
@@ -95,7 +103,7 @@ public class PlayerController : MonoBehaviour
         if (usingPortal) animator.SetBool("isMove", false);
         else animator.SetBool("isMove", isMove);
         // isMove 값 true일 때 이동
-        if (isMove && !animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1") && !usingPortal)
+        if (isMove && !isAttack && !usingPortal)
         {
             lookForward = new Vector3(cameraArm.forward.x, 0f, cameraArm.forward.z).normalized;
             lookRight = new Vector3(cameraArm.right.x, 0f, cameraArm.right.z).normalized;
@@ -105,7 +113,7 @@ public class PlayerController : MonoBehaviour
             if (!isAttack) transform.position += moveDirection * Time.deltaTime * speed;
             else moveDirection = Vector3.zero;
         }
-        
+
     }
 
     private void Jump()
@@ -121,28 +129,69 @@ public class PlayerController : MonoBehaviour
 
     private void Attack()
     {
-        if (mouseLeft)
+        if (!isJump && mouseLeft)
         {
-            if (animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1"))
-            {
-                animator.SetTrigger("doAttack2");
-            }
-            else
-            {
-                isAttack = true;
-                animator.SetTrigger("doAttack1");
-                StartCoroutine(Wait());
-            }
+            NormalAttack();
+        }
+        if (isJump && mouseLeft)
+        {
+            JumpAttack();
+        }
+        if (!isJump && mouseRight)
+        {
+            SkiilAttack();
         }
     }
 
-    private void Skill()
+    private void NormalAttack()
     {
-        if(mouseRight)
+        if (comboIndex >= 1 && animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.5f && animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1a"))
         {
-            animator.SetTrigger("doSkill1");
-            rigidbody.velocity = moveDirection * 2f;
-            //transform.position += moveDirection * Time.deltaTime * speed * 1.3f;
+            animator.SetTrigger("doAttack1b");
+            comboIndex++;
+        }
+        if (comboIndex >= 2 && animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.5f && animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1b"))
+        {
+            animator.SetTrigger("doAttack1c");
+            comboIndex = 0;
+        }
+        if (isAttack)
+            return;
+        else
+        {
+            isAttack = true;
+            animator.SetTrigger("doAttack1a");
+            comboIndex++;
+        }
+        StartCoroutine(Wait(0));
+    }
+
+    private void JumpAttack()
+    {
+        isAttack = true;
+        animator.SetTrigger("doAttack2");
+        rigidbody.AddForce(Vector3.down * jumpForce, ForceMode.Impulse);
+        StartCoroutine(Wait(1));
+    }
+
+    private void SkiilAttack()
+    {
+        isAttack = true;
+        animator.SetTrigger("doAttack3");
+        StartCoroutine(Wait(2));
+    }
+
+    private void End_Attack()
+    {
+        if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1a") || !animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1b") || !animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1c") || !animator.GetCurrentAnimatorStateInfo(0).IsName("Attack2a") || !animator.GetCurrentAnimatorStateInfo(0).IsName("Attack2b") || !animator.GetCurrentAnimatorStateInfo(0).IsName("Attack3a") || !animator.GetCurrentAnimatorStateInfo(0).IsName("Attack3b"))
+        {
+            BigSword[0].SetActive(false);
+            BigSword[1].SetActive(true);
+        }
+        else
+        {
+            BigSword[0].SetActive(true);
+            BigSword[1].SetActive(false);
         }
     }
 
@@ -158,19 +207,33 @@ public class PlayerController : MonoBehaviour
         animator.SetBool("isDead", isDead);
     }
 
+    private void Weapon()
+    {
+        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1a") || animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1b") || animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1c") || animator.GetCurrentAnimatorStateInfo(0).IsName("Attack2a") || animator.GetCurrentAnimatorStateInfo(0).IsName("Attack2b") || animator.GetCurrentAnimatorStateInfo(0).IsName("Attack3a") || animator.GetCurrentAnimatorStateInfo(0).IsName("Attack3b"))
+        {
+            BigSword[0].SetActive(true);
+            BigSword[1].SetActive(false);
+        }
+        else
+        {
+            BigSword[0].SetActive(false);
+            BigSword[1].SetActive(true);
+        }
+    }
+
     private void OnCollisionEnter(Collision collision)
     {
-        if(collision.gameObject.tag == "Floor")
+        if (collision.gameObject.tag == "Floor")
         {
             animator.SetBool("isJump", false);
             isJump = false;
-        }    
+        }
     }
 
     private void OnTriggerEnter(Collider other)
     {
         int i = 0;
-        foreach(GameObject gameObject in startPortals)
+        foreach (GameObject gameObject in startPortals)
         {
             if (other.gameObject == gameObject)
             {
@@ -178,7 +241,7 @@ public class PlayerController : MonoBehaviour
             }
             i++;
         }
-        
+
     }
 
     IEnumerator PortalMove(int i)
@@ -189,12 +252,15 @@ public class PlayerController : MonoBehaviour
         usingPortal = false;
     }
 
-    IEnumerator Wait()
+    IEnumerator Wait(int attackNum)
     {
-        yield return new WaitForSeconds(0.6f);
-        weaponArea.enabled = true;
-        yield return new WaitForSeconds(1.0f);
-        weaponArea.enabled = false;
+        int hitbox = Convert.ToInt32(Convert.ToBoolean(attackNum));
+        Debug.Log(hitbox);
+        if (attackNum != 1)
+            yield return new WaitForSeconds(0.3f);
+        weaponArea[hitbox].enabled = true;
+        yield return new WaitForSeconds(0.5f);
+        weaponArea[hitbox].enabled = false;
         isAttack = false;
     }
 }

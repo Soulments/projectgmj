@@ -303,6 +303,12 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 26015657}
   m_Mesh: {fileID: 625845135098221407, guid: b0bef7790a0d07f46a8a9fcb3729fd5d, type: 3}
+--- !u!1 &38805502 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2377818561400851178, guid: d97a63d82b625544f96079b5395af9ae,
+    type: 3}
+  m_PrefabInstance: {fileID: 1126058148}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &74492524
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9619,7 +9625,7 @@ GameObject:
   - component: {fileID: 425658397}
   - component: {fileID: 425658396}
   m_Layer: 3
-  m_Name: Hitbox
+  m_Name: Hitbox0
   m_TagString: Weapon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14745,6 +14751,21 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -709807482782863824, guid: d97a63d82b625544f96079b5395af9ae,
+        type: 3}
+      propertyPath: m_TagString
+      value: Untagged
+      objectReference: {fileID: 0}
+    - target: {fileID: 2377818561400851178, guid: d97a63d82b625544f96079b5395af9ae,
+        type: 3}
+      propertyPath: m_TagString
+      value: Untagged
+      objectReference: {fileID: 0}
+    - target: {fileID: 4550979270400101674, guid: d97a63d82b625544f96079b5395af9ae,
+        type: 3}
+      propertyPath: isDead
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4550979270400101674, guid: d97a63d82b625544f96079b5395af9ae,
         type: 3}
       propertyPath: weaponArea
@@ -14752,9 +14773,29 @@ PrefabInstance:
       objectReference: {fileID: 425658396}
     - target: {fileID: 4550979270400101674, guid: d97a63d82b625544f96079b5395af9ae,
         type: 3}
+      propertyPath: BigSword.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4550979270400101674, guid: d97a63d82b625544f96079b5395af9ae,
+        type: 3}
       propertyPath: endPortals.Array.size
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 4550979270400101674, guid: d97a63d82b625544f96079b5395af9ae,
+        type: 3}
+      propertyPath: weaponArea.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4550979270400101674, guid: d97a63d82b625544f96079b5395af9ae,
+        type: 3}
+      propertyPath: BigSword.Array.data[0]
+      value: 
+      objectReference: {fileID: 2027629484}
+    - target: {fileID: 4550979270400101674, guid: d97a63d82b625544f96079b5395af9ae,
+        type: 3}
+      propertyPath: BigSword.Array.data[1]
+      value: 
+      objectReference: {fileID: 38805502}
     - target: {fileID: 4550979270400101674, guid: d97a63d82b625544f96079b5395af9ae,
         type: 3}
       propertyPath: startPortals.Array.size
@@ -14770,6 +14811,16 @@ PrefabInstance:
       propertyPath: endPortals.Array.data[1]
       value: 
       objectReference: {fileID: 966467419}
+    - target: {fileID: 4550979270400101674, guid: d97a63d82b625544f96079b5395af9ae,
+        type: 3}
+      propertyPath: weaponArea.Array.data[0]
+      value: 
+      objectReference: {fileID: 425658396}
+    - target: {fileID: 4550979270400101674, guid: d97a63d82b625544f96079b5395af9ae,
+        type: 3}
+      propertyPath: weaponArea.Array.data[1]
+      value: 
+      objectReference: {fileID: 2025501251}
     - target: {fileID: 4550979270400101674, guid: d97a63d82b625544f96079b5395af9ae,
         type: 3}
       propertyPath: startPortals.Array.data[0]
@@ -14843,6 +14894,10 @@ PrefabInstance:
         type: 3}
       insertIndex: 0
       addedObject: {fileID: 425658395}
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: d97a63d82b625544f96079b5395af9ae,
+        type: 3}
+      insertIndex: 1
+      addedObject: {fileID: 2025501250}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d97a63d82b625544f96079b5395af9ae, type: 3}
 --- !u!1001 &1128813655
@@ -21931,6 +21986,119 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2015057969}
   m_Mesh: {fileID: 625845135098221407, guid: b0bef7790a0d07f46a8a9fcb3729fd5d, type: 3}
+--- !u!1 &2025501249
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2025501250}
+  - component: {fileID: 2025501253}
+  - component: {fileID: 2025501252}
+  - component: {fileID: 2025501251}
+  m_Layer: 3
+  m_Name: Hitbox1
+  m_TagString: Weapon
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2025501250
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2025501249}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.8, z: 0}
+  m_LocalScale: {x: 5, y: 1, z: 5}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1816900034}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &2025501251
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2025501249}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 0
+  serializedVersion: 2
+  m_Radius: 0.5000001
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!23 &2025501252
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2025501249}
+  m_Enabled: 0
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &2025501253
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2025501249}
+  m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &2027629484 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -709807482782863824, guid: d97a63d82b625544f96079b5395af9ae,
+    type: 3}
+  m_PrefabInstance: {fileID: 1126058148}
+  m_PrefabAsset: {fileID: 0}
 --- !u!43 &2030342071
 Mesh:
   m_ObjectHideFlags: 0

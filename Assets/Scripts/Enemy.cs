@@ -107,7 +107,6 @@ public class Enemy : MonoBehaviour
 
     private void OnDie()
     {
-        animator.SetTrigger("doHit");
         Destroy(gameObject);
     }
 

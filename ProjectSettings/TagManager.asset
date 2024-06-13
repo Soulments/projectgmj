@@ -7,6 +7,7 @@ TagManager:
   - CinemachineTarget
   - Floor
   - Weapon
+  - Weapon2
   layers:
   - Default
   - TransparentFX
