@@ -255,7 +255,6 @@ public class PlayerController : MonoBehaviour
     IEnumerator Wait(int attackNum)
     {
         int hitbox = Convert.ToInt32(Convert.ToBoolean(attackNum));
-        Debug.Log(hitbox);
         if (attackNum != 1)
             yield return new WaitForSeconds(0.3f);
         weaponArea[hitbox].enabled = true;
