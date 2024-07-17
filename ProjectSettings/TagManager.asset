@@ -8,6 +8,7 @@ TagManager:
   - Floor
   - Weapon
   - Weapon2
+  - Enemy
   layers:
   - Default
   - TransparentFX
