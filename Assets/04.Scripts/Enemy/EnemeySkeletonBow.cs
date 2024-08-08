@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Arrow : MonoBehaviour
+public class EnemeySkeletonBow : Enemy
 {
     // Start is called before the first frame update
     void Start()
@@ -14,5 +14,11 @@ public class Arrow : MonoBehaviour
     void Update()
     {
         
+    }
+
+    // 스켈레톤 궁수 공격 함수
+    void Attack()
+    {
+
     }
 }
