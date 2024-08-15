@@ -7,32 +7,33 @@ using UnityEngine.AI;
 public class Enemy : MonoBehaviour
 {
     public Transform target;
+    protected bool isChase;
+    protected bool isMove;
+    protected bool isAttack = false;
+    protected bool isDead;
+    protected bool isHit = false;
 
-    bool isChase;
-    bool isMove;
-    bool isAttack = false;
-    bool isDead;
-    bool isHit = false;
+    protected int hitcount = 0;
 
-    float attackRange = 3f;
-    float closeRange = 1.5f;
+    protected float attackRange = 1.5f;
+    protected float closeRange = 0.5f;
 
-    Rigidbody rigidbody;
-    BoxCollider boxCollider;
-    MeshRenderer meshRenderer;
-    NavMeshAgent navMeshAgent;
-    Animator animator;
+    protected Rigidbody rigidbody;
+    protected BoxCollider boxCollider;
+    protected MeshRenderer meshRenderer;
+    protected NavMeshAgent navMeshAgent;
+    protected Animator animator;
 
     private void Awake()
     {
-        rigidbody = GetComponent<Rigidbody>();
-        boxCollider = GetComponent<BoxCollider>();
-        meshRenderer = GetComponent<MeshRenderer>();
-        navMeshAgent = GetComponent<NavMeshAgent>();
-        animator = GetComponent<Animator>();
-        isMove = true;
-        isChase = true;
-        animator.SetBool("isMove", true);
+        //rigidbody = GetComponent<Rigidbody>();
+        //boxCollider = GetComponent<BoxCollider>();
+        //meshRenderer = GetComponent<MeshRenderer>();
+        //navMeshAgent = GetComponent<NavMeshAgent>();
+        //animator = GetComponent<Animator>();
+        //isMove = true;
+        //isChase = true;
+        //animator.SetBool("isMove", true);
     }
 
     private void Update()
@@ -54,7 +55,7 @@ public class Enemy : MonoBehaviour
         FreezeVelocity(isOverRange, isTooClose);
     }
 
-    void FreezeVelocity(bool isOverRange, bool isTooClose)
+    protected void FreezeVelocity(bool isOverRange, bool isTooClose)
     {
         if(isChase && !isOverRange || isTooClose)
         {
@@ -63,7 +64,7 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    void Targeting(bool isOverRange)
+    protected void Targeting(bool isOverRange)
     {
         if (isOverRange && !isAttack)
         {
@@ -76,7 +77,7 @@ public class Enemy : MonoBehaviour
         StartCoroutine(Attack());
     }
 
-    IEnumerator Attack()
+    protected IEnumerator Attack()
     {
         isChase = false;
         isMove = false;
@@ -90,22 +91,34 @@ public class Enemy : MonoBehaviour
         isAttack = false;
     }
 
-    private void OnTriggerEnter(Collider other)
+    protected void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag == "Weapon")
         {
-            StartCoroutine(Hit());
+            StartCoroutine(Hit(1));
+        }
+        else if (other.gameObject.tag == "Weapon2")
+        {
+            StartCoroutine(Hit(2));
         }
     }
 
-    IEnumerator Hit()
+    protected IEnumerator Hit(int hitnum)
     {
-        animator.SetTrigger("doHit");
-        yield return new WaitForSeconds(0.5f);
-        OnDie();
+        if (hitnum == 1)
+        {
+            animator.SetTrigger("doHit");
+        }
+        else
+        {
+            animator.SetTrigger("doAirborne");
+        }
+        hitcount++;
+        if (hitcount > 5) OnDie();
+        else yield return new WaitForSeconds(0.5f);
     }
 
-    private void OnDie()
+    protected void OnDie()
     {
         Destroy(gameObject);
     }

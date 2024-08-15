@@ -13,6 +13,8 @@ public class CharAnimObject : MonoBehaviour
     public Transform handL;
     public Transform handR;
     public Transform weaponL;
+    public Transform weaponLObject;
     public Transform weaponR;
-    public Camera mainCamera;
+    public Transform weaponRObject;
+    public Camera motionCamera;
 }

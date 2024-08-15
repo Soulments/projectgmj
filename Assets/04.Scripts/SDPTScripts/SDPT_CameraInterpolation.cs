@@ -46,7 +46,8 @@ public class CameraInterpolation : MonoBehaviour
             targetPosition = Vector3.Lerp(controlCameraPoint.transform.position, motionCameraPoint.transform.position, weight);
             targetRotation = Quaternion.Lerp(controlCameraPoint.transform.rotation, motionCameraPoint.transform.rotation, weight);
             targetFOV = Mathf.Lerp(controlCameraPoint.fieldOfView, motionCameraPoint.fieldOfView, weight);
-            targetSpeed =  Mathf.Lerp(1, Mathf.Min(followSpeed*Time.deltaTime*10, 1), weight);
+            //targetSpeed =  Mathf.Lerp(1, Mathf.Min(followSpeed*Time.deltaTime*10, 1), weight);
+            targetSpeed =  Mathf.Min(followSpeed*Time.deltaTime*10, 1);
         }
     }
 
@@ -56,20 +57,6 @@ public class CameraInterpolation : MonoBehaviour
         mainCamera.transform.position = Vector3.Lerp(mainCamera.transform.position, targetPosition, targetSpeed);
         mainCamera.transform.rotation = Quaternion.Lerp(mainCamera.transform.rotation, targetRotation, targetSpeed);
         mainCamera.fieldOfView = Mathf.Lerp(mainCamera.fieldOfView, targetFOV, targetSpeed);
-    }
-
-
-    // 평균값의 디버그용 라인을 그려줍니다.
-    // 평소에 주석처리합니다.
-    void OnDrawGizmos()
-    {
-        CalculateCameraPostition();
-        Gizmos.color = Color.blue;
-        Gizmos.DrawLine(targetPosition, targetPosition + targetRotation * Vector3.forward);
-        Gizmos.color = Color.green;
-        Gizmos.DrawLine(targetPosition, targetPosition + targetRotation * Vector3.up);
-        Gizmos.color = Color.red;
-        Gizmos.DrawLine(targetPosition, targetPosition + targetRotation * Vector3.right);
     }
 
     // 활성화 첫 프레임에 호출됩니다.

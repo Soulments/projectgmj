@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class PlayerController : MonoBehaviour
 {
@@ -10,10 +11,8 @@ public class PlayerController : MonoBehaviour
     private Transform playerBody;
     [SerializeField]
     private Transform cameraArm;
-    [SerializeField]
-    private GameObject[] BigSword;
 
-    int attackNum;
+    int hitCount = 0;
 
     float horizontalAxis;
     float verticalAxis;
@@ -21,11 +20,22 @@ public class PlayerController : MonoBehaviour
     bool jumpDown;
     bool mouseLeft;
     bool mouseRight;
+    bool bufSkill;
+    bool cooldownbufSkill;
+    bool upperSkill;
+    bool cooldownupperSkill;
+    bool[] windmillSkill = new bool[2];
+    bool cooldownwindmillSkill;
 
     bool isMove;
     bool isAttack;
+    bool isAttack3;
     bool isJump;
+    bool ishit;
+    bool isGrounded;
+    bool isEnhanced;
     bool usingPortal;
+    bool comboTrigger;
     public bool isDead = false;
 
     Vector2 moveInput;
@@ -33,19 +43,19 @@ public class PlayerController : MonoBehaviour
     Vector3 lookRight;
     Vector3 moveDirection;
 
+    public GameManager manager;
     Animator animator;
     Rigidbody rigidbody;
     public Collider[] weaponArea;
 
+    public LayerMask groundLayer;
     public GameObject[] startPortals;
     public GameObject[] endPortals;
     public Material[] materials;
+    public SkillControl[] skillControls = new SkillControl[4];
 
     public float jumpForce = 30000;
     public float speed = 10;
-
-    private bool bComboExist = false;
-    private bool bComboEnable = false;
     private int comboIndex;
     // Start is called before the first frame update
     void Start()
@@ -61,9 +71,10 @@ public class PlayerController : MonoBehaviour
         LookAround();
         Move();
         Jump();
-        Attack();
-        //End_Attack();
-        Weapon();
+        //GroundCheck();
+        ActionPlayer();
+        End_Attack();
+        //Weapon();
     }
 
     private void GetInput()
@@ -74,6 +85,13 @@ public class PlayerController : MonoBehaviour
         jumpDown = Input.GetButtonDown("Jump");
         mouseLeft = Input.GetMouseButtonDown(0);
         mouseRight = Input.GetMouseButtonDown(1);
+        if (!cooldownupperSkill) upperSkill = Input.GetKeyDown(KeyCode.E);
+        if (!cooldownwindmillSkill)
+        {
+            windmillSkill[0] = Input.GetKeyDown(KeyCode.R);
+            windmillSkill[1] = Input.GetKeyUp(KeyCode.R);
+        }
+        if (!cooldownbufSkill) bufSkill = Input.GetKeyDown(KeyCode.F);
     }
 
     private void LookAround()
@@ -103,14 +121,15 @@ public class PlayerController : MonoBehaviour
         if (usingPortal) animator.SetBool("isMove", false);
         else animator.SetBool("isMove", isMove);
         // isMove 값 true일 때 이동
-        if (isMove && !isAttack && !usingPortal)
+        if (ishit) moveDirection = Vector3.zero;
+        else if (isMove && !isAttack && !usingPortal)
         {
             lookForward = new Vector3(cameraArm.forward.x, 0f, cameraArm.forward.z).normalized;
             lookRight = new Vector3(cameraArm.right.x, 0f, cameraArm.right.z).normalized;
             moveDirection = lookForward * moveInput.y + lookRight * moveInput.x;
 
-            playerBody.forward = moveDirection;
-            if (!isAttack) transform.position += moveDirection * Time.deltaTime * speed;
+            if (!isAttack3) playerBody.forward = moveDirection;
+            if (!isAttack || !ishit) transform.position += moveDirection * Time.deltaTime * speed;
             else moveDirection = Vector3.zero;
         }
 
@@ -127,7 +146,17 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void Attack()
+    //private void GroundCheck()
+    //{
+    //    isGrounded = Physics.Raycast(transform.position, Vector3.down, 0.1f, LayerMask.GetMask("Floor"));
+    //    if (isGrounded)
+    //    {
+    //        animator.SetBool("isJump", false);
+    //        isJump = false;
+    //    }
+    //}
+
+    private void ActionPlayer()
     {
         if (!isJump && mouseLeft)
         {
@@ -137,33 +166,49 @@ public class PlayerController : MonoBehaviour
         {
             JumpAttack();
         }
-        if (!isJump && mouseRight)
+        if (!isJump && upperSkill)
         {
-            SkiilAttack();
+            SkillUpper();
+        }    
+        if (!isJump && windmillSkill[0])
+        {
+            SkiilWindmill();
         }
+        if (!isJump && windmillSkill[1])
+        {
+            SkillWindmillStop();
+        }
+        if (!isJump && bufSkill)
+        {
+            SkillBuf();
+        }
+
     }
 
     private void NormalAttack()
     {
-        if (comboIndex >= 1 && animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.5f && animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1a"))
-        {
-            animator.SetTrigger("doAttack1b");
-            comboIndex++;
-        }
-        if (comboIndex >= 2 && animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.5f && animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1b"))
-        {
-            animator.SetTrigger("doAttack1c");
-            comboIndex = 0;
-        }
-        if (isAttack)
-            return;
-        else
+        Debug.Log(comboIndex);
+        Debug.Log(isAttack);
+        if (comboIndex == 0)
         {
             isAttack = true;
             animator.SetTrigger("doAttack1a");
-            comboIndex++;
+            comboIndex = 1;
         }
-        StartCoroutine(Wait(0));
+        else if (comboIndex == 1 && animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1a"))
+        {
+            isAttack = true;
+            comboTrigger = true;
+            animator.SetTrigger("doAttack1b");
+            comboIndex = 2;
+        }
+        else if (comboIndex == 2 && animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1b"))
+        {
+            isAttack = true;
+            animator.SetTrigger("doAttack1c");
+            comboIndex = 3;
+        }
+        weaponArea[0].enabled = true;
     }
 
     private void JumpAttack()
@@ -174,30 +219,124 @@ public class PlayerController : MonoBehaviour
         StartCoroutine(Wait(1));
     }
 
-    private void SkiilAttack()
+    private void SkillUpper()
     {
         isAttack = true;
+        animator.SetTrigger("doAttack5");
+        StartCoroutine(UpperSkill());
+        CoolTimeTrigger(1);
+        cooldownupperSkill = true;
+        StartCoroutine(WaitForCooltime(skillControls[1].GetComponent<SkillControl>().coolTime));
+        cooldownupperSkill = false;
+    }
+
+    IEnumerator UpperSkill()
+    {
+        yield return new WaitForSeconds(1f);
+        weaponArea[2].enabled = true;
+        yield return new WaitForSeconds(1.5f);
+        weaponArea[2].enabled = false;
+    }
+
+    private void SkiilWindmill()
+    {
+        isAttack3 = true;
         animator.SetTrigger("doAttack3");
-        StartCoroutine(Wait(2));
+        StartCoroutine(WindmillReady());
+        StartCoroutine(Windmill());
+    }
+
+    IEnumerator WindmillReady()
+    {
+        yield return new WaitForSeconds(0.5f);
+    }
+
+    IEnumerator Windmill()
+    {
+        WaitForSeconds waitWindmil = new WaitForSeconds(0.5f);
+        while (true)
+        {
+            if (!isAttack3) break;
+            weaponArea[1].enabled = true;
+            yield return waitWindmil;
+            weaponArea[1].enabled = false;
+        }
+    }
+
+    private void SkillWindmillStop()
+    {
+        isAttack3 = false;
+        animator.SetTrigger("stopAttack3");
+        weaponArea[1].enabled = false;
+        CoolTimeTrigger(2);
+        cooldownwindmillSkill = true;
+        StartCoroutine(WaitForCooltime(skillControls[2].GetComponent<SkillControl>().coolTime));
+        cooldownwindmillSkill = false;
+    }
+
+    private void SkillBuf()
+    {
+        isAttack = true;
+        animator.SetTrigger("doAttack4");
+        CoolTimeTrigger(3);
+        cooldownbufSkill = true;
+        StartCoroutine(WaitForCooltime(skillControls[3].GetComponent<SkillControl>().coolTime));
+        cooldownbufSkill = false;
     }
 
     private void End_Attack()
     {
-        if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1a") || !animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1b") || !animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1c") || !animator.GetCurrentAnimatorStateInfo(0).IsName("Attack2a") || !animator.GetCurrentAnimatorStateInfo(0).IsName("Attack2b") || !animator.GetCurrentAnimatorStateInfo(0).IsName("Attack3a") || !animator.GetCurrentAnimatorStateInfo(0).IsName("Attack3b"))
+        if (comboTrigger == true) return;
+        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1a") || animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1b") || animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1c"))
         {
-            BigSword[0].SetActive(false);
-            BigSword[1].SetActive(true);
+            Debug.Log("isAttackDisable");
+            if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.9f)
+            {
+                isAttack = false;
+                comboIndex = 0;
+            }
         }
-        else
+        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Attack4a") || animator.GetCurrentAnimatorStateInfo(0).IsName("Attack5a"))
         {
-            BigSword[0].SetActive(true);
-            BigSword[1].SetActive(false);
+            if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.9f)
+            {
+                isAttack = false;
+            }
         }
+    }
+
+    private void CoolTimeTrigger(int num)
+    {
+        skillControls[num].GetComponent<SkillControl>().isUseSkill = true;
+        skillControls[num].GetComponent<SkillControl>().StartCooltime();
     }
 
     private void OnHit()
     {
+        if (hitCount > 3)
+        {
+            StartCoroutine(Enhance());
+        }
+        else if(!isAttack3)
+        {
+            animator.SetTrigger("doHit");
+            hitCount++;
+        }
+    }
 
+    IEnumerator Enhance()
+    {
+        isEnhanced = true;
+        yield return new WaitForSeconds(5.0f);
+        isEnhanced = false;
+        hitCount = 0;
+    }
+
+    IEnumerator Hit()
+    {
+        ishit = true;
+        yield return new WaitForSeconds(1.0f);
+        ishit = false;
     }
 
     private void OnDie()
@@ -205,20 +344,6 @@ public class PlayerController : MonoBehaviour
         isDead = true;
         animator.SetTrigger("doDie");
         animator.SetBool("isDead", isDead);
-    }
-
-    private void Weapon()
-    {
-        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1a") || animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1b") || animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1c") || animator.GetCurrentAnimatorStateInfo(0).IsName("Attack2a") || animator.GetCurrentAnimatorStateInfo(0).IsName("Attack2b") || animator.GetCurrentAnimatorStateInfo(0).IsName("Attack3a") || animator.GetCurrentAnimatorStateInfo(0).IsName("Attack3b"))
-        {
-            BigSword[0].SetActive(true);
-            BigSword[1].SetActive(false);
-        }
-        else
-        {
-            BigSword[0].SetActive(false);
-            BigSword[1].SetActive(true);
-        }
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -232,6 +357,14 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (other.gameObject.tag == "Arrow" || other.gameObject.tag == "Weapon")
+        {
+            if (!isEnhanced)
+            {
+                OnHit();
+            }
+            return;
+        }
         int i = 0;
         foreach (GameObject gameObject in startPortals)
         {
@@ -241,12 +374,13 @@ public class PlayerController : MonoBehaviour
             }
             i++;
         }
-
     }
 
     IEnumerator PortalMove(int i)
     {
-        usingPortal = true; yield return new WaitForSeconds(1.5f);
+        usingPortal = true;
+        manager.portalTrigger = true;
+        yield return new WaitForSeconds(1.5f);
         transform.position = new Vector3(endPortals[i].transform.position.x, 0, endPortals[i].transform.position.z);
         yield return new WaitForSeconds(1.5f);
         usingPortal = false;
@@ -261,5 +395,10 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         weaponArea[hitbox].enabled = false;
         isAttack = false;
+    }
+
+    IEnumerator WaitForCooltime(float coolTime)
+    {
+        yield return new WaitForSecondsRealtime(coolTime);
     }
 }
