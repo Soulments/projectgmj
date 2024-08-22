@@ -37,7 +37,7 @@ public class EnemySkeletonSword : Enemy
     }
 
     // ½ºÄÌ·¹Åæ °Ë»ç °ø°Ý ÇÔ¼ö
-    new void Targeting(bool isOverRange)
+    protected override void Targeting(bool isOverRange)
     {
         if (isOverRange && !isAttack)
         {
@@ -50,7 +50,7 @@ public class EnemySkeletonSword : Enemy
         StartCoroutine(Attack());
     }
 
-    new IEnumerator Attack()
+    protected override IEnumerator Attack()
     {
         isChase = false;
         isMove = false;

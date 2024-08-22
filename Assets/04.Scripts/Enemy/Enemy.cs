@@ -64,7 +64,7 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    protected void Targeting(bool isOverRange)
+    protected virtual void Targeting(bool isOverRange)
     {
         if (isOverRange && !isAttack)
         {
@@ -77,7 +77,7 @@ public class Enemy : MonoBehaviour
         StartCoroutine(Attack());
     }
 
-    protected IEnumerator Attack()
+    protected virtual IEnumerator Attack()
     {
         isChase = false;
         isMove = false;

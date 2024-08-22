@@ -40,7 +40,7 @@ public class EnemeySkeletonBow : Enemy
     }
 
     // 스켈레톤 궁수 공격 함수
-    new void Targeting(bool isOverRange)
+    protected override void Targeting(bool isOverRange)
     {
         if (isOverRange && !isAttack)
         {
@@ -53,7 +53,7 @@ public class EnemeySkeletonBow : Enemy
         StartCoroutine(Attack());
     }
 
-    new IEnumerator Attack()
+    protected virtual IEnumerator Attack()    
     {
         isChase = false;
         isAttack = true;
