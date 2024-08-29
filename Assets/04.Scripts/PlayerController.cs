@@ -16,6 +16,7 @@ public class PlayerController : MonoBehaviour
 
     float horizontalAxis;
     float verticalAxis;
+    float currentTime;
 
     bool jumpDown;
     bool mouseLeft;
@@ -43,11 +44,11 @@ public class PlayerController : MonoBehaviour
     Vector3 lookRight;
     Vector3 moveDirection;
 
-    public GameManager manager;
     Animator animator;
     Rigidbody rigidbody;
-    public Collider[] weaponArea;
 
+    public Collider[] weaponArea;
+    public GameManager manager;
     public LayerMask groundLayer;
     public GameObject[] startPortals;
     public GameObject[] endPortals;
@@ -61,7 +62,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         animator = playerBody.GetComponent<Animator>();
-        rigidbody = this.GetComponent<Rigidbody>();
+        rigidbody = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
@@ -75,6 +76,11 @@ public class PlayerController : MonoBehaviour
         ActionPlayer();
         End_Attack();
         //Weapon();
+    }
+
+    private void FixedUpdate()
+    {
+        //transform.position = Vector3.Lerp(transform.position, transform.GetChild(0).position, Time.deltaTime);
     }
 
     private void GetInput()
