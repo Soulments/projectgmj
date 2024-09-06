@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.Rendering;
 
 public class Boss : Enemy
@@ -12,45 +13,127 @@ public class Boss : Enemy
     }
 
     public int summonCount;
-    
-    int waveCount = 3;
+    public int maxHP = 40;
+    public int currentHP;
+
+    public float DirectAttack_A_cooldownTime = 5.0f;
+    public float DirectAttack_B_cooldownTime = 20.0f;
+
+
+    int phaseCount = 1;
     int enemyCount = 0;
 
+    bool bufReady = false;
+    bool directAttack_A_Ready = false;
+    bool directAttack_B_Ready = false;
+
+    Status status;
     Vector3 currentPosition;
     Vector3[] range = new Vector3[4];
-    Animator animator;
     EnemySkeletonSword sword;
     EnemySkeletonBow bow;
-    // Start is called before the first frame update
+
     void Awake()
     {
+        rigidbody = GetComponent<Rigidbody>();
+        capsuleCollider = GetComponent<CapsuleCollider>();
+        meshRenderer = GetComponent<MeshRenderer>();
+        navMeshAgent = GetComponent<NavMeshAgent>();
+        animator = GetComponent<Animator>();
+        status = new Status();
         target = GameObject.FindWithTag("Player").transform;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        currentHP = maxHP;
+        StartCoroutine(Phase1());
     }
 
     private void FixedUpdate()
     {
         SummonPosition();
+        // 플레이어를 항상 바라보게
         transform.LookAt(target);
     }
 
-    // 보스 패턴용 함수
-    protected override void Targeting(bool isOverRange)
+    // 보스 페이즈 1
+    IEnumerator Phase1()
     {
-        if (isOverRange && !isAttack)
+        while (currentHP > 32)
         {
-            return;
+            // 몹 소환
+            if (summonCount > 0 && enemyCount == 0)
+            {
+                summonCount--;
+                Attack('B', 0);
+                yield return new WaitForSeconds(5.0f);
+                bufReady = true;
+            }
+            // 몹 버프
+            if (bufReady == true)
+            {
+                Attack('A', 1);
+                bufReady = false;
+            }
+            yield return null;
         }
-        if (isAttack)
+        // Phase2로 넘어가기 위한 단계
+        phaseCount++;
+        summonCount = 1;
+        BossResize(phaseCount);
+        StartCoroutine(Phase2());
+    }
+
+    // 보스 페이즈 2
+    IEnumerator Phase2()
+    {
+        capsuleCollider.enabled = true;
+        StartCoroutine(CoolDown(directAttack_A_Ready, DirectAttack_A_cooldownTime));
+        while (currentHP > 7)
         {
-            return;
+            // 몹 소환
+            if (summonCount > 0 && enemyCount == 0)
+            {
+                Attack('B', 0);
+                Attack('A', 0);
+            }
+            // 직접 공격 A
+            if (directAttack_A_Ready == true)
+            {
+                Attack('B', 1);
+                StartCoroutine(CoolDown(directAttack_A_Ready, DirectAttack_A_cooldownTime));
+            }
+            yield return null;
         }
-        //StartCoroutine(Attack());
+        // Phase3로 넘어가기 위한 단계
+        phaseCount++;
+        capsuleCollider.enabled = false;
+        BossResize(phaseCount);
+        StartCoroutine(Phase3());
+    }
+
+    // 보스 페이즈 3
+    IEnumerator Phase3()
+    {
+        capsuleCollider.enabled = true;
+        StartCoroutine(CoolDown(directAttack_A_Ready, DirectAttack_A_cooldownTime));
+        StartCoroutine(CoolDown(directAttack_B_Ready, DirectAttack_B_cooldownTime));
+        while (phaseCount == 3)
+        {
+            // 직접 공격 A
+            if (directAttack_A_Ready == true)
+            {
+                Attack('B', 1);
+                StartCoroutine(CoolDown(directAttack_A_Ready, DirectAttack_A_cooldownTime));
+            }
+            // 직접 공격 B
+            if (directAttack_B_Ready == true)
+            {
+                Attack('C', 1);
+                StartCoroutine(CoolDown(directAttack_B_Ready, DirectAttack_B_cooldownTime));
+            }
+            yield return null;
+        }
+        // 보스 사망
+        capsuleCollider.enabled = false;
+        OnDie();
     }
 
     // 보스 이동 함수
@@ -132,7 +215,7 @@ public class Boss : Enemy
             range[i] = currentPosition;
         }
         range[0].x += 2;
-        range[1].y -= 2;
+        range[1].x -= 2;
         range[2].z += 2;
         range[3].z -= 2;
     }
@@ -163,7 +246,7 @@ public class Boss : Enemy
     // 스켈레톤 버프
     void Buff()
     {
-
+        // 뭐넣지
     }
 
     // 보스 직접 공격
@@ -172,6 +255,10 @@ public class Boss : Enemy
         if (attackNum == 0)
         {
             // 느린 공격
+            for(int i = 0; i < 5; i++)
+            {
+                // 공격 소환
+            }
         }
         else
         {
@@ -179,18 +266,33 @@ public class Boss : Enemy
         }
     }
 
-    IEnumerator BossResize(int waveCount)
+    IEnumerator BossResize(int phaseCount)
     {
-        while (transform.localScale.x > waveCount * 2)
+        while (transform.localScale.x > phaseCount * 2)
         {
             transform.localScale *= 0.9f;
         }
-        transform.localScale = new Vector3(waveCount * 2, waveCount * 2, waveCount * 2);
+        transform.localScale = new Vector3(phaseCount * 2, phaseCount * 2, phaseCount * 2);
         yield return null;
     }
 
-    IEnumerator CoolDown()
+    // 쿨타임 거는용
+    IEnumerator CoolDown(bool ready, float cooldownTime)
     {
-        yield return new WaitForSeconds(1.0f);
+        ready = false;
+        yield return new WaitForSeconds(cooldownTime);
+        ready = true;
+    }
+
+    protected override void OnDie()
+    {
+        animator.SetTrigger("doDie");
+        StartCoroutine(Wait());
+        Destroy(gameObject);
+    }
+
+    IEnumerator Wait()
+    {
+        yield return new WaitForSeconds(3.0f);
     }
 }

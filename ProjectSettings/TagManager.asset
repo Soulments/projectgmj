@@ -9,6 +9,7 @@ TagManager:
   - Weapon
   - Weapon2
   - Arrow
+  - Enemy
   layers:
   - Default
   - TransparentFX

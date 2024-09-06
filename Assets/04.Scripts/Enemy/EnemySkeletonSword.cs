@@ -8,7 +8,7 @@ public class EnemySkeletonSword : Enemy
     private void Awake()
     {
         rigidbody = GetComponent<Rigidbody>();
-        boxCollider = GetComponent<BoxCollider>();
+        capsuleCollider = GetComponent<CapsuleCollider>();
         meshRenderer = GetComponent<MeshRenderer>();
         navMeshAgent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();

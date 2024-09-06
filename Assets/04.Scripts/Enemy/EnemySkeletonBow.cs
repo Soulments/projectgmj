@@ -11,7 +11,7 @@ public class EnemySkeletonBow : Enemy
     private void Awake()
     {
         rigidbody = GetComponent<Rigidbody>();
-        boxCollider = GetComponent<BoxCollider>();
+        capsuleCollider = GetComponent<CapsuleCollider>();
         meshRenderer = GetComponent<MeshRenderer>();
         navMeshAgent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
@@ -53,7 +53,7 @@ public class EnemySkeletonBow : Enemy
         StartCoroutine(Attack());
     }
 
-    protected virtual IEnumerator Attack()    
+    protected override IEnumerator Attack()    
     {
         isChase = false;
         isAttack = true;

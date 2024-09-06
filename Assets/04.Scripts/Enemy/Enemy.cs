@@ -19,7 +19,7 @@ public class Enemy : MonoBehaviour
     protected float closeRange = 0.5f;
 
     protected Rigidbody rigidbody;
-    protected BoxCollider boxCollider;
+    protected CapsuleCollider capsuleCollider;
     protected MeshRenderer meshRenderer;
     protected NavMeshAgent navMeshAgent;
     protected Animator animator;
@@ -118,7 +118,7 @@ public class Enemy : MonoBehaviour
         else yield return new WaitForSeconds(0.5f);
     }
 
-    protected void OnDie()
+    protected virtual void OnDie()
     {
         Destroy(gameObject);
     }

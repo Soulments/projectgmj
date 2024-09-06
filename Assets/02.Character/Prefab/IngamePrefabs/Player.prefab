@@ -294,11 +294,11 @@ MonoBehaviour:
   playerBody: {fileID: 537308734144339958}
   cameraArm: {fileID: 9117312763903318531}
   isDead: 0
-  manager: {fileID: 0}
   weaponArea:
   - {fileID: 1608161362954061765}
   - {fileID: 2390600675886061165}
   - {fileID: 858141680120961517}
+  manager: {fileID: 0}
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -356,7 +356,7 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
