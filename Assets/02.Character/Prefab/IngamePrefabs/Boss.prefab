@@ -6729,11 +6729,11 @@ GameObject:
   - component: {fileID: 9177079078837279003}
   m_Layer: 0
   m_Name: Boss
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &8864571284728503494
 Transform:
   m_ObjectHideFlags: 0
@@ -6790,6 +6790,8 @@ MonoBehaviour:
   summonCount: 2
   maxHP: 0
   currentHP: 0
+  DirectAttack_A_cooldownTime: 5
+  DirectAttack_B_cooldownTime: 20
 --- !u!136 &-8185122782803121282
 CapsuleCollider:
   m_ObjectHideFlags: 0
