@@ -13,7 +13,7 @@ public class Item : MonoBehaviour
 
     long tick;
 
-    public float randomSeed;
+    public int randomSeed;
 
     public GameObject[] randomObjects;
 
