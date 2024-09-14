@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public int waveCount = 1;
+    public int stageCount = 1;
     public bool portalTrigger;
 
     public GameObject[] portals;
@@ -31,7 +31,7 @@ public class GameManager : MonoBehaviour
 
     void WaveStart()
     {
-        waves[waveCount - 1].SetActive(true);
+        waves[stageCount - 1].SetActive(true);
         return;
     }
 
@@ -39,8 +39,8 @@ public class GameManager : MonoBehaviour
     {
         if (portalTrigger)
         {
-            waves[waveCount - 1].SetActive(false);
-            waveCount++;
+            waves[stageCount - 1].SetActive(false);
+            stageCount++;
             WaveStart();
             portalTrigger = false;
         }
@@ -48,7 +48,7 @@ public class GameManager : MonoBehaviour
 
     void CheckEnemy()
     {
-        if (waves[waveCount - 1].transform.childCount == 0)
+        if (waves[stageCount - 1].transform.childCount == 0)
         {
             portals[0].SetActive(true);
         }

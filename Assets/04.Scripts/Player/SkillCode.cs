@@ -2,10 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum UnitCode
+public enum SkillCode
 {
-    Player,
-    Enemy,
-    Boss,
-    Item
+    Jump,
+    Upper,
+    Windmill
 }
