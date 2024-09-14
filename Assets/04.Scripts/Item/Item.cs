@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using UnityEngine;
 using UnityEngine.Rendering.LookDev;
 
@@ -9,12 +11,16 @@ public class Item : MonoBehaviour
     Status status;
     GameManager gameManager;
 
+    long tick;
+
+    public float randomSeed;
+
     public GameObject[] randomObjects;
 
     void Awake()
     {
         StatusInit();
-
+        RandomSeed();
     }
 
     // 스테이터스 초기화
@@ -31,5 +37,12 @@ public class Item : MonoBehaviour
     {
         // 뭐넣을지 고민중
         
+    }
+
+    void RandomSeed()
+    {
+        tick = DateTime.Now.Ticks;
+        randomSeed = (int)(tick % int.MaxValue);
+        UnityEngine.Random.InitState((int)randomSeed);
     }
 }
