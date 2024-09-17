@@ -7,6 +7,8 @@ using UnityEngine.Rendering.LookDev;
 
 public class Item : MonoBehaviour
 {
+    public ItemData itemData;   // ScriptableObject에서 데이터 가져오기
+
     UnitCode unitCode;
     Status status;
     GameManager gameManager;

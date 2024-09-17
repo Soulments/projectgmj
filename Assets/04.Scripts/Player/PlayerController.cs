@@ -1,9 +1,6 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class PlayerController : MonoBehaviour
 {
@@ -58,6 +55,14 @@ public class PlayerController : MonoBehaviour
     public float jumpForce = 30000;
     public float speed = 10;
     private int comboIndex;
+
+    [SerializeField]
+    public Inventory inventory;
+    [SerializeField]
+    private CanvasGroup inventoryCanvasGroup;
+    private bool isInventoryOpen = false; // 인벤토리 활성화 상태
+
+    public UIController UIController;
     // Start is called before the first frame update
     void Start()
     {
@@ -91,6 +96,14 @@ public class PlayerController : MonoBehaviour
         jumpDown = Input.GetButtonDown("Jump");
         mouseLeft = Input.GetMouseButtonDown(0);
         mouseRight = Input.GetMouseButtonDown(1);
+
+        // 인벤토리 on/off
+        if (Input.GetKeyDown(KeyCode.I))
+        {
+            ToggleInventory();
+        }
+
+
         if (!cooldownupperSkill) upperSkill = Input.GetKeyDown(KeyCode.E);
         if (!cooldownwindmillSkill)
         {
@@ -99,6 +112,13 @@ public class PlayerController : MonoBehaviour
         }
         if (!cooldownbufSkill) bufSkill = Input.GetKeyDown(KeyCode.F);
     }
+    private void ToggleInventory()
+    {
+        isInventoryOpen = !isInventoryOpen;
+        inventoryCanvasGroup.alpha=isInventoryOpen ? 1 : 0;
+        inventoryCanvasGroup.interactable = isInventoryOpen; // UI 상호작용 가능 여부 설정
+        inventoryCanvasGroup.blocksRaycasts = isInventoryOpen; // UI 클릭 가능 여부 설정
+    } 
 
     private void LookAround()
     {
@@ -175,7 +195,7 @@ public class PlayerController : MonoBehaviour
         if (!isJump && upperSkill)
         {
             SkillUpper();
-        }    
+        }
         if (!isJump && windmillSkill[0])
         {
             SkiilWindmill();
@@ -323,7 +343,7 @@ public class PlayerController : MonoBehaviour
         {
             StartCoroutine(Enhance());
         }
-        else if(!isAttack3)
+        else if (!isAttack3)
         {
             animator.SetTrigger("doHit");
             hitCount++;
@@ -380,6 +400,16 @@ public class PlayerController : MonoBehaviour
             }
             i++;
         }
+
+            IObjectItem clickInterface = other.GetComponent<IObjectItem>();
+            if (clickInterface != null)
+            {
+                ItemData item = clickInterface.ClickItem();
+                inventory.AddItem(item);
+                clickInterface.OnPickup();
+                Debug.Log($"{item.itemName}");
+            }
+        
     }
 
     IEnumerator PortalMove(int i)

@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -20,38 +19,27 @@ public class SDPT_ObjectOnOff : MonoBehaviour
     [Range (0.0f, 1.0f)]
     public float dissolveSpeed;
 
-    public float dissolveMax = 0.6f;
-    public float dissolveMin = -0.6f;
-    public float dissolvePoint = -0.5f ;
-    private float dissolveValue;
+    public float dissolveMax;
+    public float dissolveMin;
 
-    private void Start()
-    {
-        if (targetEnable) dissolveValue = dissolveMax;
-        else {dissolveValue = dissolveMin;}
-    }
-    
     private void Update()
     {
         if (targetObject != null)
         {
-            float targetValue = dissolveMin;
-            if (targetEnable) targetValue = dissolveMax;
-
-            dissolveValue = Mathf.Lerp(dissolveValue, targetValue, Mathf.Min(dissolveSpeed*Time.deltaTime*10, 1));
-
-            if (dissolveValue < dissolvePoint) targetObject.SetActive(false);
-            else targetObject.SetActive(true);
-
-            Renderer renderer;
-            if (targetObject.TryGetComponent<Renderer>(out renderer))
+            try
             {
-                foreach( Material material in renderer.sharedMaterials) 
-                {
-                    if (material.HasFloat("_DissolveAmount")) material.SetFloat("_DissolveAmount", dissolveValue);
-                }
+                float currentValue = targetObject.GetComponent<Renderer>().sharedMaterial.GetFloat("_DissolveAmount");
+                float targetValue = dissolveMin;
+                if (targetEnable) targetValue = dissolveMax;
+
+                targetObject.SetActive(true);
+                targetObject.GetComponent<Renderer>().sharedMaterial.SetFloat("_DissolveAmount", Mathf.Lerp(currentValue, targetValue, Mathf.Min(dissolveSpeed*Time.deltaTime*10, 1)));
+            } 
+            catch
+            {
+                targetObject.SetActive(targetEnable);
             }
-        }
+    }
     }
 }
 
