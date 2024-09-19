@@ -1,6 +1,9 @@
 using System;
 using System.Collections;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
+using static UnityEditor.Progress;
 
 public class PlayerController : MonoBehaviour
 {
@@ -62,7 +65,13 @@ public class PlayerController : MonoBehaviour
     private CanvasGroup inventoryCanvasGroup;
     private bool isInventoryOpen = false; // 인벤토리 활성화 상태
 
-    public UIController UIController;
+    // 아이템 메세지 관련 변수-------------
+    private IObjectItem itemPickup = null;
+
+    public UIController uiController;
+    public TextMeshProUGUI itemName;
+    // -----------------------------------
+
     // Start is called before the first frame update
     void Start()
     {
@@ -97,12 +106,24 @@ public class PlayerController : MonoBehaviour
         mouseLeft = Input.GetMouseButtonDown(0);
         mouseRight = Input.GetMouseButtonDown(1);
 
-        // 인벤토리 on/off
+        // 인벤토리 on/off----------------
         if (Input.GetKeyDown(KeyCode.I))
         {
             ToggleInventory();
         }
+        // ------------------------------
+        // 아이템 획득-------------------------------------------
+        if (itemPickup != null && Input.GetKeyDown(KeyCode.G))
+        {
+            ItemData item = itemPickup.ClickItem();
 
+            inventory.AddItem(item);
+            itemPickup.OnPickup(); // 아이템 획득하면 오브젝트 파괴
+            Debug.Log($"{item.itemName}");
+
+            uiController.CloseMessagePanel();
+        }
+        // ------------------------------------------------------
 
         if (!cooldownupperSkill) upperSkill = Input.GetKeyDown(KeyCode.E);
         if (!cooldownwindmillSkill)
@@ -115,10 +136,10 @@ public class PlayerController : MonoBehaviour
     private void ToggleInventory()
     {
         isInventoryOpen = !isInventoryOpen;
-        inventoryCanvasGroup.alpha=isInventoryOpen ? 1 : 0;
+        inventoryCanvasGroup.alpha = isInventoryOpen ? 1 : 0;
         inventoryCanvasGroup.interactable = isInventoryOpen; // UI 상호작용 가능 여부 설정
         inventoryCanvasGroup.blocksRaycasts = isInventoryOpen; // UI 클릭 가능 여부 설정
-    } 
+    }
 
     private void LookAround()
     {
@@ -400,18 +421,35 @@ public class PlayerController : MonoBehaviour
             }
             i++;
         }
-
-            IObjectItem clickInterface = other.GetComponent<IObjectItem>();
-            if (clickInterface != null)
-            {
-                ItemData item = clickInterface.ClickItem();
-                inventory.AddItem(item);
-                clickInterface.OnPickup();
-                Debug.Log($"{item.itemName}");
-            }
         
-    }
+        // 아이템 획득 관련 코드---------------------------------------
+        IObjectItem clickInterface = other.GetComponent<IObjectItem>();
+        if (clickInterface != null)
+        {
+            ItemData item = clickInterface.ClickItem();
 
+            uiController.OpenMessagePanel("");
+            itemName.text = item.itemName;
+
+            itemPickup = clickInterface;
+            /*
+            inventory.AddItem(item);
+            clickInterface.OnPickup(); // 아이템 획득하면 오브젝트 파괴
+            Debug.Log($"{item.itemName}");
+            */
+        }
+        // -----------------------------------------------------------
+
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        IObjectItem clickInterface = other.GetComponent<IObjectItem>();
+        if (clickInterface != null)
+        {
+            uiController.CloseMessagePanel();
+            itemPickup = null;
+        }
+    }
     IEnumerator PortalMove(int i)
     {
         usingPortal = true;

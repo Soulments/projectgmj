@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 324421ae9fe6af24983185c97f68ee62, type: 3}
   m_Name: NeckOrb
   m_EditorClassIdentifier: 
-  itemName: "orb\uBAA9\uAC70\uB9AC"
+  itemName: OrbNeck
   sprite: {fileID: 21300000, guid: d28bdabb8cb60154c969c160d15217c6, type: 3}
   itemTag: 1

@@ -29,7 +29,8 @@ public class ObjectItem : MonoBehaviour, IObjectItem
     public void OnPickup()
     {
         // TODO: Add logic what happens when item is picked up by player
-        gameObject.SetActive(false);
+        //gameObject.SetActive(false);
+        Destroy(gameObject);
     }
     public  ItemData ClickItem()
     {
