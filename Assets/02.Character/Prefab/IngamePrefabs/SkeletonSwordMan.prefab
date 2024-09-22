@@ -910,7 +910,7 @@ GameObject:
   - component: {fileID: 2334018943590084104}
   m_Layer: 0
   m_Name: SkeletonSwordMan
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -946,7 +946,7 @@ Animator:
   m_GameObject: {fileID: 3483191956348753153}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 4591c9b320033a6489c53a46270f9e64, type: 3}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: df930579ac8eab64bb6cab09db3d3e8c, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 1
@@ -1058,6 +1058,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 0}
+  item: {fileID: 5021055782646222534, guid: 2e21f55503158734f89931f9ce3c7c69, type: 3}
 --- !u!1 &3587863755531429572
 GameObject:
   m_ObjectHideFlags: 0

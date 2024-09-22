@@ -5006,7 +5006,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 9100000, guid: df930579ac8eab64bb6cab09db3d3e8c, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 3184600382100058526, guid: 4591c9b320033a6489c53a46270f9e64, type: 3}
@@ -5162,6 +5162,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 0}
+  item: {fileID: 5021055782646222534, guid: 2e21f55503158734f89931f9ce3c7c69, type: 3}
   arrow: {fileID: 0}
   arrowStart: {fileID: 0}
 --- !u!1 &9026965066619489110 stripped

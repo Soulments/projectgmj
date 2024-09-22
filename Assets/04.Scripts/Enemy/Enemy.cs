@@ -7,6 +7,8 @@ using UnityEngine.AI;
 public class Enemy : MonoBehaviour
 {
     public Transform target;
+    public Item item;
+
     protected bool isChase;
     protected bool isMove;
     protected bool isAttack = false;
@@ -120,6 +122,8 @@ public class Enemy : MonoBehaviour
 
     protected virtual void OnDie()
     {
+        Vector3 position = new Vector3 (transform.position.x, transform.position.y + 1, transform.position.z);
+        Instantiate(item, position, Quaternion.identity);
         Destroy(gameObject);
     }
 

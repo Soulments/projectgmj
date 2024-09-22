@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class Status : MonoBehaviour
+public class Status
 {
     // 유닛 코드
-    UnitCode unitCode { get; }
+    private UnitCode UnitCode { get; }
     // 이름
     public string ObjectName { get; set; }
     // 체력
@@ -30,11 +30,11 @@ public class Status : MonoBehaviour
 
     public Status()
     {
-        Status status = new Status();
+            
     }
     public Status(UnitCode unitCode, string objectName, int stageCount)
     {
-        this.unitCode = unitCode;
+        this.UnitCode = unitCode;
         PowerLevel = stageCount;
         switch (unitCode)
         {
@@ -52,18 +52,22 @@ public class Status : MonoBehaviour
                 break;
             // 아이템용
             case UnitCode.Item:
-                InitItemStatus(objectName);
+                InitItemStatus(objectName, stageCount);
                 break;
             default:
                 break;
         }
     }
 
+    ~Status()
+    {
+
+    }
+
 
     // 플레이어용
     public void InitPlayerStatus(string objectName)
     {
-        Status status = null;
         SkillPercent = new float[Enum.GetValues(typeof(SkillCode)).Length];
 
         ObjectName = objectName;
@@ -82,8 +86,6 @@ public class Status : MonoBehaviour
     // 에너미용
     public void InitEnemyStatus(string objectName)
     {
-        Status status = null;
-
         ObjectName = objectName;
         if (ObjectName == "근거리")
         {
@@ -111,31 +113,17 @@ public class Status : MonoBehaviour
         Defense = 5;
     }
     // 아이템용
-    public void InitItemStatus(string objectName)
+    public void InitItemStatus(string objectName, int stageCount)
     {
-        Status status = null;
         SkillPercent = new float[Enum.GetValues(typeof(SkillCode)).Length];
         ObjectName = objectName;
 
-        MaxHP = 3;
+        MaxHP = 1;
         CurrentHP = MaxHP;
-        AttackDamage = 10;
-        Defense = 5;
-        AttackSpeed = 1.0f;
+        AttackDamage = 1;
+        Defense = 1;
+        AttackSpeed = 1;
         for (int i = 0; i < SkillPercent.Length; i++)
-            SkillPercent[i] = 2;
-    }
-
-    public void EditItemStatus(int stageCount)
-    {
-
-        MaxHP = 3;
-        CurrentHP = MaxHP;
-        AttackDamage = 10;
-        Defense = 5;
-        AttackSpeed = 1.0f;
-        AttackSpeed = 1.0f;
-        for (int i = 0; i < SkillPercent.Length; i++)
-            SkillPercent[i] = 2;
+            SkillPercent[i] = 1;
     }
 }
