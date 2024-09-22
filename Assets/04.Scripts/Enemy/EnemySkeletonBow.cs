@@ -15,6 +15,7 @@ public class EnemySkeletonBow : Enemy
         meshRenderer = GetComponent<MeshRenderer>();
         navMeshAgent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
+        status = new Status(UnitCode.Enemy, "원거리", 1);
         isChase = true;
         attackRange = 30.0f;
         target = GameObject.FindWithTag("Player").transform;

@@ -19,6 +19,10 @@ public class Boss : Enemy
     public float DirectAttack_A_cooldownTime = 5.0f;
     public float DirectAttack_B_cooldownTime = 20.0f;
 
+    public GameObject sword;
+    public GameObject bow;
+
+    public GameObject[] enemyPrefabs;
 
     int phaseCount = 1;
     int enemyCount = 0;
@@ -27,11 +31,8 @@ public class Boss : Enemy
     bool directAttack_A_Ready = false;
     bool directAttack_B_Ready = false;
 
-    Status status;
     Vector3 currentPosition;
     Vector3[] range = new Vector3[4];
-    EnemySkeletonSword sword;
-    EnemySkeletonBow bow;
 
     void Awake()
     {
@@ -40,9 +41,8 @@ public class Boss : Enemy
         meshRenderer = GetComponent<MeshRenderer>();
         navMeshAgent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
-        status = new Status();
+        status = new Status(UnitCode.Boss, "보스", 1);
         target = GameObject.FindWithTag("Player").transform;
-        currentHP = maxHP;
         StartCoroutine(Phase1());
     }
 
@@ -56,7 +56,8 @@ public class Boss : Enemy
     // 보스 페이즈 1
     IEnumerator Phase1()
     {
-        while (currentHP > 32)
+        enemyPrefabs = new GameObject[4];
+        while (status.CurrentHP > 200)
         {
             // 몹 소환
             if (summonCount > 0 && enemyCount == 0)
@@ -84,6 +85,7 @@ public class Boss : Enemy
     // 보스 페이즈 2
     IEnumerator Phase2()
     {
+        enemyPrefabs = new GameObject[6];
         capsuleCollider.enabled = true;
         StartCoroutine(CoolDown(directAttack_A_Ready, DirectAttack_A_cooldownTime));
         while (currentHP > 7)
@@ -210,6 +212,7 @@ public class Boss : Enemy
     void SummonPosition()
     {
         currentPosition = transform.position;
+        currentPosition.y = 0;
         for (int i = 0; i < 4; i++)
         {
             range[i] = currentPosition;
@@ -228,7 +231,8 @@ public class Boss : Enemy
         {
             for (int i = 0; i < 2; i++)
             {
-                EnemySkeletonBow skeletonBow = Instantiate(bow, range[i], transform.rotation);
+                GameObject skeletonBow = Instantiate(bow, range[i], transform.rotation);
+                enemyPrefabs[i] = skeletonBow;
             }
             enemyCount += 2;
         }
@@ -237,7 +241,8 @@ public class Boss : Enemy
         {
             for (int i = 0; i < 4; i++)
             {
-                EnemySkeletonSword skeletonSword = Instantiate(sword, range[i], transform.rotation);
+                GameObject skeletonSword = Instantiate(sword, range[i], transform.rotation);
+                enemyPrefabs[i] = skeletonSword;
             }
             enemyCount += 4;
         }
@@ -264,6 +269,11 @@ public class Boss : Enemy
         {
             // 빠른 공격
         }
+    }
+
+    void EnemyDestoryCheck()
+    {
+
     }
 
     IEnumerator BossResize(int phaseCount)

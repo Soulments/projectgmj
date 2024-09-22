@@ -4338,6 +4338,23 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4712703062064012526, guid: 93274e7b19d5bf949ab02cdfe9ccedad,
+        type: 3}
+      propertyPath: bow
+      value: 
+      objectReference: {fileID: 6690237433580827723, guid: d72dee8f7e6cc464b83f86d47637f4dc,
+        type: 3}
+    - target: {fileID: 4712703062064012526, guid: 93274e7b19d5bf949ab02cdfe9ccedad,
+        type: 3}
+      propertyPath: sword
+      value: 
+      objectReference: {fileID: 3483191956348753153, guid: 2c6ae2769551e144f9509fb5b3a8774c,
+        type: 3}
+    - target: {fileID: 4712703062064012526, guid: 93274e7b19d5bf949ab02cdfe9ccedad,
+        type: 3}
+      propertyPath: summonCount
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 6667133551384563375, guid: 93274e7b19d5bf949ab02cdfe9ccedad,
         type: 3}
       propertyPath: m_Name
@@ -4411,6 +4428,11 @@ PrefabInstance:
     - target: {fileID: 8864571284728503494, guid: 93274e7b19d5bf949ab02cdfe9ccedad,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9177079078837279003, guid: 93274e7b19d5bf949ab02cdfe9ccedad,
+        type: 3}
+      propertyPath: m_UseGravity
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

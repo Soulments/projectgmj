@@ -25,6 +25,7 @@ public class Enemy : MonoBehaviour
     protected MeshRenderer meshRenderer;
     protected NavMeshAgent navMeshAgent;
     protected Animator animator;
+    protected Status status;
 
     private void Awake()
     {
@@ -40,12 +41,7 @@ public class Enemy : MonoBehaviour
 
     private void Update()
     {
-        if (navMeshAgent.enabled && Vector3.Distance(transform.position, target.position) < attackRange * 30)
-        {
-            navMeshAgent.SetDestination(target.position);
-            
-            navMeshAgent.isStopped = !isChase;
-        }
+        
         //float distance = Vector3.Distance(tr)
     }
 

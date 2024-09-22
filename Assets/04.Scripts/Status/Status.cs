@@ -34,6 +34,8 @@ public class Status
     }
     public Status(UnitCode unitCode, string objectName, int stageCount)
     {
+        Debug.Log("스테이터스 선언");
+        Debug.Log(unitCode);
         this.UnitCode = unitCode;
         PowerLevel = stageCount;
         switch (unitCode)
@@ -48,7 +50,7 @@ public class Status
                 break;
             // 보스용
             case UnitCode.Boss:
-                InitEnemyStatus(objectName);
+                InitBossStatus(objectName);
                 break;
             // 아이템용
             case UnitCode.Item:
@@ -105,9 +107,10 @@ public class Status
     // 보스용
     public void InitBossStatus(string objectName)
     {
+        Debug.Log("보스 스테이터스");
         ObjectName = objectName;
 
-        MaxHP = 100;
+        MaxHP = 300;
         CurrentHP = MaxHP;
         AttackDamage = 5;
         Defense = 5;
