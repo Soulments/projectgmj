@@ -110,7 +110,7 @@ public class Status
         Debug.Log("보스 스테이터스");
         ObjectName = objectName;
 
-        MaxHP = 300;
+        MaxHP = 3000;
         CurrentHP = MaxHP;
         AttackDamage = 5;
         Defense = 5;

@@ -13,19 +13,22 @@ public class Boss : Enemy
     }
 
     public int summonCount;
-    public int maxHP = 40;
-    public int currentHP;
 
     public float DirectAttack_A_cooldownTime = 5.0f;
     public float DirectAttack_B_cooldownTime = 20.0f;
 
     public GameObject sword;
     public GameObject bow;
-
+    public GameObject attackA;
+    public GameObject attackB;
+    public GameObject castCPoint;
+    public GameObject[] castBPoints;
     public GameObject[] enemyPrefabs;
+    public GameObject[] summonPoints;
 
     int phaseCount = 1;
     int enemyCount = 0;
+    int checkenemyCount = 0;
 
     bool bufReady = false;
     bool directAttack_A_Ready = false;
@@ -48,16 +51,16 @@ public class Boss : Enemy
 
     private void FixedUpdate()
     {
-        SummonPosition();
         // 플레이어를 항상 바라보게
         transform.LookAt(target);
+        EnemyDestoryCheck();
     }
 
     // 보스 페이즈 1
     IEnumerator Phase1()
     {
         enemyPrefabs = new GameObject[4];
-        while (status.CurrentHP > 200)
+        while (status.CurrentHP > 2000)
         {
             // 몹 소환
             if (summonCount > 0 && enemyCount == 0)
@@ -88,7 +91,7 @@ public class Boss : Enemy
         enemyPrefabs = new GameObject[6];
         capsuleCollider.enabled = true;
         StartCoroutine(CoolDown(directAttack_A_Ready, DirectAttack_A_cooldownTime));
-        while (currentHP > 7)
+        while (status.CurrentHP > 1000)
         {
             // 몹 소환
             if (summonCount > 0 && enemyCount == 0)
@@ -114,6 +117,8 @@ public class Boss : Enemy
     // 보스 페이즈 3
     IEnumerator Phase3()
     {
+        if (status.CurrentHP != 1000) status.CurrentHP = 1000;
+
         capsuleCollider.enabled = true;
         StartCoroutine(CoolDown(directAttack_A_Ready, DirectAttack_A_cooldownTime));
         StartCoroutine(CoolDown(directAttack_B_Ready, DirectAttack_B_cooldownTime));
@@ -203,24 +208,9 @@ public class Boss : Enemy
     // 캐스트 C 모션용
     void CastC()
     {
-        animator.SetTrigger("doCastA");
+        animator.SetTrigger("doCastC");
         // 직선 공격
         DirectAttack(1);
-    }
-
-    // 소환 위치 참조용
-    void SummonPosition()
-    {
-        currentPosition = transform.position;
-        currentPosition.y = 0;
-        for (int i = 0; i < 4; i++)
-        {
-            range[i] = currentPosition;
-        }
-        range[0].x += 2;
-        range[1].x -= 2;
-        range[2].z += 2;
-        range[3].z -= 2;
     }
 
     // 스켈레톤 소환
@@ -231,7 +221,7 @@ public class Boss : Enemy
         {
             for (int i = 0; i < 2; i++)
             {
-                GameObject skeletonBow = Instantiate(bow, range[i], transform.rotation);
+                GameObject skeletonBow = Instantiate(bow, summonPoints[i].transform.position, transform.rotation);
                 enemyPrefabs[i] = skeletonBow;
             }
             enemyCount += 2;
@@ -241,7 +231,7 @@ public class Boss : Enemy
         {
             for (int i = 0; i < 4; i++)
             {
-                GameObject skeletonSword = Instantiate(sword, range[i], transform.rotation);
+                GameObject skeletonSword = Instantiate(sword, summonPoints[i].transform.position, transform.rotation);
                 enemyPrefabs[i] = skeletonSword;
             }
             enemyCount += 4;
@@ -263,27 +253,55 @@ public class Boss : Enemy
             for(int i = 0; i < 5; i++)
             {
                 // 공격 소환
+                GameObject projectileA = Instantiate(attackA, castBPoints[i].transform.position, transform.rotation);
             }
         }
         else
         {
             // 빠른 공격
+            GameObject projectileB = Instantiate(attackB, castCPoint.transform.position, transform.rotation);
         }
     }
 
     void EnemyDestoryCheck()
     {
-
+        for (int i = 0; i < enemyPrefabs.Length; i++)
+        {
+            if (enemyPrefabs[i] != null)
+            {
+                checkenemyCount++;
+            }
+        }
+        if (checkenemyCount != enemyCount)
+        {
+            if (phaseCount == 1)
+            {
+                status.CurrentHP -= (enemyCount - checkenemyCount) * 125;
+            }
+            else
+            {
+                status.CurrentHP -= (enemyCount - checkenemyCount) * 100;
+            }
+            enemyCount = checkenemyCount;
+        }
+        checkenemyCount = 0;
     }
 
-    IEnumerator BossResize(int phaseCount)
+    void BossResize(int phaseCount)
     {
-        while (transform.localScale.x > phaseCount * 2)
+        while (transform.localScale.x > (5 - phaseCount))
         {
             transform.localScale *= 0.9f;
         }
-        transform.localScale = new Vector3(phaseCount * 2, phaseCount * 2, phaseCount * 2);
-        yield return null;
+        transform.localScale = new Vector3((5 - phaseCount), (5 - phaseCount), (5 - phaseCount));
+        int height;
+        if (phaseCount == 2) height = 2;
+        else height = 0;
+        while (transform.position.y > height)
+        {
+            transform.position -= new Vector3(0, 0.1f, 0);
+        }
+        StartCoroutine(Wait());
     }
 
     // 쿨타임 거는용

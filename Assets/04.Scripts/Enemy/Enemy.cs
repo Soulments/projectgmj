@@ -27,6 +27,8 @@ public class Enemy : MonoBehaviour
     protected Animator animator;
     protected Status status;
 
+    Boss boss;
+
     private void Awake()
     {
         //rigidbody = GetComponent<Rigidbody>();

@@ -7,7 +7,7 @@ public class EnemySkeletonBow : Enemy
 {
     public GameObject arrow;
 
-    public Transform arrowStart;
+    public GameObject arrowPoint;
     private void Awake()
     {
         rigidbody = GetComponent<Rigidbody>();
@@ -68,7 +68,7 @@ public class EnemySkeletonBow : Enemy
 
     void Shoot()
     {
-        GameObject instantarrow = Instantiate(arrow, arrowStart.position, arrowStart.rotation);
+        GameObject instantarrow = Instantiate(arrow, arrowPoint.transform.position, arrowPoint.transform.rotation);
         Rigidbody rigidarrow = instantarrow.GetComponent<Rigidbody>();
         rigidarrow.velocity = transform.forward * 20;
     }

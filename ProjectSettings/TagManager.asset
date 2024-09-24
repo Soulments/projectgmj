@@ -11,6 +11,7 @@ TagManager:
   - Arrow
   - Enemy
   - Item
+  - Boss
   layers:
   - Default
   - TransparentFX

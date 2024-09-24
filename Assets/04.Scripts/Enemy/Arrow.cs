@@ -59,7 +59,7 @@ public class Arrow : MonoBehaviour
     // 화살 맞았을 때
     void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Player")
+        if (other.gameObject.tag == "Player" || other.gameObject.tag == "Floor")
         {
             // 데미지 주는 기능
 
