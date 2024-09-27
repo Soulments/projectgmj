@@ -7,6 +7,8 @@ using UnityEngine.AI;
 public class Enemy : MonoBehaviour
 {
     public Transform target;
+    public Item item;
+
     protected bool isChase;
     protected bool isMove;
     protected bool isAttack = false;
@@ -23,6 +25,9 @@ public class Enemy : MonoBehaviour
     protected MeshRenderer meshRenderer;
     protected NavMeshAgent navMeshAgent;
     protected Animator animator;
+    protected Status status;
+
+    Boss boss;
 
     private void Awake()
     {
@@ -38,12 +43,7 @@ public class Enemy : MonoBehaviour
 
     private void Update()
     {
-        if (navMeshAgent.enabled && Vector3.Distance(transform.position, target.position) < attackRange * 30)
-        {
-            navMeshAgent.SetDestination(target.position);
-            
-            navMeshAgent.isStopped = !isChase;
-        }
+        
         //float distance = Vector3.Distance(tr)
     }
 
@@ -120,6 +120,8 @@ public class Enemy : MonoBehaviour
 
     protected virtual void OnDie()
     {
+        Vector3 position = new Vector3 (transform.position.x, transform.position.y + 1, transform.position.z);
+        Instantiate(item, position, Quaternion.identity);
         Destroy(gameObject);
     }
 

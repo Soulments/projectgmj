@@ -13,6 +13,7 @@ public class EnemySkeletonSword : Enemy
         navMeshAgent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
         target = GameObject.FindWithTag("Player").transform;
+        status = new Status(UnitCode.Enemy, "¿ø°Å¸®", 1);
         isMove = true;
         isChase = true;
         animator.SetBool("isMove", true);

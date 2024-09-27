@@ -2,43 +2,54 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Rendering.LookDev;
+using Random = UnityEngine.Random;
 
+public enum SlotTag { None, equip }
+[CreateAssetMenu]
 public class Item : MonoBehaviour
 {
-    public ItemData itemData;   // ScriptableObject¿¡¼­ µ¥ÀÌÅÍ °¡Á®¿À±â
+
+    public ItemData itemData;   // ScriptableObjectì—ì„œ ë°ì´í„° ê°€ì ¸ì˜¤ê¸°
 
     UnitCode unitCode;
     Status status;
+
+    enum Stats
+    {
+        HP,
+        AttackDamage,
+        Defense,
+        AttackSpeed,
+        SkillPercent
+    }
+
+
     GameManager gameManager;
 
     long tick;
 
+    float addStats;
+
     public int randomSeed;
 
+    public Status status;
     public GameObject[] randomObjects;
+    public UnitCode unitCode;
 
-    void Awake()
+    public Sprite sprite;
+    public SlotTag itemTag;
+
+    [Header("If the item can be equipped")]
+    public GameObject equipmentPrefab;
+
+    private void Start()
     {
-        StatusInit();
         RandomSeed();
-    }
-
-    // ½ºÅ×ÀÌÅÍ½º ÃÊ±âÈ­
-    void StatusInit()
-    {
-        // ¼öÁ¤ ¿¹Á¤
-        string itemName = "¾ÆÀÌÅÛ ÀÌ¸§";
-        unitCode = UnitCode.Item;
-        status = new Status(unitCode, itemName, gameManager.stageCount);
-    }
-
-    // Àåºñ ·£´ı½Ä ÇÔ¼ö
-    void RandomStatus()
-    {
-        // ¹¹³ÖÀ»Áö °í¹ÎÁß
-        
+        StatusInit();
+        RandomStatus();
     }
 
     void RandomSeed()
@@ -46,5 +57,53 @@ public class Item : MonoBehaviour
         tick = DateTime.Now.Ticks;
         randomSeed = (int)(tick % int.MaxValue);
         UnityEngine.Random.InitState((int)randomSeed);
+        Debug.Log(randomSeed);
+    }
+
+    // ìŠ¤í…Œì´í„°ìŠ¤ ì´ˆê¸°í™”
+    void StatusInit()
+    {
+        // ìˆ˜ì • ì˜ˆì •
+        string itemName = "ì•„ì´í…œ ì´ë¦„";
+        unitCode = UnitCode.Item;
+        status = new Status(unitCode, itemName, 1);
+    }
+
+    // ì¥ë¹„ ëœë¤ì‹ í•¨ìˆ˜
+    void RandomStatus()
+    {
+        int randomEnhance = Random.Range(0, 5);
+
+        addStats = (float)(1 + (0.05 * 1));
+        //addStats = (float)(1 + (0.05 * gameManager.stageCount));
+
+        switch (randomEnhance)
+        {
+            case (int)Stats.HP:
+                status.MaxHP = (int)(3 * addStats);
+                status.CurrentHP = status.MaxHP;
+                break;
+            case (int)Stats.AttackDamage:
+                status.AttackDamage = 10 * addStats;
+                break;
+            case (int)Stats.Defense:
+                status.Defense = 5 * addStats;
+                break;
+            case (int)Stats.AttackSpeed:
+                status.AttackSpeed = 1.0f * addStats;
+                break;
+            case (int)Stats.SkillPercent:
+                for (int i = 0; i < status.SkillPercent.Length; i++)
+                    status.SkillPercent[i] = 2 * addStats;
+                break;
+            default:
+                break;
+        }
+    }
+
+    // ì•„ì´í…œ íŒŒê´´
+    private void OnDestroy()
+    {
+        Destroy(gameObject);
     }
 }
