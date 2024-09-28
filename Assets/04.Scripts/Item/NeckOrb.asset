@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 324421ae9fe6af24983185c97f68ee62, type: 3}
+  m_Name: NeckOrb
+  m_EditorClassIdentifier: 
+  itemName: OrbNeck
+  sprite: {fileID: 21300000, guid: d28bdabb8cb60154c969c160d15217c6, type: 3}
+  itemTag: 1

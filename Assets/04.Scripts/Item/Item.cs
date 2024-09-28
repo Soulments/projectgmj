@@ -19,6 +19,8 @@ public class Item : MonoBehaviour
         AttackSpeed,
         SkillPercent
     }
+    
+    public ItemData itemData;   // ScriptableObject에서 데이터 가져오기
 
     GameManager gameManager;
 
