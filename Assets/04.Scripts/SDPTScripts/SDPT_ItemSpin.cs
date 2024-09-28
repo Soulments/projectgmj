@@ -7,6 +7,7 @@ using UnityEngine.UIElements;
 public class SDPT_ItemSpin : MonoBehaviour
 {
     public GameObject trackingObject = null;
+    public GameObject soundPrefab = null;
     public Vector3 minSpeed;
     public Vector3 maxSpeed;
     private Vector3 speed;
@@ -16,7 +17,7 @@ public class SDPT_ItemSpin : MonoBehaviour
 
     private void Start() 
     {
-        if (trackingObject == null) Destroy(this);
+        if (trackingObject == null || soundPrefab == null) Destroy(this);
         speed = new Vector3(UnityEngine.Random.Range(minSpeed.x, maxSpeed.x), UnityEngine.Random.Range(minSpeed.y, maxSpeed.y), UnityEngine.Random.Range(minSpeed.z, maxSpeed.z));
         spinSpeed = new Vector3(UnityEngine.Random.Range(minSpinSpeed.x, maxSpinSpeed.x), UnityEngine.Random.Range(minSpinSpeed.y, maxSpinSpeed.y), UnityEngine.Random.Range(minSpinSpeed.z, maxSpinSpeed.z));
     }
@@ -33,6 +34,8 @@ public class SDPT_ItemSpin : MonoBehaviour
     {
         Vector3 eular = trackingObject.transform.eulerAngles;
         trackingObject.transform.rotation = Quaternion.Euler(0, eular.y, 0);
+        GameObject soundObject = Instantiate(soundPrefab, transform.position, transform.rotation);
+        soundObject.transform.SetParent(trackingObject.transform);
         Destroy(this.gameObject);
     }
 }

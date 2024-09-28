@@ -2,15 +2,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
-using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Rendering.LookDev;
 using Random = UnityEngine.Random;
 
-public enum SlotTag { None, equip }
-[CreateAssetMenu]
 public class Item : MonoBehaviour
 {
+    public ItemData itemData;   // ScriptableObject에서 데이터 가져오기
+
     enum Stats
     {
         HP,
@@ -19,8 +18,6 @@ public class Item : MonoBehaviour
         AttackSpeed,
         SkillPercent
     }
-    
-    public ItemData itemData;   // ScriptableObject에서 데이터 가져오기
 
     GameManager gameManager;
 
@@ -40,7 +37,7 @@ public class Item : MonoBehaviour
     [Header("If the item can be equipped")]
     public GameObject equipmentPrefab;
 
-    private void Start()
+    void Awake()
     {
         RandomSeed();
         StatusInit();
@@ -52,7 +49,6 @@ public class Item : MonoBehaviour
         tick = DateTime.Now.Ticks;
         randomSeed = (int)(tick % int.MaxValue);
         UnityEngine.Random.InitState((int)randomSeed);
-        Debug.Log(randomSeed);
     }
 
     // 스테이터스 초기화
@@ -61,6 +57,7 @@ public class Item : MonoBehaviour
         // 수정 예정
         string itemName = "아이템 이름";
         unitCode = UnitCode.Item;
+        // status = new Status(unitCode, itemName, gameManager.stageCount);
         status = new Status(unitCode, itemName, 1);
     }
 

@@ -118,6 +118,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   trackingObject: {fileID: 0}
+  soundPrefab: {fileID: 7177907785926645297, guid: 52d05d5e7a3576f4382e1fa687e5da96,
+    type: 3}
   minSpeed: {x: -3, y: 5, z: -3}
   maxSpeed: {x: 3, y: 10, z: 3}
   minSpinSpeed: {x: 100, y: 100, z: 100}
