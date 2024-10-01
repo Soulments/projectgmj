@@ -94,17 +94,18 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        //transform.position = Vector3.Lerp(transform.position, transform.GetChild(0).position, Time.deltaTime);
+        if (!isAttack)
+            playerBody.transform.position = Vector3.Lerp(playerBody.transform.position, transform.position, 0.5f);
     }
 
     private void GetInput()
     {
         // Input값 정리
-        horizontalAxis = Input.GetAxis("Horizontal");
-        verticalAxis = Input.GetAxis("Vertical");
-        jumpDown = Input.GetButtonDown("Jump");
-        mouseLeft = Input.GetMouseButtonDown(0);
-        mouseRight = Input.GetMouseButtonDown(1);
+        horizontalAxis = Input.GetAxis("Horizontal") * (!isInventoryOpen ? 1 : 0);
+        verticalAxis = Input.GetAxis("Vertical") * (!isInventoryOpen ? 1 : 0);
+        jumpDown = Input.GetButtonDown("Jump") && !isInventoryOpen;
+        mouseLeft = Input.GetMouseButtonDown(0) && !isInventoryOpen;
+        mouseRight = Input.GetMouseButtonDown(1) && !isInventoryOpen;
 
         // 인벤토리 on/off----------------
         if (Input.GetKeyDown(KeyCode.I))
@@ -113,7 +114,7 @@ public class PlayerController : MonoBehaviour
         }
         // ------------------------------
         // 아이템 획득-------------------------------------------
-        if (itemPickup != null && Input.GetKeyDown(KeyCode.G))
+        if (itemPickup != null && Input.GetKeyDown(KeyCode.G) && !isInventoryOpen)
         {
             ItemData item = itemPickup.ClickItem();
 
@@ -125,13 +126,13 @@ public class PlayerController : MonoBehaviour
         }
         // ------------------------------------------------------
 
-        if (!cooldownupperSkill) upperSkill = Input.GetKeyDown(KeyCode.E);
-        if (!cooldownwindmillSkill)
+        if (!cooldownupperSkill && !isInventoryOpen) upperSkill = Input.GetKeyDown(KeyCode.E);
+        if (!cooldownwindmillSkill && !isInventoryOpen)
         {
             windmillSkill[0] = Input.GetKeyDown(KeyCode.R);
             windmillSkill[1] = Input.GetKeyUp(KeyCode.R);
         }
-        if (!cooldownbufSkill) bufSkill = Input.GetKeyDown(KeyCode.F);
+        if (!cooldownbufSkill && !isInventoryOpen) bufSkill = Input.GetKeyDown(KeyCode.F);
     }
     private void ToggleInventory()
     {
@@ -143,20 +144,23 @@ public class PlayerController : MonoBehaviour
 
     private void LookAround()
     {
-        Vector2 mouseDelta = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
-        Vector3 cameraAngle = cameraArm.rotation.eulerAngles;
-        float x = cameraAngle.x - mouseDelta.y;
-
-        if (x < 180f)
+        if (!isInventoryOpen)
         {
-            x = Mathf.Clamp(x, -1f, 70f);
-        }
-        else
-        {
-            x = Mathf.Clamp(x, 335f, 361f);
-        }
+            Vector2 mouseDelta = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
+            Vector3 cameraAngle = cameraArm.rotation.eulerAngles;
+            float x = cameraAngle.x - mouseDelta.y;
 
-        cameraArm.rotation = Quaternion.Euler(x, cameraAngle.y + mouseDelta.x, cameraAngle.z);
+            if (x < 180f)
+            {
+                x = Mathf.Clamp(x, -1f, 70f);
+            }
+            else
+            {
+                x = Mathf.Clamp(x, 335f, 361f);
+            }
+
+            cameraArm.rotation = Quaternion.Euler(x, cameraAngle.y + mouseDelta.x, cameraAngle.z);
+        }
     }
 
     private void Move()
@@ -234,8 +238,6 @@ public class PlayerController : MonoBehaviour
 
     private void NormalAttack()
     {
-        Debug.Log(comboIndex);
-        Debug.Log(isAttack);
         if (comboIndex == 0)
         {
             isAttack = true;
@@ -336,7 +338,6 @@ public class PlayerController : MonoBehaviour
         if (comboTrigger == true) return;
         if (animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1a") || animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1b") || animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1c"))
         {
-            Debug.Log("isAttackDisable");
             if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.9f)
             {
                 isAttack = false;
