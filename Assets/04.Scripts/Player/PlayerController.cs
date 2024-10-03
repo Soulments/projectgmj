@@ -101,11 +101,11 @@ public class PlayerController : MonoBehaviour
     private void GetInput()
     {
         // Input값 정리
-        horizontalAxis = Input.GetAxis("Horizontal") * (!isInventoryOpen ? 1 : 0);
-        verticalAxis = Input.GetAxis("Vertical") * (!isInventoryOpen ? 1 : 0);
-        jumpDown = Input.GetButtonDown("Jump") && !isInventoryOpen;
-        mouseLeft = Input.GetMouseButtonDown(0) && !isInventoryOpen;
-        mouseRight = Input.GetMouseButtonDown(1) && !isInventoryOpen;
+        horizontalAxis = Input.GetAxis("Horizontal");
+        verticalAxis = Input.GetAxis("Vertical");
+        jumpDown = Input.GetButtonDown("Jump");
+        mouseLeft = Input.GetMouseButtonDown(0);
+        mouseRight = Input.GetMouseButtonDown(1);
 
         // 인벤토리 on/off----------------
         if (Input.GetKeyDown(KeyCode.I))
@@ -165,6 +165,7 @@ public class PlayerController : MonoBehaviour
 
     private void Move()
     {
+        if (isInventoryOpen) return;
         // 플레이어 이동 값 가져오기
         moveInput = new Vector2(horizontalAxis, verticalAxis);
         // 이동 수평 값 확인
@@ -188,6 +189,7 @@ public class PlayerController : MonoBehaviour
 
     private void Jump()
     {
+        if (isInventoryOpen) return;
         if (jumpDown && !isJump && !isAttack && !animator.GetCurrentAnimatorStateInfo(0).IsName("Jump"))
         {
             rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
@@ -209,6 +211,7 @@ public class PlayerController : MonoBehaviour
 
     private void ActionPlayer()
     {
+        if (isInventoryOpen) return;
         if (!isJump && mouseLeft)
         {
             NormalAttack();
