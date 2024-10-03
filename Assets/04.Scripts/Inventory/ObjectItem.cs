@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public interface IObjectItem
@@ -9,8 +10,35 @@ public interface IObjectItem
 }
 public class ObjectItem : MonoBehaviour, IObjectItem
 {
-    [Header("아이템")]
-    public ItemData item;
+    public ItemData[] itemList;
+    ItemData item;
+    public void SetItemSkin(string skin)
+    {
+        switch (skin)
+        {
+            case "DiamondNecklace_20240910(Clone)":
+                item = itemList[1];
+                break;
+            case "DiamondRing_20240910(Clone)":
+                item = itemList[4];
+                break;
+            case "Necklace_20240910(Clone)":
+                item = itemList[0];
+                break;
+            case "OrbNecklace_20240910(Clone)":
+                item = itemList[2];
+                break;
+            case "OrbRing_20240910(Clone)":
+                item = itemList[5];
+                break;
+            case "Ring_20240910(Clone)":
+                item = itemList[3];
+                break;
+        }
+    }
+
+
+    
     /*[Header("아이템 이미지")]
     public SpriteRenderer itemImage;
     void Start()

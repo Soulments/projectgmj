@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 324421ae9fe6af24983185c97f68ee62, type: 3}
-  m_Name: Nectlace
+  m_Name: Ring
   m_EditorClassIdentifier: 
-  itemName: Neck
-  sprite: {fileID: 21300000, guid: e5d06e0d33ae6a440a8de5048c12e608, type: 3}
+  itemName: Ring
+  sprite: {fileID: 21300000, guid: 0dc08109bc5d0ef4f8ac0ae326a0a803, type: 3}
   itemTag: 1

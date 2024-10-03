@@ -70,6 +70,7 @@ public class PlayerController : MonoBehaviour
 
     public UIController uiController;
     public TextMeshProUGUI itemName;
+    public TextMeshProUGUI itemStatus;
     // -----------------------------------
 
     // Start is called before the first frame update
@@ -114,7 +115,7 @@ public class PlayerController : MonoBehaviour
         }
         // ------------------------------
         // 아이템 획득-------------------------------------------
-        if (itemPickup != null && Input.GetKeyDown(KeyCode.G) && !isInventoryOpen)
+        if (itemPickup != null && Input.GetKeyDown(KeyCode.F) && !isInventoryOpen)
         {
             ItemData item = itemPickup.ClickItem();
 
@@ -132,7 +133,7 @@ public class PlayerController : MonoBehaviour
             windmillSkill[0] = Input.GetKeyDown(KeyCode.R);
             windmillSkill[1] = Input.GetKeyUp(KeyCode.R);
         }
-        if (!cooldownbufSkill && !isInventoryOpen) bufSkill = Input.GetKeyDown(KeyCode.F);
+        if (!cooldownbufSkill && !isInventoryOpen) bufSkill = Input.GetKeyDown(KeyCode.Tab);
     }
     private void ToggleInventory()
     {
@@ -434,6 +435,7 @@ public class PlayerController : MonoBehaviour
 
             uiController.OpenMessagePanel("");
             itemName.text = item.itemName;
+            //itemStatus.text = itemStat.status.ToString();
 
             itemPickup = clickInterface;
             /*

@@ -9,9 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 05325549501e26f4795c7f7c04a80086, type: 3}
-  m_Name: NecklaceOrb
+  m_Script: {fileID: 11500000, guid: 324421ae9fe6af24983185c97f68ee62, type: 3}
+  m_Name: RingOrb
   m_EditorClassIdentifier: 
-  sprite: {fileID: 21300000, guid: d28bdabb8cb60154c969c160d15217c6, type: 3}
+  itemName: OrbRing
+  sprite: {fileID: 21300000, guid: 978e0106ac94e20408fefb8385d8a3ee, type: 3}
   itemTag: 1
-  equipmentPrefab: {fileID: 0}

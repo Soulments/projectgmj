@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 680456647822932272}
   - component: {fileID: 5021055782646222534}
-  - component: {fileID: 608529023944489430}
   - component: {fileID: 3914691627814621739}
+  - component: {fileID: 1983784545620362066}
   m_Layer: 0
   m_Name: Base Item
   m_TagString: Item
@@ -48,26 +48,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4fa84d86dba88bb4bb95564c47637f82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemData: {fileID: 0}
   randomSeed: 0
   randomObjects: []
   unitCode: 0
   sprite: {fileID: 0}
   itemTag: 0
-  equipmentPrefab: {fileID: 0}
---- !u!114 &608529023944489430
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3476123423114083647}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21762ec732d2d654bbec91f6943d9034, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  item: {fileID: 0}
 --- !u!65 &3914691627814621739
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -89,6 +74,25 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1983784545620362066
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3476123423114083647}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21762ec732d2d654bbec91f6943d9034, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemList:
+  - {fileID: 11400000, guid: a47429eb5f767bc48acb34bdc4948a9b, type: 2}
+  - {fileID: 11400000, guid: 9574d0573f5df8749b1e8cd1f4dd1ea9, type: 2}
+  - {fileID: 11400000, guid: 84b70588395860846b61d84b9e686876, type: 2}
+  - {fileID: 11400000, guid: 454c079885d0ff04c98b60f54db46d4f, type: 2}
+  - {fileID: 11400000, guid: 2e640585a1832a04b8a54f1b63793260, type: 2}
+  - {fileID: 11400000, guid: a0b172eeb1623554e8418e7177d242ed, type: 2}
 --- !u!1001 &3997968006756950757
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -97,6 +101,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 680456647822932272}
     m_Modifications:
+    - target: {fileID: 581381070145870699, guid: c68be3a26248fb445a41a20434bf9a9a,
+        type: 3}
+      propertyPath: objectItem
+      value: 
+      objectReference: {fileID: 1983784545620362066}
     - target: {fileID: 581381070145870699, guid: c68be3a26248fb445a41a20434bf9a9a,
         type: 3}
       propertyPath: skinParent

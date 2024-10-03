@@ -8,8 +8,6 @@ using Random = UnityEngine.Random;
 
 public class Item : MonoBehaviour
 {
-    public ItemData itemData;   // ScriptableObject에서 데이터 가져오기
-
     enum Stats
     {
         HP,
@@ -34,8 +32,6 @@ public class Item : MonoBehaviour
     public Sprite sprite;
     public SlotTag itemTag;
 
-    [Header("If the item can be equipped")]
-    public GameObject equipmentPrefab;
 
     void Awake()
     {

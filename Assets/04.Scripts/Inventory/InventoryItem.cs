@@ -11,6 +11,8 @@ public class InventoryItem : MonoBehaviour, IPointerClickHandler
 
     public ItemData myItem { get; set; }
     public InventorySlot activeSlot { get; set; }
+
+    public Item itemState { get; set; }
     void Awake()
     {
         canvasGroup = GetComponent<CanvasGroup>();
