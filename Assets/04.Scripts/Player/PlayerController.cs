@@ -102,11 +102,11 @@ public class PlayerController : MonoBehaviour
     private void GetInput()
     {
         // Input값 정리
-        horizontalAxis = Input.GetAxis("Horizontal");
-        verticalAxis = Input.GetAxis("Vertical");
-        jumpDown = Input.GetButtonDown("Jump");
-        mouseLeft = Input.GetMouseButtonDown(0);
-        mouseRight = Input.GetMouseButtonDown(1);
+        horizontalAxis = Input.GetAxis("Horizontal") * (!isInventoryOpen ? 1 : 0);
+        verticalAxis = Input.GetAxis("Vertical") * (!isInventoryOpen ? 1 : 0);
+        jumpDown = Input.GetButtonDown("Jump") && !isInventoryOpen;
+        mouseLeft = Input.GetMouseButtonDown(0) && !isInventoryOpen;
+        mouseRight = Input.GetMouseButtonDown(1) && !isInventoryOpen;
 
         // 인벤토리 on/off----------------
         if (Input.GetKeyDown(KeyCode.I))
@@ -127,13 +127,10 @@ public class PlayerController : MonoBehaviour
         }
         // ------------------------------------------------------
 
-        if (!cooldownupperSkill && !isInventoryOpen) upperSkill = Input.GetKeyDown(KeyCode.E);
-        if (!cooldownwindmillSkill && !isInventoryOpen)
-        {
-            windmillSkill[0] = Input.GetKeyDown(KeyCode.R);
-            windmillSkill[1] = Input.GetKeyUp(KeyCode.R);
-        }
-        if (!cooldownbufSkill && !isInventoryOpen) bufSkill = Input.GetKeyDown(KeyCode.Tab);
+        upperSkill = Input.GetKeyDown(KeyCode.E) &&!cooldownupperSkill && !isInventoryOpen;
+        windmillSkill[0] = Input.GetKeyDown(KeyCode.R) && !cooldownwindmillSkill && !isInventoryOpen;
+        windmillSkill[1] = Input.GetKeyUp(KeyCode.R) && !cooldownwindmillSkill && !isInventoryOpen;
+        bufSkill = Input.GetKeyDown(KeyCode.Tab) && !cooldownbufSkill && !isInventoryOpen;
     }
     private void ToggleInventory()
     {
@@ -166,7 +163,6 @@ public class PlayerController : MonoBehaviour
 
     private void Move()
     {
-        if (isInventoryOpen) return;
         // 플레이어 이동 값 가져오기
         moveInput = new Vector2(horizontalAxis, verticalAxis);
         // 이동 수평 값 확인
@@ -190,7 +186,6 @@ public class PlayerController : MonoBehaviour
 
     private void Jump()
     {
-        if (isInventoryOpen) return;
         if (jumpDown && !isJump && !isAttack && !animator.GetCurrentAnimatorStateInfo(0).IsName("Jump"))
         {
             rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
@@ -212,7 +207,6 @@ public class PlayerController : MonoBehaviour
 
     private void ActionPlayer()
     {
-        if (isInventoryOpen) return;
         if (!isJump && mouseLeft)
         {
             NormalAttack();
@@ -278,9 +272,7 @@ public class PlayerController : MonoBehaviour
         animator.SetTrigger("doAttack5");
         StartCoroutine(UpperSkill());
         CoolTimeTrigger(1);
-        cooldownupperSkill = true;
-        StartCoroutine(WaitForCooltime(skillControls[1].GetComponent<SkillControl>().coolTime));
-        cooldownupperSkill = false;
+        StartCoroutine(WaitForCooltime(skillControls[1].GetComponent<SkillControl>().coolTime, 1));
     }
 
     IEnumerator UpperSkill()
@@ -322,9 +314,7 @@ public class PlayerController : MonoBehaviour
         animator.SetTrigger("stopAttack3");
         weaponArea[1].enabled = false;
         CoolTimeTrigger(2);
-        cooldownwindmillSkill = true;
-        StartCoroutine(WaitForCooltime(skillControls[2].GetComponent<SkillControl>().coolTime));
-        cooldownwindmillSkill = false;
+        StartCoroutine(WaitForCooltime(skillControls[3].GetComponent<SkillControl>().coolTime, 2));
     }
 
     private void SkillBuf()
@@ -332,9 +322,7 @@ public class PlayerController : MonoBehaviour
         isAttack = true;
         animator.SetTrigger("doAttack4");
         CoolTimeTrigger(3);
-        cooldownbufSkill = true;
-        StartCoroutine(WaitForCooltime(skillControls[3].GetComponent<SkillControl>().coolTime));
-        cooldownbufSkill = false;
+        StartCoroutine(WaitForCooltime(skillControls[3].GetComponent<SkillControl>().coolTime, 3));
     }
 
     private void End_Attack()
@@ -477,8 +465,36 @@ public class PlayerController : MonoBehaviour
         isAttack = false;
     }
 
-    IEnumerator WaitForCooltime(float coolTime)
+    IEnumerator WaitForCooltime(float coolTime, int coolDownNum)
     {
-        yield return new WaitForSecondsRealtime(coolTime);
+        switch (coolDownNum)
+        {
+            case 0:
+                break;
+            case 1:
+                cooldownupperSkill = true;
+                break;
+            case 2:
+                cooldownwindmillSkill = true;
+                break;
+            case 3:
+                cooldownbufSkill = true;
+                break;
+        }
+        yield return new WaitForSeconds(coolTime);
+        switch (coolDownNum)
+        {
+            case 0:
+                break;
+            case 1:
+                cooldownupperSkill = false;
+                break;
+            case 2:
+                cooldownwindmillSkill = false;
+                break;
+            case 3:
+                cooldownbufSkill = false;
+                break;
+        }
     }
 }
