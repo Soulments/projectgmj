@@ -12,6 +12,8 @@ public class ObjectItem : MonoBehaviour, IObjectItem
 {
     public ItemData[] itemList;
     ItemData item;
+
+    Status itemStatus;
     public void SetItemSkin(string skin)
     {
         switch (skin)
@@ -37,7 +39,10 @@ public class ObjectItem : MonoBehaviour, IObjectItem
         }
     }
 
-
+    public void SetItemStatus(Status status)
+    {
+        itemStatus = status;
+    }
     
     /*[Header("아이템 이미지")]
     public SpriteRenderer itemImage;

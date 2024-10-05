@@ -1213,6 +1213,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MessagePanel: {fileID: 392625124711828684}
+  itemStatus: {fileID: 0}
+  itemName: {fileID: 0}
+  item: {fileID: 0}
 --- !u!223 &6300449681934005890
 Canvas:
   m_ObjectHideFlags: 0

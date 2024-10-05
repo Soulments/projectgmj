@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering.LookDev;
 using Random = UnityEngine.Random;
@@ -38,6 +39,8 @@ public class Item : MonoBehaviour
         RandomSeed();
         StatusInit();
         RandomStatus();
+
+        PrintStatusDebug();
     }
 
     void RandomSeed()
@@ -93,5 +96,21 @@ public class Item : MonoBehaviour
     private void OnDestroy()
     {
         Destroy(gameObject);
+    }
+
+    void PrintStatusDebug()
+    {
+        Debug.Log($"Item Name: {status.ObjectName}");
+        Debug.Log($"Max HP: {status.MaxHP}");
+        Debug.Log($"Current HP: {status.CurrentHP}");
+        Debug.Log($"Attack Damage: {status.AttackDamage}");
+        Debug.Log($"Defense: {status.Defense}");
+        Debug.Log($"Attack Speed: {status.AttackSpeed}");
+
+        // Skill Percent 배열 출력
+        for (int i = 0; i < status.SkillPercent.Length; i++)
+        {
+            Debug.Log($"Skill Percent[{i}]: {status.SkillPercent[i]}");
+        }
     }
 }
