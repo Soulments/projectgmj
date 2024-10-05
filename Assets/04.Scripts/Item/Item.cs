@@ -26,7 +26,6 @@ public class Item : MonoBehaviour
     public int randomSeed;
 
     public Status status;
-    public GameObject[] randomObjects;
     public UnitCode unitCode;
 
     public Sprite sprite;
@@ -62,6 +61,7 @@ public class Item : MonoBehaviour
     {
         int randomEnhance = Random.Range(0, 5);
 
+        Debug.Log(randomEnhance);
         addStats = (float)(1 + (0.05 * 1));
         //addStats = (float)(1 + (0.05 * gameManager.stageCount));
 

@@ -121,12 +121,12 @@ public class Status
         SkillPercent = new float[Enum.GetValues(typeof(SkillCode)).Length];
         ObjectName = objectName;
 
-        MaxHP = 1;
+        MaxHP = 0;
         CurrentHP = MaxHP;
-        AttackDamage = 1;
-        Defense = 1;
-        AttackSpeed = 1;
+        AttackDamage = 0;
+        Defense = 0;
+        AttackSpeed = 0;
         for (int i = 0; i < SkillPercent.Length; i++)
-            SkillPercent[i] = 1;
+            SkillPercent[i] = 0;
     }
 }

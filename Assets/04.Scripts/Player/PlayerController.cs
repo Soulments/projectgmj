@@ -45,7 +45,7 @@ public class PlayerController : MonoBehaviour
     Vector3 moveDirection;
 
     Animator animator;
-    Rigidbody rigidbody;
+    Rigidbody rigidBody;
 
     public Collider[] weaponArea;
     public GameManager manager;
@@ -77,7 +77,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         animator = playerBody.GetComponent<Animator>();
-        rigidbody = GetComponent<Rigidbody>();
+        rigidBody = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
@@ -188,7 +188,7 @@ public class PlayerController : MonoBehaviour
     {
         if (jumpDown && !isJump && !isAttack && !animator.GetCurrentAnimatorStateInfo(0).IsName("Jump"))
         {
-            rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            rigidBody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             animator.SetBool("isJump", true);
             animator.SetTrigger("doJump");
             isJump = true;
@@ -262,7 +262,7 @@ public class PlayerController : MonoBehaviour
     {
         isAttack = true;
         animator.SetTrigger("doAttack2");
-        rigidbody.AddForce(Vector3.down * jumpForce, ForceMode.Impulse);
+        rigidBody.AddForce(Vector3.down * jumpForce, ForceMode.Impulse);
         StartCoroutine(Wait(1));
     }
 

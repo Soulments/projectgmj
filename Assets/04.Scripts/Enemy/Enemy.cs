@@ -20,7 +20,7 @@ public class Enemy : MonoBehaviour
     protected float attackRange = 1.5f;
     protected float closeRange = 0.5f;
 
-    protected Rigidbody rigidbody;
+    protected Rigidbody rigidBody;
     protected CapsuleCollider capsuleCollider;
     protected MeshRenderer meshRenderer;
     protected NavMeshAgent navMeshAgent;
@@ -59,8 +59,8 @@ public class Enemy : MonoBehaviour
     {
         if(isChase && !isOverRange || isTooClose)
         {
-            rigidbody.velocity = Vector3.zero;
-            rigidbody.angularVelocity = Vector3.zero;
+            rigidBody.velocity = Vector3.zero;
+            rigidBody.angularVelocity = Vector3.zero;
         }
     }
 

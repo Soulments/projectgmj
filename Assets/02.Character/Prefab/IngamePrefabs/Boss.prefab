@@ -7079,8 +7079,8 @@ MonoBehaviour:
   DirectAttack_B_cooldownTime: 20
   sword: {fileID: 3483191956348753153, guid: 2c6ae2769551e144f9509fb5b3a8774c, type: 3}
   bow: {fileID: 6690237433580827723, guid: d72dee8f7e6cc464b83f86d47637f4dc, type: 3}
-  attackA: {fileID: 8062478697060886655, guid: 1a8731286715b754684da9a996fe2ccd, type: 3}
-  attackB: {fileID: 5146554605809118930, guid: 59b587906fa650d4d8e1bd592ddd4694, type: 3}
+  attackA: {fileID: 4449623838845420351, guid: 1a8731286715b754684da9a996fe2ccd, type: 3}
+  attackB: {fileID: 654088162449334226, guid: 59b587906fa650d4d8e1bd592ddd4694, type: 3}
   castCPoint: {fileID: 6027496186530788366}
   castBPoints:
   - {fileID: 2071926927075635031}
@@ -7142,7 +7142,7 @@ Rigidbody:
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 14
+  m_Constraints: 126
   m_CollisionDetection: 0
 --- !u!1 &6831548908462859376
 GameObject:
