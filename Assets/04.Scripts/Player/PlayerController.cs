@@ -69,7 +69,6 @@ public class PlayerController : MonoBehaviour
     private IObjectItem itemPickup = null;
 
     public UIController uiController;
-    public TextMeshProUGUI itemName;
     public TextMeshProUGUI itemStatus;
     // -----------------------------------
 
@@ -421,8 +420,8 @@ public class PlayerController : MonoBehaviour
         {
             ItemData item = clickInterface.ClickItem();
 
-            uiController.OpenMessagePanel("");
-            itemName.text = item.itemName;
+            uiController.OpenMessagePanel(item.itemName);
+            //itemName.text = item.itemName;
             //itemStatus.text = itemStat.status.ToString();
 
             itemPickup = clickInterface;

@@ -18,7 +18,7 @@ public class UIController : MonoBehaviour
     public void OpenMessagePanel(string text)
     {
         MessagePanel.SetActive(true);
-
+        itemName.text = text;
     }
     public void CloseMessagePanel()
     {

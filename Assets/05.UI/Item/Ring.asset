@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Ring
   sprite: {fileID: 21300000, guid: 0dc08109bc5d0ef4f8ac0ae326a0a803, type: 3}
-  itemTag: 1
+  itemTag: 2
