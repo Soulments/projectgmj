@@ -8,6 +8,7 @@ public class Enemy : MonoBehaviour
 {
     public Transform target;
     public Item item;
+    public Status status;
 
     protected bool isChase;
     protected bool isMove;
@@ -25,7 +26,6 @@ public class Enemy : MonoBehaviour
     protected MeshRenderer meshRenderer;
     protected NavMeshAgent navMeshAgent;
     protected Animator animator;
-    protected Status status;
 
     Boss boss;
 

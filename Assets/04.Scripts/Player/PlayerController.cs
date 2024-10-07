@@ -54,6 +54,7 @@ public class PlayerController : MonoBehaviour
     public GameObject[] endPortals;
     public Material[] materials;
     public SkillControl[] skillControls = new SkillControl[4];
+    public Status status;
 
     public float jumpForce = 30000;
     public float speed = 10;

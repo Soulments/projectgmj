@@ -8,7 +8,7 @@ using UnityEngine;
 
 // 랜덤으로 오브젝트를 가져옵니다.
 [Serializable]
-public class SDPT_ItemSkin : MonoBehaviour
+public class SDPT_Item : MonoBehaviour
 {
     public int skinCode = 0;
     public GameObject randomSeedObject = null; 
@@ -16,8 +16,6 @@ public class SDPT_ItemSkin : MonoBehaviour
 
     [SerializeField]
     public List<GameObject> objectList;
-
-    public ObjectItem objectItem;
 
     // Start is called before the first frame update
     void Start()
@@ -31,12 +29,7 @@ public class SDPT_ItemSkin : MonoBehaviour
         if (objectList.Count > 0)
         {
             GameObject skinObject = Instantiate(objectList[Math.Abs(skinCode) % objectList.Count], transform.position, transform.rotation);
-
-            Debug.Log(skinObject.name);
-            objectItem.SetItemSkin(skinObject.name);
-
             if (skinParent != null) skinObject.transform.SetParent(skinParent.transform);
-
             Destroy(this);
         }
     }
