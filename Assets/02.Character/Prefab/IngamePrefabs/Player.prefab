@@ -150,6 +150,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d445bd33cd8c27e40ba1d8caf699b680, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  SkillPercent: 0
 --- !u!1 &3787176140846116001
 GameObject:
   m_ObjectHideFlags: 0
@@ -268,6 +269,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d445bd33cd8c27e40ba1d8caf699b680, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  SkillPercent: 0
 --- !u!1 &5121145204019285098
 GameObject:
   m_ObjectHideFlags: 0
@@ -388,6 +390,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d445bd33cd8c27e40ba1d8caf699b680, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  SkillPercent: 0
 --- !u!1 &7095382832543323647
 GameObject:
   m_ObjectHideFlags: 0
@@ -441,8 +444,8 @@ MonoBehaviour:
   cameraArm: {fileID: 9117312763903318531}
   isDead: 0
   normalAttack: {fileID: 1608161362954061765}
-  jumpAttackHitBox: {fileID: 2390600675886061165}
-  skillHitBox:
+  jumpAttack: {fileID: 2390600675886061165}
+  skillAttack:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 858141680120961517}
@@ -637,6 +640,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d445bd33cd8c27e40ba1d8caf699b680, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  SkillPercent: 0
 --- !u!1 &7824603190044941387
 GameObject:
   m_ObjectHideFlags: 0
