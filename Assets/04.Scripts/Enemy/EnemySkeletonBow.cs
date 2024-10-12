@@ -70,6 +70,11 @@ public class EnemySkeletonBow : Enemy
     {
         GameObject instantarrow = Instantiate(arrow, arrowPoint.transform.position, arrowPoint.transform.rotation);
         Rigidbody rigidarrow = instantarrow.GetComponent<Rigidbody>();
+        Arrow arrowScrpit = instantarrow.GetComponent<Arrow>();
+        if (arrowScrpit != null)
+        {
+            arrowScrpit.SetSummoner(this);
+        }
         rigidarrow.velocity = transform.forward * 20;
     }
 }

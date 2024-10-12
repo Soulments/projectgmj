@@ -64,4 +64,7 @@ public class EnemySkeletonSword : Enemy
         animator.SetBool("isMove", true);
         isAttack = false;
     }
+
+    // 공격 닿았을 때
+    
 }

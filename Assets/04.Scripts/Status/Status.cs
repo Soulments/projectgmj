@@ -112,7 +112,7 @@ public class Status
 
         MaxHP = 3000;
         CurrentHP = MaxHP;
-        AttackDamage = 5;
+        AttackDamage = 7;
         Defense = 5;
     }
     // 아이템용

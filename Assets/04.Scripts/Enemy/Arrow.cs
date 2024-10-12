@@ -43,6 +43,12 @@ public class Arrow : MonoBehaviour
 
     //    transform.Rotate(new Vector3(Mathf.Cos(Angle * Mathf.PI / 180.0f), 0, 0));
     //}
+    EnemySkeletonBow summoner;
+
+    public void SetSummoner(EnemySkeletonBow bow)
+    {
+        summoner = bow;
+    }
 
     private void Start()
     {
@@ -61,7 +67,7 @@ public class Arrow : MonoBehaviour
         if (other.gameObject.tag == "Player" || other.gameObject.tag == "Floor")
         {
             // 데미지 주는 기능
-
+            _ = new Damage(summoner.status.AttackDamage, other.gameObject);
             Destroy(gameObject);
         }
     }

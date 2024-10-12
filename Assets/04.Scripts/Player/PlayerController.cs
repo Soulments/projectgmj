@@ -47,7 +47,9 @@ public class PlayerController : MonoBehaviour
     Animator animator;
     Rigidbody rigidBody;
 
-    public Collider[] weaponArea;
+    public Collider normalAttack;
+    public Collider jumpAttack;
+    public Collider[] skillAttack = new Collider[4];
     public GameManager manager;
     public LayerMask groundLayer;
     public GameObject[] startPortals;
@@ -73,6 +75,12 @@ public class PlayerController : MonoBehaviour
     public TextMeshProUGUI itemStatus;
     // -----------------------------------
 
+    void Awake()
+    {
+        status = new Status(UnitCode.Player, "플레이어", GameObject.Find("GameManager").GetComponent<GameManager>().stageCount);
+        HitBoxDamage();
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -91,6 +99,7 @@ public class PlayerController : MonoBehaviour
         ActionPlayer();
         End_Attack();
         //Weapon();
+        OnDie();
     }
 
     private void FixedUpdate()
@@ -99,9 +108,19 @@ public class PlayerController : MonoBehaviour
             playerBody.transform.position = Vector3.Lerp(playerBody.transform.position, transform.position, 0.5f);
     }
 
+    // 공격별 데미지 설정
+    void HitBoxDamage()
+    {
+        normalAttack.GetComponent<HitBox>().SkillPercent = status.AttackDamage;
+        jumpAttack.GetComponent<HitBox>().SkillPercent = status.SkillPercent[(int)SkillCode.Jump];
+        // skillAttack[(int)SkillCode.SwordGust].GetComponent<HitBox>().SkillPercent = status.SkillPercent[(int)SkillCode.SwordGust];
+        skillAttack[(int)SkillCode.Upper].GetComponent<HitBox>().SkillPercent = status.SkillPercent[(int)SkillCode.Upper];
+        skillAttack[(int)SkillCode.Windmill].GetComponent<HitBox>().SkillPercent = status.SkillPercent[(int)SkillCode.Windmill];
+    }
+
+    // Input값 정리
     private void GetInput()
     {
-        // Input값 정리
         horizontalAxis = Input.GetAxis("Horizontal") * (!isInventoryOpen ? 1 : 0);
         verticalAxis = Input.GetAxis("Vertical") * (!isInventoryOpen ? 1 : 0);
         jumpDown = Input.GetButtonDown("Jump") && !isInventoryOpen;
@@ -140,6 +159,7 @@ public class PlayerController : MonoBehaviour
         inventoryCanvasGroup.blocksRaycasts = isInventoryOpen; // UI 클릭 가능 여부 설정
     }
 
+    // 화면 회전
     private void LookAround()
     {
         if (!isInventoryOpen)
@@ -161,6 +181,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    // 이동
     private void Move()
     {
         // 플레이어 이동 값 가져오기
@@ -184,6 +205,7 @@ public class PlayerController : MonoBehaviour
 
     }
 
+    // 점프
     private void Jump()
     {
         if (jumpDown && !isJump && !isAttack && !animator.GetCurrentAnimatorStateInfo(0).IsName("Jump"))
@@ -205,6 +227,7 @@ public class PlayerController : MonoBehaviour
     //    }
     //}
 
+    // 공격 액션
     private void ActionPlayer()
     {
         if (!isJump && mouseLeft)
@@ -234,6 +257,7 @@ public class PlayerController : MonoBehaviour
 
     }
 
+    // 일반공격
     private void NormalAttack()
     {
         if (comboIndex == 0)
@@ -255,9 +279,10 @@ public class PlayerController : MonoBehaviour
             animator.SetTrigger("doAttack1c");
             comboIndex = 3;
         }
-        weaponArea[0].enabled = true;
+        normalAttack.enabled = true;
     }
 
+    // 점프공격
     private void JumpAttack()
     {
         isAttack = true;
@@ -266,6 +291,7 @@ public class PlayerController : MonoBehaviour
         StartCoroutine(Wait(1));
     }
 
+    // 스킬 3번 올려치기
     private void SkillUpper()
     {
         isAttack = true;
@@ -275,14 +301,16 @@ public class PlayerController : MonoBehaviour
         StartCoroutine(WaitForCooltime(skillControls[1].GetComponent<SkillControl>().coolTime, 1));
     }
 
+    // 올려치기용 코루틴
     IEnumerator UpperSkill()
     {
         yield return new WaitForSeconds(1f);
-        weaponArea[2].enabled = true;
+        skillAttack[2].enabled = true;
         yield return new WaitForSeconds(1.5f);
-        weaponArea[2].enabled = false;
+        skillAttack[2].enabled = false;
     }
 
+    // 스킬 4번 윈드밀
     private void SkiilWindmill()
     {
         isAttack3 = true;
@@ -291,28 +319,31 @@ public class PlayerController : MonoBehaviour
         StartCoroutine(Windmill());
     }
 
+    // 윈드밀 시전 대기
     IEnumerator WindmillReady()
     {
         yield return new WaitForSeconds(0.5f);
     }
 
+    // 윈드밀 시전중
     IEnumerator Windmill()
     {
         WaitForSeconds waitWindmil = new WaitForSeconds(0.5f);
         while (true)
         {
             if (!isAttack3) break;
-            weaponArea[1].enabled = true;
+            skillAttack[3].enabled = true;
             yield return waitWindmil;
-            weaponArea[1].enabled = false;
+            skillAttack[3].enabled = false;
         }
     }
 
+    // 윈드밀 종료
     private void SkillWindmillStop()
     {
         isAttack3 = false;
         animator.SetTrigger("stopAttack3");
-        weaponArea[1].enabled = false;
+        skillAttack[3].enabled = false;
         CoolTimeTrigger(2);
         StartCoroutine(WaitForCooltime(skillControls[3].GetComponent<SkillControl>().coolTime, 2));
     }
@@ -357,9 +388,10 @@ public class PlayerController : MonoBehaviour
         {
             StartCoroutine(Enhance());
         }
-        else if (!isAttack3)
+        else if (!isAttack3 && !isEnhanced)
         {
             animator.SetTrigger("doHit");
+            StartCoroutine(Hit());
             hitCount++;
         }
     }
@@ -381,6 +413,8 @@ public class PlayerController : MonoBehaviour
 
     private void OnDie()
     {
+        if (status.CurrentHP > 0) return;
+
         isDead = true;
         animator.SetTrigger("doDie");
         animator.SetBool("isDead", isDead);
@@ -456,12 +490,9 @@ public class PlayerController : MonoBehaviour
 
     IEnumerator Wait(int attackNum)
     {
-        int hitbox = Convert.ToInt32(Convert.ToBoolean(attackNum));
-        if (attackNum != 1)
-            yield return new WaitForSeconds(0.3f);
-        weaponArea[hitbox].enabled = true;
+        jumpAttack.enabled = true;
         yield return new WaitForSeconds(0.5f);
-        weaponArea[hitbox].enabled = false;
+        jumpAttack.enabled = false;
         isAttack = false;
     }
 

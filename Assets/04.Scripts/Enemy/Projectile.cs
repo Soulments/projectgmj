@@ -9,11 +9,13 @@ public class Projectile : MonoBehaviour
     public float speed;
     Transform target = null;
     Rigidbody rigidBody;
+    Boss boss;
 
     void Awake()
     {
         target = GameObject.FindWithTag("Player").transform;
         rigidBody = GetComponent<Rigidbody>();
+        boss = GameObject.FindWithTag("Boss").GetComponent<Boss>();
         transform.LookAt(target);
     }
     // Start is called before the first frame update
@@ -71,7 +73,14 @@ public class Projectile : MonoBehaviour
         if (other.gameObject.tag == "Player" || other.gameObject.tag == "Floor")
         {
             // 데미지 주는 기능
-
+            if (projectileType == 'A')
+            {
+                _ = new Damage(boss.status.AttackDamage, other.gameObject);
+            }
+            else
+            {
+                _ = new Damage(boss.status.AttackDamage * 3, other.gameObject);
+            }
             Destroy(gameObject);
         }
     }

@@ -43,8 +43,8 @@ public class Enemy : MonoBehaviour
 
     private void Update()
     {
-        
         //float distance = Vector3.Distance(tr)
+        OnDie();
     }
 
     private void FixedUpdate()
@@ -91,7 +91,7 @@ public class Enemy : MonoBehaviour
         isAttack = false;
     }
 
-    protected void OnTriggerEnter(Collider other)
+    protected virtual void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag == "Weapon")
         {
@@ -120,13 +120,9 @@ public class Enemy : MonoBehaviour
 
     protected virtual void OnDie()
     {
+        if (status.CurrentHP > 0) return;
         Vector3 position = new Vector3 (transform.position.x, transform.position.y + 1, transform.position.z);
         Instantiate(item, position, Quaternion.identity);
         Destroy(gameObject);
     }
-
-    //IEnumerator OnDamage()
-    //{
-    //    Destroy(gameObject);
-    //}
 }

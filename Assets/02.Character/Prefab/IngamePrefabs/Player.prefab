@@ -44,8 +44,9 @@ GameObject:
   - component: {fileID: 1645372654018934366}
   - component: {fileID: 4930162378130064534}
   - component: {fileID: 858141680120961517}
+  - component: {fileID: 629397191728178959}
   m_Layer: 3
-  m_Name: Hitbox2
+  m_Name: Upper
   m_TagString: Weapon2
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -137,6 +138,18 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &629397191728178959
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1333248166903425815}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d445bd33cd8c27e40ba1d8caf699b680, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3787176140846116001
 GameObject:
   m_ObjectHideFlags: 0
@@ -149,8 +162,9 @@ GameObject:
   - component: {fileID: 4992722173578159939}
   - component: {fileID: 2202121419687202200}
   - component: {fileID: 1608161362954061765}
+  - component: {fileID: 5300965860600160502}
   m_Layer: 3
-  m_Name: Hitbox0
+  m_Name: NormalAttack
   m_TagString: Weapon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -242,6 +256,138 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &5300965860600160502
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3787176140846116001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d445bd33cd8c27e40ba1d8caf699b680, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!1 &5121145204019285098
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1804104859817543322}
+  - component: {fileID: 8219409266423306137}
+  - component: {fileID: 2797493822316063833}
+  - component: {fileID: 4592617903177306647}
+  - component: {fileID: 1544498250119358236}
+  m_Layer: 3
+  m_Name: Windmill
+  m_TagString: Weapon
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1804104859817543322
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5121145204019285098}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.8, z: 0}
+  m_LocalScale: {x: 5, y: 1, z: 5}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3325901597486198068}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!33 &8219409266423306137
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5121145204019285098}
+  m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!23 &2797493822316063833
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5121145204019285098}
+  m_Enabled: 0
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!136 &4592617903177306647
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5121145204019285098}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 0
+  serializedVersion: 2
+  m_Radius: 0.5000001
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1544498250119358236
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5121145204019285098}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d445bd33cd8c27e40ba1d8caf699b680, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7095382832543323647
 GameObject:
   m_ObjectHideFlags: 0
@@ -294,10 +440,13 @@ MonoBehaviour:
   playerBody: {fileID: 537308734144339958}
   cameraArm: {fileID: 9117312763903318531}
   isDead: 0
-  weaponArea:
-  - {fileID: 1608161362954061765}
-  - {fileID: 2390600675886061165}
+  normalAttack: {fileID: 1608161362954061765}
+  jumpAttackHitBox: {fileID: 2390600675886061165}
+  skillHitBox:
+  - {fileID: 0}
+  - {fileID: 0}
   - {fileID: 858141680120961517}
+  - {fileID: 4592617903177306647}
   manager: {fileID: 0}
   groundLayer:
     serializedVersion: 2
@@ -314,6 +463,10 @@ MonoBehaviour:
   - {fileID: 0}
   jumpForce: 400
   speed: 10
+  inventory: {fileID: 0}
+  inventoryCanvasGroup: {fileID: 0}
+  uiController: {fileID: 0}
+  itemStatus: {fileID: 0}
 --- !u!54 &4342210053080304514
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -376,8 +529,9 @@ GameObject:
   - component: {fileID: 1363479402689111569}
   - component: {fileID: 3179716499940300263}
   - component: {fileID: 2390600675886061165}
+  - component: {fileID: 9180919914725982332}
   m_Layer: 3
-  m_Name: Hitbox1
+  m_Name: JumpAttack
   m_TagString: Weapon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -471,6 +625,18 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &9180919914725982332
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7387834179672123431}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d445bd33cd8c27e40ba1d8caf699b680, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7824603190044941387
 GameObject:
   m_ObjectHideFlags: 0
@@ -640,6 +806,7 @@ Transform:
   - {fileID: 7272043855200193035}
   - {fileID: 5702617486534214881}
   - {fileID: 4229837395525922606}
+  - {fileID: 1804104859817543322}
   m_Father: {fileID: 3627944878351756996}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &6982042736547295499

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Rendering;
@@ -33,9 +34,6 @@ public class Boss : Enemy
     bool bufReady = false;
     bool directAttack_A_Ready = false;
     bool directAttack_B_Ready = false;
-
-    Vector3 currentPosition;
-    Vector3[] range = new Vector3[4];
 
     void Awake()
     {
@@ -90,7 +88,7 @@ public class Boss : Enemy
     {
         enemyPrefabs = new GameObject[6];
         capsuleCollider.enabled = true;
-        StartCoroutine(CoolDown(directAttack_A_Ready, DirectAttack_A_cooldownTime));
+        StartCoroutine(CoolDown(false, DirectAttack_A_cooldownTime));
         while (status.CurrentHP > 1000)
         {
             // 몹 소환
@@ -103,7 +101,7 @@ public class Boss : Enemy
             if (directAttack_A_Ready == true)
             {
                 Attack('B', 1);
-                StartCoroutine(CoolDown(directAttack_A_Ready, DirectAttack_A_cooldownTime));
+                StartCoroutine(CoolDown(false, DirectAttack_A_cooldownTime));
             }
             yield return null;
         }
@@ -120,21 +118,21 @@ public class Boss : Enemy
         if (status.CurrentHP != 1000) status.CurrentHP = 1000;
 
         capsuleCollider.enabled = true;
-        StartCoroutine(CoolDown(directAttack_A_Ready, DirectAttack_A_cooldownTime));
-        StartCoroutine(CoolDown(directAttack_B_Ready, DirectAttack_B_cooldownTime));
+        StartCoroutine(CoolDown(false, DirectAttack_A_cooldownTime));
+        StartCoroutine(CoolDown(true, DirectAttack_B_cooldownTime));
         while (phaseCount == 3)
         {
             // 직접 공격 A
             if (directAttack_A_Ready == true)
             {
                 Attack('B', 1);
-                StartCoroutine(CoolDown(directAttack_A_Ready, DirectAttack_A_cooldownTime));
+                StartCoroutine(CoolDown(false, DirectAttack_A_cooldownTime));
             }
             // 직접 공격 B
             if (directAttack_B_Ready == true)
             {
                 Attack('C', 1);
-                StartCoroutine(CoolDown(directAttack_B_Ready, DirectAttack_B_cooldownTime));
+                StartCoroutine(CoolDown(true, DirectAttack_B_cooldownTime));
             }
             yield return null;
         }
@@ -253,13 +251,13 @@ public class Boss : Enemy
             for(int i = 0; i < 5; i++)
             {
                 // 공격 소환
-                GameObject projectileA = Instantiate(attackA, castBPoints[i].transform.position, transform.rotation);
+                _ = Instantiate(attackA, castBPoints[i].transform.position, transform.rotation);
             }
         }
         else
         {
             // 빠른 공격
-            GameObject projectileB = Instantiate(attackB, castCPoint.transform.position, transform.rotation);
+            _ = Instantiate(attackB, castCPoint.transform.position, transform.rotation);
         }
     }
 
@@ -307,9 +305,23 @@ public class Boss : Enemy
     // 쿨타임 거는용
     IEnumerator CoolDown(bool ready, float cooldownTime)
     {
-        ready = false;
+        if (!ready)
+        {
+            directAttack_A_Ready = false;
+        }
+        else
+        {
+            directAttack_B_Ready = false;
+        }
         yield return new WaitForSeconds(cooldownTime);
-        ready = true;
+        if (!ready)
+        {
+            directAttack_A_Ready = true;
+        }
+        else
+        {
+            directAttack_B_Ready = true;
+        }
     }
 
     protected override void OnDie()
@@ -322,5 +334,10 @@ public class Boss : Enemy
     IEnumerator Wait()
     {
         yield return new WaitForSeconds(3.0f);
+    }
+
+    protected override void OnTriggerEnter(Collider other)
+    {
+        return;
     }
 }

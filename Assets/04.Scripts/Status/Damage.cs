@@ -4,16 +4,20 @@ using UnityEngine;
 
 public class Damage
 {
+    PlayerController damagedPlayer;
+    Enemy damagedEnemy;
 
-    // 플레이어가 입는 데미지
-    public Damage(float damagePercent, PlayerController damagedPlayer)
+    public Damage(float damagePercent, GameObject otherObject)
     {
-        damagedPlayer.status.CurrentHP -= (int)damagePercent;
-    }
-
-    // 적이 입는 데미지
-    public Damage(float damagePercent, Enemy damagedEnemy)
-    {
-        damagedEnemy.status.CurrentHP -= (int)damagePercent;
+        if (otherObject.CompareTag("Player"))
+        {
+            damagedPlayer = otherObject.GetComponent<PlayerController>();
+            damagedPlayer.status.CurrentHP -= (int)damagePercent;
+        }
+        else
+        {
+            damagedEnemy = otherObject.GetComponent<Enemy>();
+            damagedEnemy.status.CurrentHP -= (int)damagePercent;
+        }
     }
 }
