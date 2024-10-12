@@ -120,7 +120,7 @@ public class Enemy : MonoBehaviour
 
     protected virtual void OnDie()
     {
-        if (status.CurrentHP > 0) return;
+        // 임시 주석 -------- if (status.CurrentHP > 0) return;
         Vector3 position = new Vector3 (transform.position.x, transform.position.y + 1, transform.position.z);
         Instantiate(item, position, Quaternion.identity);
         Destroy(gameObject);

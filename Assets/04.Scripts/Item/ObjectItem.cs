@@ -7,6 +7,7 @@ public interface IObjectItem
 {
     void OnPickup();
     ItemData ClickItem();
+    Status GetStatus();
 }
 public class ObjectItem : MonoBehaviour, IObjectItem
 {
@@ -42,6 +43,20 @@ public class ObjectItem : MonoBehaviour, IObjectItem
     public void SetItemStatus(Status status)
     {
         itemStatus = status;
+
+
+            Debug.Log($"----Item Name: {itemStatus.ObjectName}");
+            Debug.Log($"----Max HP: {itemStatus.MaxHP}");
+            Debug.Log($"----Current HP: {itemStatus.CurrentHP}");
+            Debug.Log($"----Attack Damage: {itemStatus.AttackDamage}");
+            Debug.Log($"----Defense: {itemStatus.Defense}");
+            Debug.Log($"----Attack Speed: {itemStatus.AttackSpeed}");
+
+            // Skill Percent 배열 출력
+            for (int i = 0; i < itemStatus.SkillPercent.Length; i++)
+            {
+                Debug.Log($"----Skill Percent[{i}]: {status.SkillPercent[i]}");
+            }
     }
     
     /*[Header("아이템 이미지")]
@@ -68,5 +83,9 @@ public class ObjectItem : MonoBehaviour, IObjectItem
     public  ItemData ClickItem()
     {
         return this.item;
+    }
+    public Status GetStatus()
+    {
+        return this.itemStatus;
     }
 }

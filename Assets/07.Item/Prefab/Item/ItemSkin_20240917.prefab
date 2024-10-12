@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 1120878012479080891}
   - component: {fileID: 1336334072763281540}
   - component: {fileID: 688987065298634448}
-  - component: {fileID: 581381070145870699}
   - component: {fileID: 1503134260071170176}
+  - component: {fileID: 581381070145870699}
   m_Layer: 0
   m_Name: ItemSkin_20240917
   m_TagString: Untagged
@@ -83,7 +83,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 126
   m_CollisionDetection: 0
---- !u!114 &581381070145870699
+--- !u!114 &1503134260071170176
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -92,7 +92,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1952371301804481808}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f276cde6699252f4cae031479f20d921, type: 3}
+  m_Script: {fileID: 11500000, guid: 4f94211067c8f6647989d61ab040d37b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   skinCode: 0
@@ -105,7 +105,8 @@ MonoBehaviour:
   - {fileID: 7844494204326210909, guid: ea561a3cf0269a24bbb6590c8679a63b, type: 3}
   - {fileID: 6641910958453722653, guid: b55a0e7a9e41c3e4d908f0bae062a4fa, type: 3}
   - {fileID: 8877484034792913489, guid: fda209030f8f0af498295cd2b69a44de, type: 3}
---- !u!114 &1503134260071170176
+  objectItem: {fileID: 0}
+--- !u!114 &581381070145870699
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -114,7 +115,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1952371301804481808}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fa23d0f614886e74c94044fef3347fb1, type: 3}
+  m_Script: {fileID: 11500000, guid: 282e5c81dfc506c45870ab799ae03ed2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   trackingObject: {fileID: 0}

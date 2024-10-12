@@ -71,7 +71,7 @@ public class InventoryItem : MonoBehaviour, IPointerClickHandler, IPointerEnterH
     {
         if (canvasGroup.alpha == 0) return;
 
-        uiController.OpenMessagePanel(myItem.itemName);
+        // юс╫ц -------uiController.OpenMessagePanel(myItem.itemName);
     }
     public void OnPointerExit(PointerEventData eventData)
     {

@@ -29,9 +29,7 @@ public class Item : MonoBehaviour
     public Status status;
     public UnitCode unitCode;
 
-    public Sprite sprite;
-    public SlotTag itemTag;
-
+    public ObjectItem objectItem; 
 
     void Awake()
     {
@@ -90,6 +88,7 @@ public class Item : MonoBehaviour
             default:
                 break;
         }
+        objectItem.SetItemStatus(status);
     }
 
     // 아이템 파괴

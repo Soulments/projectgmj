@@ -15,8 +15,8 @@ public class Inventory : MonoBehaviour
     [SerializeField] Transform draggablesTransform; // 드래그 가능한 아이템의 부모
     [SerializeField] InventoryItem itemPrefab; // 아이템 프리팹
 
-    [Header("Item List")]
-    [SerializeField] ItemData[] items; // 생성 가능한 아이템 리스트
+    //[Header("Item List")]
+    //[SerializeField] ItemData[] items; // 생성 가능한 아이템 리스트
 
 
     void Awake()

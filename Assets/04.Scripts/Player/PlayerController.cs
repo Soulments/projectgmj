@@ -78,7 +78,7 @@ public class PlayerController : MonoBehaviour
     void Awake()
     {
         status = new Status(UnitCode.Player, "플레이어", GameObject.Find("GameManager").GetComponent<GameManager>().stageCount);
-        HitBoxDamage();
+        // 임시 주석 ------------ HitBoxDamage();
     }
 
     // Start is called before the first frame update
@@ -113,10 +113,13 @@ public class PlayerController : MonoBehaviour
     {
         normalAttack.GetComponent<HitBox>().SkillPercent = status.AttackDamage;
         jumpAttack.GetComponent<HitBox>().SkillPercent = status.SkillPercent[(int)SkillCode.Jump];
+        
+
         // skillAttack[(int)SkillCode.SwordGust].GetComponent<HitBox>().SkillPercent = status.SkillPercent[(int)SkillCode.SwordGust];
         skillAttack[(int)SkillCode.Upper].GetComponent<HitBox>().SkillPercent = status.SkillPercent[(int)SkillCode.Upper];
         skillAttack[(int)SkillCode.Windmill].GetComponent<HitBox>().SkillPercent = status.SkillPercent[(int)SkillCode.Windmill];
     }
+    
 
     // Input값 정리
     private void GetInput()
@@ -137,6 +140,7 @@ public class PlayerController : MonoBehaviour
         if (itemPickup != null && Input.GetKeyDown(KeyCode.F) && !isInventoryOpen)
         {
             ItemData item = itemPickup.ClickItem();
+            Status itemStats = itemPickup.GetStatus();
 
             inventory.AddItem(item);
             itemPickup.OnPickup(); // 아이템 획득하면 오브젝트 파괴
@@ -454,8 +458,9 @@ public class PlayerController : MonoBehaviour
         if (clickInterface != null)
         {
             ItemData item = clickInterface.ClickItem();
+            Status itemStatus = clickInterface.GetStatus();
 
-            uiController.OpenMessagePanel(item.itemName);
+            uiController.OpenMessagePanel(item.itemName, itemStatus);
             //itemName.text = item.itemName;
             //itemStatus.text = itemStat.status.ToString();
 

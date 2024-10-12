@@ -49,10 +49,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   randomSeed: 0
-  randomObjects: []
   unitCode: 0
-  sprite: {fileID: 0}
-  itemTag: 0
+  objectItem: {fileID: 1983784545620362066}
 --- !u!65 &3914691627814621739
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -113,6 +111,11 @@ PrefabInstance:
       objectReference: {fileID: 3476123423114083647}
     - target: {fileID: 581381070145870699, guid: c68be3a26248fb445a41a20434bf9a9a,
         type: 3}
+      propertyPath: trackingObject
+      value: 
+      objectReference: {fileID: 3476123423114083647}
+    - target: {fileID: 581381070145870699, guid: c68be3a26248fb445a41a20434bf9a9a,
+        type: 3}
       propertyPath: randomSeedObject
       value: 
       objectReference: {fileID: 3476123423114083647}
@@ -168,7 +171,22 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1503134260071170176, guid: c68be3a26248fb445a41a20434bf9a9a,
         type: 3}
+      propertyPath: objectItem
+      value: 
+      objectReference: {fileID: 1983784545620362066}
+    - target: {fileID: 1503134260071170176, guid: c68be3a26248fb445a41a20434bf9a9a,
+        type: 3}
+      propertyPath: skinParent
+      value: 
+      objectReference: {fileID: 3476123423114083647}
+    - target: {fileID: 1503134260071170176, guid: c68be3a26248fb445a41a20434bf9a9a,
+        type: 3}
       propertyPath: trackingObject
+      value: 
+      objectReference: {fileID: 3476123423114083647}
+    - target: {fileID: 1503134260071170176, guid: c68be3a26248fb445a41a20434bf9a9a,
+        type: 3}
+      propertyPath: randomSeedObject
       value: 
       objectReference: {fileID: 3476123423114083647}
     - target: {fileID: 1952371301804481808, guid: c68be3a26248fb445a41a20434bf9a9a,
