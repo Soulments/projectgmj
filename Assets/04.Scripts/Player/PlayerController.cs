@@ -78,7 +78,7 @@ public class PlayerController : MonoBehaviour
     void Awake()
     {
         status = new Status(UnitCode.Player, "플레이어", GameObject.Find("GameManager").GetComponent<GameManager>().stageCount);
-        // 임시 주석 ------------ HitBoxDamage();
+        HitBoxDamage();
     }
 
     // Start is called before the first frame update
@@ -86,6 +86,7 @@ public class PlayerController : MonoBehaviour
     {
         animator = playerBody.GetComponent<Animator>();
         rigidBody = GetComponent<Rigidbody>();
+        SkillControlAttach();
     }
 
     // Update is called once per frame
@@ -106,6 +107,14 @@ public class PlayerController : MonoBehaviour
     {
         if (!isAttack)
             playerBody.transform.position = Vector3.Lerp(playerBody.transform.position, transform.position, 0.5f);
+    }
+
+    void SkillControlAttach()
+    {
+        skillControls[0] = GameObject.Find("Player Canvas/Player Panel/Skill Group/Skill Q").GetComponent<SkillControl>();
+        skillControls[1] = GameObject.Find("Player Canvas/Player Panel/Skill Group/Skill E").GetComponent<SkillControl>();
+        skillControls[2] = GameObject.Find("Player Canvas/Player Panel/Skill Group/Skill R").GetComponent<SkillControl>();
+        skillControls[3] = GameObject.Find("Player Canvas/Player Panel/Skill Group/Skill TAB").GetComponent<SkillControl>();
     }
 
     // 공격별 데미지 설정
