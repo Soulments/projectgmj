@@ -15,6 +15,7 @@ public class ObjectItem : MonoBehaviour, IObjectItem
     ItemData item;
 
     Status itemStatus;
+    float itemStat;
     public void SetItemSkin(string skin)
     {
         switch (skin)
@@ -45,7 +46,7 @@ public class ObjectItem : MonoBehaviour, IObjectItem
         itemStatus = status;
 
 
-            Debug.Log($"----Item Name: {itemStatus.ObjectName}");
+        Debug.Log($"----Item Name: {itemStatus.ObjectName}");
             Debug.Log($"----Max HP: {itemStatus.MaxHP}");
             Debug.Log($"----Current HP: {itemStatus.CurrentHP}");
             Debug.Log($"----Attack Damage: {itemStatus.AttackDamage}");

@@ -10,9 +10,11 @@ public class InventoryItem : MonoBehaviour, IPointerClickHandler, IPointerEnterH
     public CanvasGroup canvasGroup { get; private set; }
 
     public ItemData myItem { get; set; }
+    public Status myStatus { get; set; }
+    public float myOne { get; set; }
     public InventorySlot activeSlot { get; set; }
 
-    public Item itemState { get; set; }
+    //public Item itemState { get; set; }
 
     UIController uiController;
     void Awake()
@@ -33,12 +35,34 @@ public class InventoryItem : MonoBehaviour, IPointerClickHandler, IPointerEnterH
     }
 
     // 아이템 초기화 슬롯 할당, 아이템 이미지 설정
-    public void Initialize(ItemData item, InventorySlot parent)
+    public void Initialize(ItemData item, Status status, InventorySlot parent)
     {
         if (parent == null) { Debug.LogError("너어얼"); return; }
         activeSlot = parent;
         activeSlot.myItem = this;
         myItem = item;
+        myStatus = status;
+
+        if (status.MaxHP > 0)
+        {
+            myOne = status.MaxHP;
+        }
+        else if (status.AttackDamage > 0)
+        {
+            myOne = status.AttackDamage;
+        }
+        else if (status.Defense > 0)
+        {
+            myOne = status.Defense;
+        }
+        else if (status.AttackSpeed > 0)
+        {
+            myOne = status.AttackSpeed;
+        }
+        else if (status.SkillPercent[0] > 0)
+        {
+            myOne = status.SkillPercent[0];
+        }
 
         if (item == null)
         {
@@ -71,7 +95,7 @@ public class InventoryItem : MonoBehaviour, IPointerClickHandler, IPointerEnterH
     {
         if (canvasGroup.alpha == 0) return;
 
-        // 임시 -------uiController.OpenMessagePanel(myItem.itemName);
+        uiController.OpenMessagePanel(myItem.itemName, myStatus);
     }
     public void OnPointerExit(PointerEventData eventData)
     {

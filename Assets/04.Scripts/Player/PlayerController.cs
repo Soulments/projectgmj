@@ -149,10 +149,13 @@ public class PlayerController : MonoBehaviour
         if (itemPickup != null && Input.GetKeyDown(KeyCode.F) && !isInventoryOpen)
         {
             ItemData item = itemPickup.ClickItem();
-            Status itemStats = itemPickup.GetStatus();
+            Status itemStatus = itemPickup.GetStatus();
 
-            inventory.AddItem(item);
+            inventory.AddItem(item, itemStatus);
+
             itemPickup.OnPickup(); // 아이템 획득하면 오브젝트 파괴
+            itemPickup = null;
+
             Debug.Log($"{item.itemName}");
 
             uiController.CloseMessagePanel();
