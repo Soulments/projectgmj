@@ -18,7 +18,7 @@ public class Inventory : MonoBehaviour
     [SerializeField] InventoryItem itemPrefab; // 아이템 프리팹
 
     [SerializeField] TextMeshProUGUI addStat;   // 전투력표시
-    public float powerLevel = 0;
+    public int powerLevel = 0;
     public float preItem;
 
     //[Header("Item List")]
@@ -82,13 +82,43 @@ public class Inventory : MonoBehaviour
     {
         if(item != null)
         {
-            powerLevel += item.myOne;
+            powerLevel += W_cal(item.myStatus);
             preItem = item.myOne;
         }
         else
         {
-            powerLevel -= preCarriedItem.myOne;
+            powerLevel -= W_cal(preCarriedItem.myStatus);
         }
         addStat.text = powerLevel.ToString();
+    }
+    public int W_cal(Status status)
+    {
+        double A, B, C, D, E;
+        if (status.MaxHP > 0)
+        {
+            A = status.MaxHP * 1000.0;
+            return (int)A;
+        }
+        else if (status.AttackDamage > 0)
+        {
+            B = status.AttackDamage * 2000.0;
+            return (int)B;
+        }
+        else if (status.Defense > 0)
+        {
+            C = status.Defense * 1500.0;
+            return (int)C;
+        }
+        else if (status.AttackSpeed > 0)
+        {
+            D = status.AttackSpeed * 1200.0;
+            return (int)D;
+        }
+        else if (status.SkillPercent[0] > 0)
+        {
+            E = status.SkillPercent[0] * 1800.0;
+            return (int)E;
+        }
+        return 0;
     }
 }
