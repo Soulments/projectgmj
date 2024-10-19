@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class HitBox : MonoBehaviour
 {
-    public float SkillPercent;
+    public float skillPercent;
     
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag == "Enmey" || other.gameObject.tag == "Boss")
         {
-            _ = new Damage(SkillPercent, other.gameObject);
+            _ = new Damage(skillPercent, other.gameObject);
         }
     }
 }

@@ -9,12 +9,16 @@ public class Enemy : MonoBehaviour
     public Transform target;
     public Item item;
     public Status status;
+    public GameObject body;
+    public GameObject dead;
 
+    protected bool isSpawn;
     protected bool isChase;
     protected bool isMove;
     protected bool isAttack = false;
     protected bool isDead;
     protected bool isHit = false;
+    protected bool isAirBorned = false;
 
     protected int hitcount = 0;
 
@@ -26,28 +30,26 @@ public class Enemy : MonoBehaviour
     protected MeshRenderer meshRenderer;
     protected NavMeshAgent navMeshAgent;
     protected Animator animator;
+    protected AnimatorStateInfo animatorStateInfo;
 
     Boss boss;
 
-    private void Awake()
+    protected virtual void Awake()
     {
-        //rigidbody = GetComponent<Rigidbody>();
-        //boxCollider = GetComponent<BoxCollider>();
-        //meshRenderer = GetComponent<MeshRenderer>();
-        //navMeshAgent = GetComponent<NavMeshAgent>();
-        //animator = GetComponent<Animator>();
-        //isMove = true;
-        //isChase = true;
-        //animator.SetBool("isMove", true);
+        rigidBody = GetComponent<Rigidbody>();
+        capsuleCollider = GetComponent<CapsuleCollider>();
+        meshRenderer = GetComponent<MeshRenderer>();
+        navMeshAgent = GetComponent<NavMeshAgent>();
+        animator = GetComponentInChildren<Animator>();
+        target = GameObject.FindWithTag("Player").transform;
     }
 
-    private void Update()
+    protected virtual void Update()
     {
         //float distance = Vector3.Distance(tr)
-        OnDie();
     }
 
-    private void FixedUpdate()
+    protected virtual void FixedUpdate()
     {
         bool isOverRange = Vector3.Distance(transform.position, target.position) > attackRange;
         bool isTooClose = Vector3.Distance(transform.position, target.position) < closeRange;
@@ -74,6 +76,10 @@ public class Enemy : MonoBehaviour
         {
             return;
         }
+        if (isAirBorned)
+        {
+            return;
+        }
         StartCoroutine(Attack());
     }
 
@@ -91,38 +97,29 @@ public class Enemy : MonoBehaviour
         isAttack = false;
     }
 
-    protected virtual void OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject.tag == "Weapon")
-        {
-            StartCoroutine(Hit(1));
-        }
-        else if (other.gameObject.tag == "Weapon2")
-        {
-            StartCoroutine(Hit(2));
-        }
-    }
-
-    protected IEnumerator Hit(int hitnum)
-    {
-        if (hitnum == 1)
-        {
-            animator.SetTrigger("doHit");
-        }
-        else
-        {
-            animator.SetTrigger("doAirborne");
-        }
-        hitcount++;
-        if (hitcount > 5) OnDie();
-        else yield return new WaitForSeconds(0.5f);
-    }
-
     protected virtual void OnDie()
     {
         // 임시 주석 -------- if (status.CurrentHP > 0) return;
         Vector3 position = new Vector3 (transform.position.x, transform.position.y + 1, transform.position.z);
         Instantiate(item, position, Quaternion.identity);
-        Destroy(gameObject);
+    }
+
+    public void Spawn()
+    {
+        animator.SetTrigger("doSpawn");
+        StartCoroutine(WaitForSpawn());
+    }
+
+    IEnumerator WaitForSpawn()
+    {
+        isSpawn = true;
+        rigidBody.useGravity = false;
+        capsuleCollider.enabled = false;
+        navMeshAgent.enabled = false;
+        yield return new WaitForSeconds(1.5f);
+        navMeshAgent.enabled = true;
+        capsuleCollider.enabled = true;
+        rigidBody.useGravity = true;
+        isSpawn = false;
     }
 }

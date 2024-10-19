@@ -128,7 +128,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6120121249398066284}
   - component: {fileID: 8512499689911884206}
-  - component: {fileID: -4899198879822363225}
+  - component: {fileID: 2802739678764797539}
   m_Layer: 0
   m_Name: BossProjectileA
   m_TagString: Arrow
@@ -176,7 +176,7 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.15
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &-4899198879822363225
+--- !u!114 &2802739678764797539
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -185,11 +185,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 4449623838845420351}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 585a006515fe0d64285267110ae4ab40, type: 3}
+  m_Script: {fileID: 11500000, guid: 3fdac065eca164148982b2e26a297164, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   projectileType: 65
-  speed: 10
+  speed: 0
 --- !u!1 &5908835098301064177
 GameObject:
   m_ObjectHideFlags: 0

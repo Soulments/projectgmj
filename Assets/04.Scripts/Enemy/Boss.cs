@@ -35,19 +35,14 @@ public class Boss : Enemy
     bool directAttack_A_Ready = false;
     bool directAttack_B_Ready = false;
 
-    void Awake()
+    protected override void Awake()
     {
-        rigidBody = GetComponent<Rigidbody>();
-        capsuleCollider = GetComponent<CapsuleCollider>();
-        meshRenderer = GetComponent<MeshRenderer>();
-        navMeshAgent = GetComponent<NavMeshAgent>();
-        animator = GetComponent<Animator>();
+        base.Awake();
         status = new Status(UnitCode.Boss, "보스", 1);
-        target = GameObject.FindWithTag("Player").transform;
         StartCoroutine(Phase1());
     }
 
-    private void FixedUpdate()
+    protected override void FixedUpdate()
     {
         // 플레이어를 항상 바라보게
         transform.LookAt(target);
@@ -57,6 +52,7 @@ public class Boss : Enemy
     // 보스 페이즈 1
     IEnumerator Phase1()
     {
+        yield return new WaitForSeconds(3.0f);
         enemyPrefabs = new GameObject[4];
         while (status.CurrentHP > 2000)
         {
@@ -221,6 +217,10 @@ public class Boss : Enemy
             {
                 GameObject skeletonBow = Instantiate(bow, summonPoints[i].transform.position, transform.rotation);
                 enemyPrefabs[i] = skeletonBow;
+                EnemySkeletonBow skeletonBowScript = skeletonBow.GetComponent<EnemySkeletonBow>();
+                skeletonBowScript.Spawn();
+                Animator skeletonBowAnimator = skeletonBow.GetComponentInChildren<Animator>();
+                StartCoroutine(SummonObjectOnOff(i));
             }
             enemyCount += 2;
         }
@@ -231,9 +231,20 @@ public class Boss : Enemy
             {
                 GameObject skeletonSword = Instantiate(sword, summonPoints[i].transform.position, transform.rotation);
                 enemyPrefabs[i] = skeletonSword;
+                Animator skeletonSwordAnimator = skeletonSword.GetComponentInChildren<Animator>();
+                EnemySkeletonSword skeletonSwordScript = skeletonSword.GetComponent<EnemySkeletonSword>();
+                skeletonSwordScript.Spawn();
+                StartCoroutine(SummonObjectOnOff(i));
             }
             enemyCount += 4;
         }
+    }
+
+    IEnumerator SummonObjectOnOff(int summonNum)
+    {
+        summonPoints[summonNum].transform.GetChild(0).gameObject.SetActive(true);
+        yield return new WaitForSeconds(3.0f);
+        summonPoints[summonNum].transform.GetChild(0).gameObject.SetActive(false);
     }
 
     // 스켈레톤 버프
@@ -334,10 +345,5 @@ public class Boss : Enemy
     IEnumerator Wait()
     {
         yield return new WaitForSeconds(3.0f);
-    }
-
-    protected override void OnTriggerEnter(Collider other)
-    {
-        return;
     }
 }

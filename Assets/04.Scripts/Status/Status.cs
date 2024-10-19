@@ -34,8 +34,6 @@ public class Status
     }
     public Status(UnitCode unitCode, string objectName, int stageCount)
     {
-        Debug.Log("스테이터스 선언");
-        Debug.Log(unitCode);
         this.UnitCode = unitCode;
         PowerLevel = stageCount;
         switch (unitCode)
@@ -78,7 +76,8 @@ public class Status
         AttackDamage = 60.0f;
         Defense = 5;
         SkillPercent[(int)SkillCode.Jump] = 90;
-        SkillPercent[(int)SkillCode.Upper] = 80;
+        SkillPercent[(int)SkillCode.SwordGust] = 80;
+        SkillPercent[(int)SkillCode.Upper] = 90;
         SkillPercent[(int)SkillCode.Windmill] = 45;
         MoveSpeed = 1.0f;
         JumpForce = 1.0f;

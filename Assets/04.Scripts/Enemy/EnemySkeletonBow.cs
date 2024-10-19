@@ -6,33 +6,29 @@ using UnityEngine.AI;
 public class EnemySkeletonBow : Enemy
 {
     public GameObject arrow;
-
     public GameObject arrowPoint;
-    private void Awake()
+
+    protected override void Awake()
     {
-        rigidBody = GetComponent<Rigidbody>();
-        capsuleCollider = GetComponent<CapsuleCollider>();
-        meshRenderer = GetComponent<MeshRenderer>();
-        navMeshAgent = GetComponent<NavMeshAgent>();
-        animator = GetComponent<Animator>();
+        base.Awake();
         status = new Status(UnitCode.Enemy, "원거리", 1);
         isChase = true;
         attackRange = 30.0f;
-        target = GameObject.FindWithTag("Player").transform;
     }
 
-    void Update()
+    protected override void Update()
     {
+        base.Update();
         if (navMeshAgent.enabled && Vector3.Distance(transform.position, target.position) < attackRange * 30)
         {
             navMeshAgent.SetDestination(target.position);
-
             navMeshAgent.isStopped = !isChase;
         }
     }
 
-    void FixedUpdate()
+    protected override void FixedUpdate()
     {
+        base.FixedUpdate();
         bool isOverRange = Vector3.Distance(transform.position, target.position) > attackRange;
         bool isTooClose = Vector3.Distance(transform.position, target.position) < closeRange;
         Targeting(isOverRange);
@@ -76,5 +72,51 @@ public class EnemySkeletonBow : Enemy
             arrowScrpit.SetSummoner(this);
         }
         rigidarrow.velocity = transform.forward * 20;
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("Weapon"))
+        {
+            StartCoroutine(Hit(1));
+        }
+        else if (other.gameObject.CompareTag("Weapon2"))
+        {
+            StartCoroutine(Hit(2));
+        }
+    }
+
+    IEnumerator Hit(int hitnum)
+    {
+        if (hitnum == 1)
+        {
+            animator.SetTrigger("doHit");
+        }
+        else
+        {
+            animator.SetTrigger("doAirborne");
+            isAirBorned = true;
+            capsuleCollider.enabled = false;
+            yield return new WaitForSeconds(3.0f);
+            capsuleCollider.enabled = true;
+            isAirBorned = false;
+        }
+        hitcount++;
+        if (hitcount > 5) OnDie();
+        else yield return new WaitForSeconds(0.5f);
+    }
+
+    protected override void OnDie()
+    {
+        base.OnDie();
+        body.SetActive(false);
+        dead.SetActive(true);
+        StartCoroutine(CoroutineDie());
+    }
+
+    IEnumerator CoroutineDie()
+    {
+        yield return new WaitForSeconds(5.0f);
+        Destroy(gameObject);
     }
 }

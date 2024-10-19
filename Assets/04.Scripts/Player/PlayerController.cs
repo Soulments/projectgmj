@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using TMPro;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 using static UnityEditor.Progress;
@@ -23,6 +24,8 @@ public class PlayerController : MonoBehaviour
     bool mouseRight;
     bool bufSkill;
     bool cooldownbufSkill;
+    bool swordGustSkill;
+    bool cooldownswordGustSkill;
     bool upperSkill;
     bool cooldownupperSkill;
     bool[] windmillSkill = new bool[2];
@@ -46,6 +49,7 @@ public class PlayerController : MonoBehaviour
 
     Animator animator;
     Rigidbody rigidBody;
+    CapsuleCollider capsuleCollider;
 
     public Collider normalAttack;
     public Collider jumpAttack;
@@ -57,6 +61,7 @@ public class PlayerController : MonoBehaviour
     public Material[] materials;
     public SkillControl[] skillControls = new SkillControl[4];
     public Status status;
+    public GameObject swordGust;
 
     public float jumpForce = 30000;
     public float speed = 10;
@@ -85,7 +90,8 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         animator = playerBody.GetComponent<Animator>();
-        rigidBody = GetComponent<Rigidbody>();
+        rigidBody = playerBody.GetComponent<Rigidbody>();
+        capsuleCollider = playerBody.GetComponent<CapsuleCollider>();
         SkillControlAttach();
     }
 
@@ -98,7 +104,8 @@ public class PlayerController : MonoBehaviour
         Jump();
         //GroundCheck();
         ActionPlayer();
-        End_Attack();
+        ComboAttack();
+        EndAttack();
         //Weapon();
         OnDie();
     }
@@ -107,8 +114,10 @@ public class PlayerController : MonoBehaviour
     {
         if (!isAttack)
             playerBody.transform.position = Vector3.Lerp(playerBody.transform.position, transform.position, 0.5f);
+        //playerBody.transform.position = Vector3.Lerp(playerBody.transform.position, transform.position, 0.1f);
     }
 
+    // 스킬 아이콘 연결
     void SkillControlAttach()
     {
         skillControls[0] = GameObject.Find("Player Canvas/Player Panel/Skill Group/Skill Q").GetComponent<SkillControl>();
@@ -120,13 +129,15 @@ public class PlayerController : MonoBehaviour
     // 공격별 데미지 설정
     void HitBoxDamage()
     {
-        normalAttack.GetComponent<HitBox>().SkillPercent = status.AttackDamage;
-        jumpAttack.GetComponent<HitBox>().SkillPercent = status.SkillPercent[(int)SkillCode.Jump];
+        normalAttack.GetComponent<HitBox>().skillPercent = status.AttackDamage;
+        jumpAttack.GetComponent<HitBox>().skillPercent = status.SkillPercent[(int)SkillCode.Jump];
         
 
-        // skillAttack[(int)SkillCode.SwordGust].GetComponent<HitBox>().SkillPercent = status.SkillPercent[(int)SkillCode.SwordGust];
-        skillAttack[(int)SkillCode.Upper].GetComponent<HitBox>().SkillPercent = status.SkillPercent[(int)SkillCode.Upper];
-        skillAttack[(int)SkillCode.Windmill].GetComponent<HitBox>().SkillPercent = status.SkillPercent[(int)SkillCode.Windmill];
+        skillAttack[(int)SkillCode.SwordGust].GetComponent<HitBox>().skillPercent = status.SkillPercent[(int)SkillCode.SwordGust];
+        skillAttack[(int)SkillCode.Upper].GetComponent<HitBox>().skillPercent = status.SkillPercent[(int)SkillCode.Upper];
+        skillAttack[(int)SkillCode.Windmill].GetComponent<HitBox>().skillPercent = status.SkillPercent[(int)SkillCode.Windmill];
+
+        swordGust.GetComponent<SwordGust>().skillPercent = (int)(status.SkillPercent[(int)SkillCode.SwordGust] * 0.75);
     }
     
 
@@ -162,7 +173,8 @@ public class PlayerController : MonoBehaviour
         }
         // ------------------------------------------------------
 
-        upperSkill = Input.GetKeyDown(KeyCode.E) &&!cooldownupperSkill && !isInventoryOpen;
+        swordGustSkill = Input.GetKeyDown(KeyCode.Q) && !cooldownswordGustSkill && !isInventoryOpen;
+        upperSkill = Input.GetKeyDown(KeyCode.E) && !cooldownupperSkill && !isInventoryOpen;
         windmillSkill[0] = Input.GetKeyDown(KeyCode.R) && !cooldownwindmillSkill && !isInventoryOpen;
         windmillSkill[1] = Input.GetKeyUp(KeyCode.R) && !cooldownwindmillSkill && !isInventoryOpen;
         bufSkill = Input.GetKeyDown(KeyCode.Tab) && !cooldownbufSkill && !isInventoryOpen;
@@ -248,15 +260,16 @@ public class PlayerController : MonoBehaviour
     {
         if (!isJump && mouseLeft)
         {
-            NormalAttack();
+            if (!isAttack && comboIndex == 0) NormalAttack();
+            else ComboCheck();
         }
         if (isJump && mouseLeft)
         {
             JumpAttack();
         }
-        if (!isJump && upperSkill)
+        if (!isJump && swordGustSkill)
         {
-            SkillUpper();
+            SkillSwordGust();
         }
         if (!isJump && windmillSkill[0])
         {
@@ -276,26 +289,64 @@ public class PlayerController : MonoBehaviour
     // 일반공격
     private void NormalAttack()
     {
-        if (comboIndex == 0)
+        AnimatorStateInfo currentAnimation = animator.GetCurrentAnimatorStateInfo(0);
+        if (!isAttack)
         {
             isAttack = true;
             animator.SetTrigger("doAttack1a");
             comboIndex = 1;
+            normalAttack.enabled = true;
         }
-        else if (comboIndex == 1 && animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1a"))
+    }
+
+    void ComboCheck()
+    {
+        AnimatorStateInfo currentAnimation = animator.GetCurrentAnimatorStateInfo(0);
+
+        if (currentAnimation.IsName("Attack1a"))
         {
-            isAttack = true;
-            comboTrigger = true;
-            animator.SetTrigger("doAttack1b");
-            comboIndex = 2;
+            if (currentAnimation.normalizedTime > 0.5f && currentAnimation.normalizedTime < 0.99f)
+            {
+                comboTrigger = true;
+            }
         }
-        else if (comboIndex == 2 && animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1b"))
+        if (currentAnimation.IsName("Attack1b"))
         {
-            isAttack = true;
-            animator.SetTrigger("doAttack1c");
-            comboIndex = 3;
+            if (currentAnimation.normalizedTime > 0.5f && currentAnimation.normalizedTime < 0.99f)
+            {
+                comboTrigger = true;
+            }
         }
-        normalAttack.enabled = true;
+    }
+
+    void ComboAttack()
+    {
+        if (!comboTrigger) return;
+
+        AnimatorStateInfo currentAnimation = animator.GetCurrentAnimatorStateInfo(0);
+
+        if (currentAnimation.normalizedTime >= 0.99f)
+        {
+            if (currentAnimation.IsName("Attack1a"))
+            {
+                animator.SetTrigger("doAttack1b");
+                comboIndex = 2;
+            }
+            else if (currentAnimation.IsName("Attack1b"))
+            {
+                animator.SetTrigger("doAttack1c");
+                comboIndex = 3;
+            }
+            isAttack = true;
+            StartCoroutine(WaitForCombo());
+        }
+    }
+
+    IEnumerator WaitForCombo()
+    {
+        yield return new WaitForSeconds(0.1f);
+
+        comboTrigger = false;
     }
 
     // 점프공격
@@ -304,26 +355,56 @@ public class PlayerController : MonoBehaviour
         isAttack = true;
         animator.SetTrigger("doAttack2");
         rigidBody.AddForce(Vector3.down * jumpForce, ForceMode.Impulse);
-        StartCoroutine(Wait(1));
+        StartCoroutine(WaitForJumpAttack(1));
     }
 
-    // 스킬 3번 올려치기
-    private void SkillUpper()
+    // 스킬 1번 버프
+    private void SkillBuf()
+    {
+        isAttack = true;
+        animator.SetTrigger("doAttack4");
+        CoolTimeTrigger(3);
+        StartCoroutine(WaitForCooltime(skillControls[3].GetComponent<SkillControl>().coolTime, 3));
+        StartCoroutine(CoroutineBuf());
+    }
+
+    IEnumerator CoroutineBuf()
+    {
+        yield return new WaitForSeconds(5.0f);
+    }
+
+    // 스킬 2번 올려치기 + 검풍
+    private void SkillSwordGust()
     {
         isAttack = true;
         animator.SetTrigger("doAttack5");
         StartCoroutine(UpperSkill());
-        CoolTimeTrigger(1);
-        StartCoroutine(WaitForCooltime(skillControls[1].GetComponent<SkillControl>().coolTime, 1));
+        CoolTimeTrigger(0);
+        StartCoroutine(WaitForCooltime(skillControls[0].GetComponent<SkillControl>().coolTime, 0));
     }
 
     // 올려치기용 코루틴
     IEnumerator UpperSkill()
     {
         yield return new WaitForSeconds(1f);
-        skillAttack[2].enabled = true;
+        skillAttack[1].enabled = true;
         yield return new WaitForSeconds(1.5f);
-        skillAttack[2].enabled = false;
+        skillAttack[1].enabled = false;
+        SwordGust();
+    }
+
+    // 검풍 날리기
+    void SwordGust()
+    {
+        GameObject instantSwordGust = Instantiate(swordGust, transform.position, playerBody.transform.rotation);
+        Rigidbody rigidGust = instantSwordGust.GetComponent<Rigidbody>();
+        rigidGust.velocity = playerBody.forward * 20;
+    }
+
+    // 스킬 3번 도약 내려치기
+    void SkillUpper()
+    {
+
     }
 
     // 스킬 4번 윈드밀
@@ -333,6 +414,7 @@ public class PlayerController : MonoBehaviour
         animator.SetTrigger("doAttack3");
         StartCoroutine(WindmillReady());
         StartCoroutine(Windmill());
+        StartCoroutine(WindmillDuration());
     }
 
     // 윈드밀 시전 대기
@@ -353,6 +435,12 @@ public class PlayerController : MonoBehaviour
             skillAttack[3].enabled = false;
         }
     }
+    
+    IEnumerator WindmillDuration()
+    {
+        yield return new WaitForSeconds(10.0f);
+        SkillWindmillStop();
+    }
 
     // 윈드밀 종료
     private void SkillWindmillStop()
@@ -364,40 +452,35 @@ public class PlayerController : MonoBehaviour
         StartCoroutine(WaitForCooltime(skillControls[3].GetComponent<SkillControl>().coolTime, 2));
     }
 
-    private void SkillBuf()
+    private void EndAttack()
     {
-        isAttack = true;
-        animator.SetTrigger("doAttack4");
-        CoolTimeTrigger(3);
-        StartCoroutine(WaitForCooltime(skillControls[3].GetComponent<SkillControl>().coolTime, 3));
-    }
-
-    private void End_Attack()
-    {
-        if (comboTrigger == true) return;
-        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1a") || animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1b") || animator.GetCurrentAnimatorStateInfo(0).IsName("Attack1c"))
+        if (comboTrigger) return;
+        AnimatorStateInfo currentAnimation = animator.GetCurrentAnimatorStateInfo(0);
+        if (currentAnimation.IsName("Attack1a") || currentAnimation.IsName("Attack1b") || currentAnimation.IsName("Attack1c"))
         {
-            if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.9f)
+            if (currentAnimation.normalizedTime >= 0.99f)
             {
                 isAttack = false;
                 comboIndex = 0;
             }
         }
-        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Attack4a") || animator.GetCurrentAnimatorStateInfo(0).IsName("Attack5a"))
+        if (currentAnimation.IsName("Attack4a") || currentAnimation.IsName("Attack5a"))
         {
-            if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.9f)
+            if (currentAnimation.normalizedTime >= 0.99f)
             {
                 isAttack = false;
             }
         }
     }
 
+    // UI 쿨타임 관리
     private void CoolTimeTrigger(int num)
     {
         skillControls[num].GetComponent<SkillControl>().isUseSkill = true;
         skillControls[num].GetComponent<SkillControl>().StartCooltime();
     }
 
+    // 피격 함수
     private void OnHit()
     {
         if (hitCount > 3)
@@ -412,12 +495,16 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    // 피격 강화
     IEnumerator Enhance()
     {
+        animator.SetTrigger("doAirborn");
+        capsuleCollider.enabled = false;
         isEnhanced = true;
         yield return new WaitForSeconds(5.0f);
         isEnhanced = false;
         hitCount = 0;
+        capsuleCollider.enabled = true;
     }
 
     IEnumerator Hit()
@@ -505,7 +592,7 @@ public class PlayerController : MonoBehaviour
         usingPortal = false;
     }
 
-    IEnumerator Wait(int attackNum)
+    IEnumerator WaitForJumpAttack(int attackNum)
     {
         jumpAttack.enabled = true;
         yield return new WaitForSeconds(0.5f);
@@ -513,11 +600,13 @@ public class PlayerController : MonoBehaviour
         isAttack = false;
     }
 
+    // 쿨타임 체크용 코루틴
     IEnumerator WaitForCooltime(float coolTime, int coolDownNum)
     {
         switch (coolDownNum)
         {
             case 0:
+                cooldownswordGustSkill = true;
                 break;
             case 1:
                 cooldownupperSkill = true;
@@ -533,6 +622,7 @@ public class PlayerController : MonoBehaviour
         switch (coolDownNum)
         {
             case 0:
+                cooldownswordGustSkill = false;
                 break;
             case 1:
                 cooldownupperSkill = false;
