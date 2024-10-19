@@ -37,7 +37,7 @@ public class Item : MonoBehaviour
         StatusInit();
         RandomStatus();
 
-        PrintStatusDebug();
+        //PrintStatusDebug();
     }
 
     void RandomSeed()

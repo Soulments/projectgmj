@@ -29,6 +29,8 @@ public class Enemy : MonoBehaviour
 
     Boss boss;
 
+    public EnemyHp enemyHp;
+
     private void Awake()
     {
         //rigidbody = GetComponent<Rigidbody>();
@@ -114,13 +116,15 @@ public class Enemy : MonoBehaviour
             animator.SetTrigger("doAirborne");
         }
         hitcount++;
+        enemyHp.takeDamage(hitcount);
+
         if (hitcount > 5) OnDie();
         else yield return new WaitForSeconds(0.5f);
     }
 
     protected virtual void OnDie()
     {
-        // 임시 주석 -------- if (status.CurrentHP > 0) return;
+        //if (status.CurrentHP > 0) return;
         Vector3 position = new Vector3 (transform.position.x, transform.position.y + 1, transform.position.z);
         Instantiate(item, position, Quaternion.identity);
         Destroy(gameObject);
