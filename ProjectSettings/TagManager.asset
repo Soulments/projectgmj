@@ -12,6 +12,7 @@ TagManager:
   - Enemy
   - Item
   - Boss
+  - EnemyDead
   layers:
   - Default
   - TransparentFX

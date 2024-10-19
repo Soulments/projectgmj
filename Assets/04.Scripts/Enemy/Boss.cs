@@ -26,6 +26,7 @@ public class Boss : Enemy
     public GameObject[] castBPoints;
     public GameObject[] enemyPrefabs;
     public GameObject[] summonPoints;
+    public LayerMask groundLayer;
 
     int phaseCount = 1;
     int enemyCount = 0;
@@ -39,6 +40,7 @@ public class Boss : Enemy
     {
         base.Awake();
         status = new Status(UnitCode.Boss, "º¸½º", 1);
+        groundLayer = LayerMask.GetMask("Floor");
         StartCoroutine(Phase1());
     }
 
@@ -210,17 +212,19 @@ public class Boss : Enemy
     // ½ºÄÌ·¹Åæ ¼ÒÈ¯
     void Summon(int summonNum)
     {
+        Vector3 summonRealPoint;
         // ±Ã¼ö
         if (summonNum == 0)
         {
             for (int i = 0; i < 2; i++)
             {
-                GameObject skeletonBow = Instantiate(bow, summonPoints[i].transform.position, transform.rotation);
+                summonRealPoint = new Vector3(summonPoints[i].transform.position.x, summonPoints[i].transform.position.y, summonPoints[i].transform.position.z);
+                summonRealPoint = RaycastCheck(summonRealPoint);
+                GameObject skeletonBow = Instantiate(bow, summonRealPoint, transform.rotation);
                 enemyPrefabs[i] = skeletonBow;
                 EnemySkeletonBow skeletonBowScript = skeletonBow.GetComponent<EnemySkeletonBow>();
                 skeletonBowScript.Spawn();
                 Animator skeletonBowAnimator = skeletonBow.GetComponentInChildren<Animator>();
-                StartCoroutine(SummonObjectOnOff(i));
             }
             enemyCount += 2;
         }
@@ -229,22 +233,28 @@ public class Boss : Enemy
         {
             for (int i = 0; i < 4; i++)
             {
-                GameObject skeletonSword = Instantiate(sword, summonPoints[i].transform.position, transform.rotation);
+                summonRealPoint = new Vector3(summonPoints[i].transform.position.x, summonPoints[i].transform.position.y, summonPoints[i].transform.position.z);
+                summonRealPoint = RaycastCheck(summonRealPoint);
+                GameObject skeletonSword = Instantiate(sword, summonRealPoint, transform.rotation);
                 enemyPrefabs[i] = skeletonSword;
                 Animator skeletonSwordAnimator = skeletonSword.GetComponentInChildren<Animator>();
                 EnemySkeletonSword skeletonSwordScript = skeletonSword.GetComponent<EnemySkeletonSword>();
                 skeletonSwordScript.Spawn();
-                StartCoroutine(SummonObjectOnOff(i));
             }
             enemyCount += 4;
         }
     }
 
-    IEnumerator SummonObjectOnOff(int summonNum)
+    Vector3 RaycastCheck(Vector3 summonPoint)
     {
-        summonPoints[summonNum].transform.GetChild(0).gameObject.SetActive(true);
-        yield return new WaitForSeconds(3.0f);
-        summonPoints[summonNum].transform.GetChild(0).gameObject.SetActive(false);
+        RaycastHit hit;
+
+        if (Physics.Raycast(summonPoint, Vector3.down, out hit, Mathf.Infinity, groundLayer))
+        {
+            summonPoint.y = hit.point.y;
+        }
+
+        return summonPoint;
     }
 
     // ½ºÄÌ·¹Åæ ¹öÇÁ

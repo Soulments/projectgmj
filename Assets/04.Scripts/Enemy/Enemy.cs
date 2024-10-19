@@ -11,6 +11,7 @@ public class Enemy : MonoBehaviour
     public Status status;
     public GameObject body;
     public GameObject dead;
+    public GameObject spawnObject;
 
     protected bool isSpawn;
     protected bool isChase;
@@ -113,6 +114,7 @@ public class Enemy : MonoBehaviour
     IEnumerator WaitForSpawn()
     {
         isSpawn = true;
+        spawnObject.SetActive(true);
         rigidBody.useGravity = false;
         capsuleCollider.enabled = false;
         navMeshAgent.enabled = false;
@@ -121,5 +123,6 @@ public class Enemy : MonoBehaviour
         capsuleCollider.enabled = true;
         rigidBody.useGravity = true;
         isSpawn = false;
+        Destroy(spawnObject);
     }
 }
