@@ -8,9 +8,10 @@ public class HitBox : MonoBehaviour
     
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Enmey" || other.gameObject.tag == "Boss")
+        if (other.gameObject.tag == "Enemy" || other.gameObject.tag == "Boss")
         {
             _ = new Damage(skillPercent, other.gameObject);
+            Debug.Log("damage ok");
         }
     }
 }

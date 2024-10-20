@@ -534,6 +534,8 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        Debug.Log("Collision Detected with: " + other.gameObject.name);
+
         if (other.gameObject.tag == "Arrow" || other.gameObject.tag == "Weapon")
         {
             if (!isEnhanced)

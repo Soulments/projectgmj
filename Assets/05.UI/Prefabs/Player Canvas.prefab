@@ -1213,9 +1213,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MessagePanel: {fileID: 392625124711828684}
-  itemStatus: {fileID: 0}
   itemName: {fileID: 0}
-  item: {fileID: 0}
+  itemStatus: {fileID: 0}
 --- !u!223 &6300449681934005890
 Canvas:
   m_ObjectHideFlags: 0
@@ -2504,42 +2503,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!1 &5517508900310818051
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 3748789055394371357}
-  m_Layer: 5
-  m_Name: Fill Area
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &3748789055394371357
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5517508900310818051}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 7199852947209889988}
-  m_Father: {fileID: 9223032433362542481}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.25}
-  m_AnchorMax: {x: 1, y: 0.75}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &5532594294053782284
 GameObject:
   m_ObjectHideFlags: 0
@@ -3199,7 +3162,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8584762403209429087}
-  - {fileID: 3748789055394371357}
+  - {fileID: 7199852947209889988}
   - {fileID: 9199203717901838762}
   m_Father: {fileID: 788268725196294297}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3803,9 +3766,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18fc0cb7cdd602a45be530f6490a51f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hpBar: {fileID: 5124597487416287344}
+  healthSlider: {fileID: 0}
+  player: {fileID: 0}
   maxHp: 1000
-  currentHp: 1000
+  health: 0
 --- !u!1 &7917357644448657262
 GameObject:
   m_ObjectHideFlags: 0
@@ -3836,12 +3800,12 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 3748789055394371357}
+  m_Father: {fileID: 9223032433362542481}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: -12.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &298708195000572144
 CanvasRenderer:

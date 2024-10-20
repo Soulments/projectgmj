@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HpController : MonoBehaviour
+public class HpCamera: MonoBehaviour
 {
     Transform cam;
     private void Start()

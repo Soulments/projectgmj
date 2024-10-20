@@ -93,7 +93,10 @@ public class EnemySkeletonSword : Enemy
             isAirBorned = false;
         }
         hitcount++;
-        if (hitcount > 5) OnDie();
+        Debug.Log("hitcount: "+hitcount);
+
+        // hitcount > 5 조건문 변경
+        if (status.CurrentHP < 0) OnDie();
         else yield return new WaitForSeconds(0.5f);
     }
 

@@ -7,14 +7,21 @@ public class EnemyHp : MonoBehaviour
 {
     public Slider healthSlider;
     public Slider yellHealthSlider;
-    public float maxhealth = 100f;
+    
+    public Enemy enemy;
+
     public float health;
     public float lerpSpeed = 0.01f;
 
     // Start is called before the first frame update
     void Start()
     {
-        health = maxhealth;
+        health = enemy.status.MaxHP;
+
+        healthSlider.maxValue = enemy.status.MaxHP;
+        yellHealthSlider.maxValue = enemy.status.MaxHP;
+
+        Debug.Log("health: "+health);
     }
 
     // Update is called once per frame
@@ -28,9 +35,8 @@ public class EnemyHp : MonoBehaviour
         {
             yellHealthSlider.value = Mathf.Lerp(yellHealthSlider.value, health, lerpSpeed);
         }
-    }
-    public void takeDamage(int damage)
-    {
-        health -= (damage * 20);
+
+        health = enemy.status.CurrentHP;
+       // Debug.Log("currentHP"+ enemy.status.CurrentHP);
     }
 }

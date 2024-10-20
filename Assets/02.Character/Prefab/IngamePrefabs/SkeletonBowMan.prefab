@@ -463,6 +463,11 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5218080709778084996, guid: 45e71ff63690594408e027fcd79fcf9a,
+        type: 3}
+      propertyPath: enemy
+      value: 
+      objectReference: {fileID: 1276394780861356393}
     - target: {fileID: 5407296909600632538, guid: 45e71ff63690594408e027fcd79fcf9a,
         type: 3}
       propertyPath: m_LocalScale.x
@@ -497,6 +502,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8828284788360440512, guid: 45e71ff63690594408e027fcd79fcf9a,
+        type: 3}
+      propertyPath: m_PresetInfoIsWorld
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
