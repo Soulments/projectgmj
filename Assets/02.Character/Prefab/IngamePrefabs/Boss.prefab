@@ -50,7 +50,7 @@ GameObject:
   - component: {fileID: 2012481351226059899}
   m_Layer: 0
   m_Name: Boss
-  m_TagString: Enemy
+  m_TagString: Boss
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -527,22 +527,22 @@ PrefabInstance:
     - target: {fileID: 1450716141903916997, guid: 70caf0f60d130354a9757109ee57c9d8,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1450716141903916997, guid: 70caf0f60d130354a9757109ee57c9d8,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1450716141903916997, guid: 70caf0f60d130354a9757109ee57c9d8,
         type: 3}
       propertyPath: m_LocalScale.z
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1450716141903916997, guid: 70caf0f60d130354a9757109ee57c9d8,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 300
+      value: 550
       objectReference: {fileID: 0}
     - target: {fileID: 2131231114743691215, guid: 70caf0f60d130354a9757109ee57c9d8,
         type: 3}
