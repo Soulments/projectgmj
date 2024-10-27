@@ -310,7 +310,7 @@ public class Boss : Enemy
     {
         while (transform.localScale.x > (5 - phaseCount))
         {
-            transform.localScale *= 0.9f;
+            transform.localScale *= 0.95f;
         }
         transform.localScale = new Vector3((5 - phaseCount), (5 - phaseCount), (5 - phaseCount));
         int height;

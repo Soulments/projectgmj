@@ -101,8 +101,8 @@ public class EnemySkeletonBow : Enemy
             capsuleCollider.enabled = true;
             isAirBorned = false;
         }
-        hitcount++;
-        if (hitcount > 5) OnDie();
+
+        if (status.CurrentHP < 0) OnDie();
         else yield return new WaitForSeconds(0.5f);
     }
 

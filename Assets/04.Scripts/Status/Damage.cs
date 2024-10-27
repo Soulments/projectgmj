@@ -11,10 +11,9 @@ public class Damage
     {
         if (otherObject.CompareTag("Player"))
         {
-            damagedPlayer = otherObject.GetComponent<PlayerController>();
+            damagedPlayer = otherObject.transform.parent.gameObject.GetComponent<PlayerController>();
 
             damagedPlayer.status.CurrentHP -= (int)damagePercent;
-            Debug.Log("currentHP: " + damagedPlayer.status.CurrentHP);
         }
         else
         {
@@ -23,7 +22,6 @@ public class Damage
             if (damagedEnemy.status.CurrentHP < 0) return;
 
             damagedEnemy.status.CurrentHP -= (int)damagePercent;
-            Debug.Log("currentHP: " + damagedEnemy.status.CurrentHP);
         }
     }
 }

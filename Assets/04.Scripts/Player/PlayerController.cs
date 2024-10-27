@@ -36,7 +36,11 @@ public class PlayerController : MonoBehaviour
     bool isAttack3;
     bool isJump;
     bool ishit;
+    bool isNormal;
+    bool isUpper;
+    bool isGust;
     bool isGrounded;
+    bool isAirborne;
     bool isEnhanced;
     bool usingPortal;
     bool comboTrigger;
@@ -63,7 +67,9 @@ public class PlayerController : MonoBehaviour
     public Status status;
     public GameObject swordGust;
 
-    public float jumpForce = 30000;
+    public float groundCheckDistance = 0;  // 바닥으로부터 플레이어가 유지하고 싶은 거리
+    public float adjustmentSpeed = 5f;  // 보정 속도
+    public float jumpForce;
     public float speed = 10;
     private int comboIndex;
 
@@ -83,6 +89,7 @@ public class PlayerController : MonoBehaviour
     void Awake()
     {
         status = new Status(UnitCode.Player, "플레이어", GameObject.Find("GameManager").GetComponent<GameManager>().stageCount);
+        groundLayer = LayerMask.GetMask("Floor");
         HitBoxDamage();
     }
 
@@ -90,7 +97,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         animator = playerBody.GetComponent<Animator>();
-        rigidBody = playerBody.GetComponent<Rigidbody>();
+        rigidBody = GetComponent<Rigidbody>();
         capsuleCollider = playerBody.GetComponent<CapsuleCollider>();
         SkillControlAttach();
     }
@@ -98,14 +105,17 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        DisableHitBox();
+        DisableAttack();
         GetInput();
         LookAround();
         Move();
         Jump();
+        //AdjustPlayerHeight();
         //GroundCheck();
         ActionPlayer();
         ComboAttack();
-        EndAttack();
+        ActionCheck();
         //Weapon();
         OnDie();
     }
@@ -139,6 +149,29 @@ public class PlayerController : MonoBehaviour
 
         swordGust.GetComponent<SwordGust>().skillPercent = (int)(status.SkillPercent[(int)SkillCode.SwordGust] * 0.75);
     }
+
+    // 히트박스 관리용
+    void DisableHitBox()
+    {
+        AnimatorStateInfo currentAnimation = animator.GetCurrentAnimatorStateInfo(0);
+        if (currentAnimation.IsTag("NotAttack"))
+        {
+            normalAttack.enabled = false;
+            jumpAttack.enabled = false;
+            skillAttack[(int)SkillCode.Upper].enabled = false;
+            skillAttack[(int)SkillCode.SwordGust].enabled = false;
+            skillAttack[(int)SkillCode.Windmill].enabled = false;
+        }
+    }
+
+    void DisableAttack()
+    {
+        AnimatorStateInfo currentAnimation = animator.GetCurrentAnimatorStateInfo(0);
+        if (currentAnimation.IsTag("NotAttack"))
+        {
+            isAttack = false;
+        }
+    }
     
 
     // Input값 정리
@@ -166,8 +199,6 @@ public class PlayerController : MonoBehaviour
 
             itemPickup.OnPickup(); // 아이템 획득하면 오브젝트 파괴
             itemPickup = null;
-
-            Debug.Log($"{item.itemName}");
 
             uiController.CloseMessagePanel();
         }
@@ -220,7 +251,7 @@ public class PlayerController : MonoBehaviour
         else animator.SetBool("isMove", isMove);
         // isMove 값 true일 때 이동
         if (ishit) moveDirection = Vector3.zero;
-        else if (isMove && !isAttack && !usingPortal)
+        else if (isMove && !isAttack && !isAirborne && !usingPortal)
         {
             lookForward = new Vector3(cameraArm.forward.x, 0f, cameraArm.forward.z).normalized;
             lookRight = new Vector3(cameraArm.right.x, 0f, cameraArm.right.z).normalized;
@@ -240,8 +271,31 @@ public class PlayerController : MonoBehaviour
         {
             rigidBody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             animator.SetBool("isJump", true);
-            animator.SetTrigger("doJump");
             isJump = true;
+            animator.SetTrigger("doJump");
+        }
+    }
+
+    private void AdjustPlayerHeight()
+    {
+        RaycastHit hit;
+        Vector3 rayOrigin = transform.position;
+
+        // 플레이어 아래로 Ray를 쏴서 바닥과의 거리 확인
+        if (Physics.Raycast(rayOrigin, Vector3.down, out hit, Mathf.Infinity))
+        {
+            float distanceToGround = hit.distance;
+            Debug.Log(distanceToGround);
+
+            // 바닥과의 거리가 지정한 거리보다 가까울 경우 위치 재조정
+            if (distanceToGround < groundCheckDistance)
+            {
+                float targetYPosition = hit.point.y + groundCheckDistance;  // 목표 높이
+                Vector3 targetPosition = new Vector3(transform.position.x, targetYPosition, transform.position.z);
+
+                // SmoothDamp을 사용해 부드럽게 높이 보정
+                transform.position = Vector3.Lerp(transform.position, targetPosition, adjustmentSpeed * Time.deltaTime);
+            }
         }
     }
 
@@ -271,6 +325,10 @@ public class PlayerController : MonoBehaviour
         {
             SkillSwordGust();
         }
+        if (!isJump && upperSkill)
+        {
+            SkillUpper();
+        }
         if (!isJump && windmillSkill[0])
         {
             SkiilWindmill();
@@ -289,16 +347,15 @@ public class PlayerController : MonoBehaviour
     // 일반공격
     private void NormalAttack()
     {
-        AnimatorStateInfo currentAnimation = animator.GetCurrentAnimatorStateInfo(0);
         if (!isAttack)
         {
             isAttack = true;
-            animator.SetTrigger("doAttack1a");
             comboIndex = 1;
-            normalAttack.enabled = true;
+            animator.SetTrigger("doAttack1a");
         }
     }
 
+    // 콤보 활성화 여부 확인
     void ComboCheck()
     {
         AnimatorStateInfo currentAnimation = animator.GetCurrentAnimatorStateInfo(0);
@@ -318,7 +375,8 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
-
+    
+    // 콤보 공격
     void ComboAttack()
     {
         if (!comboTrigger) return;
@@ -349,13 +407,33 @@ public class PlayerController : MonoBehaviour
         comboTrigger = false;
     }
 
+    float RaycastCheck()
+    {
+        RaycastHit hit;
+        float distance = -1;
+
+        if (Physics.Raycast(transform.position, Vector3.down, out hit, Mathf.Infinity, groundLayer))
+        {
+            distance = transform.position.y - hit.point.y;
+        }
+
+        return distance;
+    }
+
     // 점프공격
     private void JumpAttack()
     {
         isAttack = true;
+        float distance = RaycastCheck() != 1 ? RaycastCheck() : 0;
+        Debug.Log(distance);
+        if (distance <= 0.75f) return;
+        if (isUpper)
+        {
+            distance = (float)Math.Ceiling(distance);
+            skillAttack[(int)SkillCode.Upper].GetComponent<HitBox>().skillPercent = status.SkillPercent[(int)SkillCode.Upper] * (1 + (0.1f * distance / 2));
+        }
         animator.SetTrigger("doAttack2");
-        rigidBody.AddForce(Vector3.down * jumpForce, ForceMode.Impulse);
-        StartCoroutine(WaitForJumpAttack(1));
+        rigidBody.AddForce(Vector3.down * jumpForce * 5, ForceMode.Impulse);
     }
 
     // 스킬 1번 버프
@@ -378,19 +456,8 @@ public class PlayerController : MonoBehaviour
     {
         isAttack = true;
         animator.SetTrigger("doAttack5");
-        StartCoroutine(UpperSkill());
         CoolTimeTrigger(0);
         StartCoroutine(WaitForCooltime(skillControls[0].GetComponent<SkillControl>().coolTime, 0));
-    }
-
-    // 올려치기용 코루틴
-    IEnumerator UpperSkill()
-    {
-        yield return new WaitForSeconds(1f);
-        skillAttack[1].enabled = true;
-        yield return new WaitForSeconds(1.5f);
-        skillAttack[1].enabled = false;
-        SwordGust();
     }
 
     // 검풍 날리기
@@ -404,7 +471,11 @@ public class PlayerController : MonoBehaviour
     // 스킬 3번 도약 내려치기
     void SkillUpper()
     {
-
+        isUpper = true;
+        animator.SetBool("isJump", true);
+        animator.SetTrigger("doAttack6");
+        CoolTimeTrigger(1);
+        StartCoroutine(WaitForCooltime(skillControls[1].GetComponent<SkillControl>().coolTime, 1));
     }
 
     // 스킬 4번 윈드밀
@@ -414,7 +485,7 @@ public class PlayerController : MonoBehaviour
         animator.SetTrigger("doAttack3");
         StartCoroutine(WindmillReady());
         StartCoroutine(Windmill());
-        StartCoroutine(WindmillDuration());
+        //StartCoroutine(WindmillDuration());
     }
 
     // 윈드밀 시전 대기
@@ -426,13 +497,12 @@ public class PlayerController : MonoBehaviour
     // 윈드밀 시전중
     IEnumerator Windmill()
     {
-        WaitForSeconds waitWindmil = new WaitForSeconds(0.5f);
+        WaitForSeconds waitWindmil = new WaitForSeconds(0.3f);
         while (true)
         {
             if (!isAttack3) break;
-            skillAttack[3].enabled = true;
+            skillAttack[(int)SkillCode.Windmill].enabled = !skillAttack[(int)SkillCode.Windmill].enabled;
             yield return waitWindmil;
-            skillAttack[3].enabled = false;
         }
     }
     
@@ -447,29 +517,84 @@ public class PlayerController : MonoBehaviour
     {
         isAttack3 = false;
         animator.SetTrigger("stopAttack3");
-        skillAttack[3].enabled = false;
+        skillAttack[(int)SkillCode.Windmill].enabled = false;
         CoolTimeTrigger(2);
         StartCoroutine(WaitForCooltime(skillControls[3].GetComponent<SkillControl>().coolTime, 2));
     }
 
-    private void EndAttack()
+    private void ActionCheck()
     {
-        if (comboTrigger) return;
         AnimatorStateInfo currentAnimation = animator.GetCurrentAnimatorStateInfo(0);
-        if (currentAnimation.IsName("Attack1a") || currentAnimation.IsName("Attack1b") || currentAnimation.IsName("Attack1c"))
+        if (currentAnimation.IsTag("NormalAttack"))
         {
+            if (!isNormal && currentAnimation.normalizedTime > 0.2f && currentAnimation.normalizedTime < 0.8f)
+            {
+                Debug.Log("노말공격 시작");
+                normalAttack.enabled = true;
+                isNormal = true;
+            }
+            if (currentAnimation.normalizedTime >= 0.8f)
+            {
+                Debug.Log("노말공격 종료");
+                isNormal = false;
+                normalAttack.enabled = false;
+            }
+            if (comboTrigger) return;
             if (currentAnimation.normalizedTime >= 0.99f)
             {
                 isAttack = false;
                 comboIndex = 0;
             }
         }
-        if (currentAnimation.IsName("Attack4a") || currentAnimation.IsName("Attack5a"))
+        if (currentAnimation.IsName("Attack2b"))
         {
+            if (currentAnimation.normalizedTime > 0.1f && currentAnimation.normalizedTime < 0.8f && !skillAttack[(int)SkillCode.Upper].enabled)
+            {
+                if (isUpper) skillAttack[(int)SkillCode.Upper].enabled = true;
+                else jumpAttack.enabled = true;
+            }
+            if (currentAnimation.normalizedTime >= 0.8f)
+            {
+                if (isUpper) skillAttack[(int)SkillCode.Upper].enabled = false;
+                else jumpAttack.enabled = false;
+            }
+            
             if (currentAnimation.normalizedTime >= 0.99f)
             {
+                isUpper = false;
                 isAttack = false;
             }
+        }
+        if (currentAnimation.IsName("Attack4a") || currentAnimation.IsName("SwordGust"))
+        {
+            if (!isGust && currentAnimation.normalizedTime > 0.55f && currentAnimation.normalizedTime < 0.8f && !skillAttack[(int)SkillCode.SwordGust].enabled)
+            {
+                skillAttack[(int)SkillCode.SwordGust].enabled = true;
+                isGust = true;
+                SwordGust();
+            }
+            if (currentAnimation.normalizedTime >= 0.8f)
+            {
+                skillAttack[(int)SkillCode.SwordGust].enabled = false;
+            }
+            if (currentAnimation.normalizedTime >= 0.99f)
+            {
+                isGust = false;
+                isAttack = false;
+            }
+        }
+        if (currentAnimation.IsName("Upper") && currentAnimation.normalizedTime >= 0.99f && !isJump)
+        {
+            rigidBody.AddForce(Vector3.up * jumpForce * 2f, ForceMode.Impulse);
+            isJump = true;
+        }
+        if (currentAnimation.IsName("Airborne") || currentAnimation.IsName("GetUp"))
+        {
+            isAirborne = true;
+        }
+        else
+        {
+            isAirborne = false;
         }
     }
 
@@ -490,6 +615,8 @@ public class PlayerController : MonoBehaviour
         else if (!isAttack3 && !isEnhanced)
         {
             animator.SetTrigger("doHit");
+            isAttack = false;
+            comboIndex = 0;
             StartCoroutine(Hit());
             hitCount++;
         }
@@ -499,12 +626,26 @@ public class PlayerController : MonoBehaviour
     IEnumerator Enhance()
     {
         animator.SetTrigger("doAirborn");
+        DisableAllHitBox();
+        isAttack = false;
         capsuleCollider.enabled = false;
+        rigidBody.useGravity = false;
         isEnhanced = true;
         yield return new WaitForSeconds(5.0f);
         isEnhanced = false;
         hitCount = 0;
+        comboIndex = 0;
         capsuleCollider.enabled = true;
+        rigidBody.useGravity = true;
+    }
+
+    void DisableAllHitBox()
+    {
+        normalAttack.enabled = false;
+        jumpAttack.enabled = false;
+        skillAttack[(int)SkillCode.SwordGust].enabled = false;
+        skillAttack[(int)SkillCode.Upper].enabled = false;
+        skillAttack[(int)SkillCode.Windmill].enabled = false;
     }
 
     IEnumerator Hit()
@@ -534,8 +675,6 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Collision Detected with: " + other.gameObject.name);
-
         if (other.gameObject.tag == "Arrow" || other.gameObject.tag == "Weapon")
         {
             if (!isEnhanced)
@@ -592,14 +731,6 @@ public class PlayerController : MonoBehaviour
         transform.position = new Vector3(endPortals[i].transform.position.x, 0, endPortals[i].transform.position.z);
         yield return new WaitForSeconds(1.5f);
         usingPortal = false;
-    }
-
-    IEnumerator WaitForJumpAttack(int attackNum)
-    {
-        jumpAttack.enabled = true;
-        yield return new WaitForSeconds(0.5f);
-        jumpAttack.enabled = false;
-        isAttack = false;
     }
 
     // 쿨타임 체크용 코루틴

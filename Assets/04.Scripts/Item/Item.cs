@@ -62,7 +62,6 @@ public class Item : MonoBehaviour
     {
         int randomEnhance = Random.Range(0, 5);
 
-        Debug.Log(randomEnhance);
         addStats = (float)(1 + (0.05 * 1));
         //addStats = (float)(1 + (0.05 * gameManager.stageCount));
 

@@ -75,9 +75,9 @@ public class Status
         CurrentHP = MaxHP;
         AttackDamage = 60.0f;
         Defense = 5;
-        SkillPercent[(int)SkillCode.Jump] = 90;
+        SkillPercent[(int)SkillCode.Jump] = 60;
         SkillPercent[(int)SkillCode.SwordGust] = 80;
-        SkillPercent[(int)SkillCode.Upper] = 90;
+        SkillPercent[(int)SkillCode.Upper] = 60;
         SkillPercent[(int)SkillCode.Windmill] = 45;
         MoveSpeed = 1.0f;
         JumpForce = 1.0f;
@@ -106,7 +106,6 @@ public class Status
     // 보스용
     public void InitBossStatus(string objectName)
     {
-        Debug.Log("보스 스테이터스");
         ObjectName = objectName;
 
         MaxHP = 3000;

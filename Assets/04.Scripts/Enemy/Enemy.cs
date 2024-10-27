@@ -21,8 +21,6 @@ public class Enemy : MonoBehaviour
     protected bool isHit = false;
     protected bool isAirBorned = false;
 
-    protected int hitcount = 0;
-
     protected float attackRange = 1.5f;
     protected float closeRange = 0.5f;
 
@@ -101,8 +99,9 @@ public class Enemy : MonoBehaviour
     protected virtual void OnDie()
     {
         if (status.CurrentHP > 0) return;
+        capsuleCollider.enabled = false;
         Vector3 position = new Vector3 (transform.position.x, transform.position.y + 1, transform.position.z);
-        Instantiate(item, position, Quaternion.identity);
+        // Instantiate(item, position, Quaternion.identity);
     }
 
     public void Spawn()

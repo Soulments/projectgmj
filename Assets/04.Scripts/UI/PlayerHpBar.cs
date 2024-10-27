@@ -16,9 +16,7 @@ public class PlayerHpBar : MonoBehaviour
         health = player.status.MaxHP;
 
         healthSlider.maxValue = player.status.MaxHP;
-        //yellHealthSlider.maxValue = enemy.status.MaxHP;
-
-        Debug.Log("health: " + health);
+        //yellHealthSlider.maxValue = player.status.MaxHP;
     }
 
     // Update is called once per frame
@@ -29,5 +27,7 @@ public class PlayerHpBar : MonoBehaviour
             healthSlider.value = Mathf.Lerp(healthSlider.value, health, Time.deltaTime * 5f);
         }
         //healthSlider.value = Mathf.Lerp(healthSlider.value, health, Time.deltaTime * 5f);
+
+        health = player.status.CurrentHP;
     }
 }

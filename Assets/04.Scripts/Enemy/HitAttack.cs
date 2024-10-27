@@ -2,13 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HitBox : MonoBehaviour
+public class HitAttack : MonoBehaviour
 {
     public float skillPercent;
-    
+
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Enemy" || other.gameObject.tag == "Boss")
+        if (other.gameObject.tag == "Player")
         {
             _ = new Damage(skillPercent, other.gameObject);
         }

@@ -14,6 +14,7 @@ public class EnemySkeletonSword : Enemy
         isChase = true;
         animator.SetBool("isMove", true);
         Spawn();
+        attackBox.GetComponent<HitAttack>().skillPercent = status.AttackDamage;
     }
 
     protected override void Update()
@@ -24,6 +25,7 @@ public class EnemySkeletonSword : Enemy
             navMeshAgent.SetDestination(target.position);
             navMeshAgent.isStopped = !isChase;
         }
+        AnimationCheck();
     }
 
     protected override void FixedUpdate()
@@ -33,6 +35,22 @@ public class EnemySkeletonSword : Enemy
         bool isTooClose = Vector3.Distance(transform.position, target.position) < closeRange;
         Targeting(isOverRange);
         FreezeVelocity(isOverRange, isTooClose);
+    }
+
+    void AnimationCheck()
+    {
+        AnimatorStateInfo currentAnimation = animator.GetCurrentAnimatorStateInfo(0);
+        if (currentAnimation.IsName("Attack"))
+        {
+            if (currentAnimation.normalizedTime > 0.65f)
+            {
+                attackBox.enabled = true;
+            }
+            if (currentAnimation.normalizedTime > 0.9f)
+            {
+                attackBox.enabled = false;
+            }
+        }
     }
 
     // 스켈레톤 검사 공격 함수
@@ -92,10 +110,7 @@ public class EnemySkeletonSword : Enemy
             capsuleCollider.enabled = true;
             isAirBorned = false;
         }
-        hitcount++;
-        Debug.Log("hitcount: "+hitcount);
 
-        // hitcount > 5 조건문 변경
         if (status.CurrentHP < 0) OnDie();
         else yield return new WaitForSeconds(0.5f);
     }
@@ -103,6 +118,7 @@ public class EnemySkeletonSword : Enemy
     protected override void OnDie()
     {
         base.OnDie();
+        attackBox.enabled = false;
         body.SetActive(false);
         dead.SetActive(true);
         StartCoroutine(CoroutineDie());

@@ -7,7 +7,7 @@ public class Projectile : MonoBehaviour
 {
     public char projectileType;
     public float speed;
-    Transform target = null;
+    public Transform target = null;
     Rigidbody rigidBody;
     Boss boss;
 
@@ -52,7 +52,7 @@ public class Projectile : MonoBehaviour
 
     IEnumerator DestroyProjectile()
     {
-        yield return new WaitForSeconds(10.0f);
+        yield return new WaitForSeconds(5.0f);
         Destroy(gameObject);
     }
 
@@ -72,14 +72,17 @@ public class Projectile : MonoBehaviour
     {
         if (other.gameObject.tag == "Player" || other.gameObject.tag == "Floor")
         {
-            // 데미지 주는 기능
-            if (projectileType == 'A')
+            if (other.gameObject.tag == "Player")
             {
-                _ = new Damage(boss.status.AttackDamage, other.gameObject);
-            }
-            else
-            {
-                _ = new Damage(boss.status.AttackDamage * 3, other.gameObject);
+                // 데미지 주는 기능
+                if (projectileType == 'A')
+                {
+                    _ = new Damage(boss.status.AttackDamage, other.gameObject);
+                }
+                else
+                {
+                    _ = new Damage(boss.status.AttackDamage * 3, other.gameObject);
+                }
             }
             Destroy(gameObject);
         }

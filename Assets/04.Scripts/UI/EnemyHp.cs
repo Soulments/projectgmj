@@ -20,8 +20,6 @@ public class EnemyHp : MonoBehaviour
 
         healthSlider.maxValue = enemy.status.MaxHP;
         yellHealthSlider.maxValue = enemy.status.MaxHP;
-
-        Debug.Log("health: "+health);
     }
 
     // Update is called once per frame

@@ -522,6 +522,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3627944878351756996}
   - component: {fileID: 7063199442179339795}
+  - component: {fileID: 5705786122586072595}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -584,12 +585,41 @@ MonoBehaviour:
   - {fileID: 0}
   swordGust: {fileID: 7605194443583224498, guid: 1800769ab40a27644b3b8c362818f76b,
     type: 3}
+  groundCheckDistance: 0.5
+  adjustmentSpeed: 5
   jumpForce: 400
   speed: 10
   inventory: {fileID: 0}
   inventoryCanvasGroup: {fileID: 0}
   uiController: {fileID: 0}
   itemStatus: {fileID: 0}
+--- !u!54 &5705786122586072595
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7095382832543323647}
+  serializedVersion: 4
+  m_Mass: 70
+  m_Drag: 1
+  m_AngularDrag: 0.1
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 112
+  m_CollisionDetection: 1
 --- !u!1 &7387834179672123431
 GameObject:
   m_ObjectHideFlags: 0
@@ -897,6 +927,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlayerSwordMan_20241018
       objectReference: {fileID: 0}
+    - target: {fileID: 2731919333530419045, guid: e5ffcff91e78e454bb4126c34c9df1b7,
+        type: 3}
+      propertyPath: m_TagString
+      value: Player
+      objectReference: {fileID: 0}
     - target: {fileID: 3285423485425574441, guid: e5ffcff91e78e454bb4126c34c9df1b7,
         type: 3}
       propertyPath: m_Controller
@@ -964,10 +999,6 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 5407987612791315066}
-    - targetCorrespondingSourceObject: {fileID: 2731919333530419045, guid: e5ffcff91e78e454bb4126c34c9df1b7,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 3076357725612520025}
   m_SourcePrefab: {fileID: 100100000, guid: e5ffcff91e78e454bb4126c34c9df1b7, type: 3}
 --- !u!1 &3228526861345676648 stripped
 GameObject:
@@ -998,33 +1029,6 @@ CapsuleCollider:
   m_Height: 1.7
   m_Direction: 1
   m_Center: {x: 0, y: 0.85, z: 0}
---- !u!54 &3076357725612520025
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3228526861345676648}
-  serializedVersion: 4
-  m_Mass: 70
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 112
-  m_CollisionDetection: 1
 --- !u!4 &4133535222871812657 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3493375325132032060, guid: e5ffcff91e78e454bb4126c34c9df1b7,

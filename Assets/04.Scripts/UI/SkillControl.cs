@@ -37,7 +37,6 @@ public class SkillControl : MonoBehaviour
         hideImg.SetActive(true);
         startTime = coolTime;
         isUseSkill = true;
-        Debug.Log("HideSkill button clicked!");
     }
     IEnumerator SkillTimeChk()
     {

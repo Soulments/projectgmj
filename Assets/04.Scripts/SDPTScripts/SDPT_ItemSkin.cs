@@ -33,7 +33,7 @@ public class SDPT_ItemSkin : MonoBehaviour
             GameObject skinObject = Instantiate(objectList[Math.Abs(skinCode) % objectList.Count], transform.position, transform.rotation);
 
             // 스킨값 넘기기 ------------------------------
-            Debug.Log(skinObject.name);
+            // Debug.Log(skinObject.name);
             objectItem.SetItemSkin(skinObject.name);
             // -------------------------------------------
 
