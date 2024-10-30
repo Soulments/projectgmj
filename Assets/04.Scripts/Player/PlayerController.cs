@@ -89,8 +89,9 @@ public class PlayerController : MonoBehaviour
 
     void Awake()
     {
-        status = new Status(UnitCode.Player, "플레이어", GameObject.Find("GameManager").GetComponent<GameManager>().waveCount);
-        groundLayer = LayerMask.GetMask("Floor");
+        // status = new Status(UnitCode.Player, "플레이어", GameObject.Find("GameManager").GetComponent<GameManager>().waveCount);
+        status = new Status(UnitCode.Player, "플레이어", 1);
+        groundLayer = LayerMask.GetMask("Ground");
         HitBoxDamage();
     }
 
@@ -119,7 +120,6 @@ public class PlayerController : MonoBehaviour
         ActionCheck();
         //Weapon();
         if (!isDead) OnDie();
-        Debug.Log(isAirborne);
     }
 
     private void FixedUpdate()
@@ -303,7 +303,7 @@ public class PlayerController : MonoBehaviour
 
     //private void GroundCheck()
     //{
-    //    isGrounded = Physics.Raycast(transform.position, Vector3.down, 0.1f, LayerMask.GetMask("Floor"));
+    //    isGrounded = Physics.Raycast(transform.position, Vector3.down, 0.1f, LayerMask.GetMask("Ground"));
     //    if (isGrounded)
     //    {
     //        animator.SetBool("isJump", false);
@@ -671,7 +671,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.tag == "Floor")
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
         {
             animator.SetBool("isJump", false);
             isJump = false;

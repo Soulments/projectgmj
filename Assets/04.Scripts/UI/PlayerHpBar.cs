@@ -13,6 +13,7 @@ public class PlayerHpBar : MonoBehaviour
 
     void Start()
     {
+        player = GameObject.Find("Player").GetComponent<PlayerController>();
         health = player.status.MaxHP;
 
         healthSlider.maxValue = player.status.MaxHP;

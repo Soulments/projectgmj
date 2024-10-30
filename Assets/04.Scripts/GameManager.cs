@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
     public int waveCount = 1;
     public bool portalTrigger = false;
     public bool stageEnd = false;
+    public bool townStage = false;
     public bool bossStage = false;
     public bool bossAwake = false;
 
@@ -22,7 +23,7 @@ public class GameManager : MonoBehaviour
     {
         player = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
         InitScene();
-        if (!bossStage)
+        if (!bossStage && !townStage)
         {
             WaveStart();
         }
@@ -33,14 +34,18 @@ public class GameManager : MonoBehaviour
     {
         if (!stageEnd)
         {
-            if (bossStage)
+            if (!townStage)
             {
-                BossCheck();
+                if (bossStage)
+                {
+                    BossCheck();
+                }
+                else
+                {
+                    WaveChange();
+                }
             }
-            else
-            {
-                WaveChange();
-            }
+            
             ActivatePortal();
         }
     }
@@ -48,7 +53,7 @@ public class GameManager : MonoBehaviour
     // æ¿ √ ±‚»≠
     void InitScene()
     {
-        if (!bossStage) FindWaves();
+        if (!bossStage && !townStage) FindWaves();
         GetPortal();
     }
     

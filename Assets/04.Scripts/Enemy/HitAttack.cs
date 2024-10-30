@@ -8,7 +8,7 @@ public class HitAttack : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Player")
+        if (other.gameObject.CompareTag("Player"))
         {
             _ = new Damage(skillPercent, other.gameObject);
         }

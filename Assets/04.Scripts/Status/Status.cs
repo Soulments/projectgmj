@@ -90,14 +90,14 @@ public class Status
         ObjectName = objectName;
         if (ObjectName == "근거리")
         {
-            MaxHP = 100;
+            MaxHP = 400;
             CurrentHP = MaxHP;
             AttackDamage = 5;
             Defense = 5;
         }
         else if(ObjectName == "원거리")
         {
-            MaxHP = 60;
+            MaxHP = 300;
             CurrentHP = MaxHP;
             AttackDamage = 6;
             Defense = 7;
