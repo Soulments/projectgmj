@@ -13,6 +13,8 @@ public class Enemy : MonoBehaviour
     public GameObject dead;
     public GameObject spawnObject;
 
+    public bool dontDaamge;
+
     protected bool isSpawn;
     protected bool isChase;
     protected bool isMove;
@@ -33,7 +35,7 @@ public class Enemy : MonoBehaviour
 
     Boss boss;
 
-    protected virtual void Awake()
+    protected virtual void Start()
     {
         rigidBody = GetComponent<Rigidbody>();
         capsuleCollider = GetComponent<CapsuleCollider>();
@@ -52,7 +54,7 @@ public class Enemy : MonoBehaviour
     {
         bool isOverRange = Vector3.Distance(transform.position, target.position) > attackRange;
         bool isTooClose = Vector3.Distance(transform.position, target.position) < closeRange;
-        Targeting(isOverRange);
+        if (status.CurrentHP > 0) Targeting(isOverRange);
         FreezeVelocity(isOverRange, isTooClose);
     }
 
@@ -101,7 +103,7 @@ public class Enemy : MonoBehaviour
         if (status.CurrentHP > 0) return;
         capsuleCollider.enabled = false;
         Vector3 position = new Vector3 (transform.position.x, transform.position.y + 1, transform.position.z);
-        // Instantiate(item, position, Quaternion.identity);
+        Instantiate(item, position, Quaternion.identity);
     }
 
     public void Spawn()

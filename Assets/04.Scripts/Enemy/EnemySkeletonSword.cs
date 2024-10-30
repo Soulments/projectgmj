@@ -6,15 +6,17 @@ using UnityEngine.AI;
 public class EnemySkeletonSword : Enemy
 {
     public BoxCollider attackBox;
-    protected override void Awake()
+
+    bool ishit;
+    protected override void Start()
     {
-        base.Awake();
+        base.Start();
         status = new Status(UnitCode.Enemy, "근거리", 1);
         isMove = true;
         isChase = true;
         animator.SetBool("isMove", true);
-        Spawn();
         attackBox.GetComponent<HitAttack>().skillPercent = status.AttackDamage;
+        Spawn();
     }
 
     protected override void Update()
@@ -33,7 +35,7 @@ public class EnemySkeletonSword : Enemy
         base.FixedUpdate();
         bool isOverRange = Vector3.Distance(transform.position, target.position) > attackRange;
         bool isTooClose = Vector3.Distance(transform.position, target.position) < closeRange;
-        Targeting(isOverRange);
+        if (status.CurrentHP > 0) Targeting(isOverRange);
         FreezeVelocity(isOverRange, isTooClose);
     }
 
@@ -51,6 +53,14 @@ public class EnemySkeletonSword : Enemy
                 attackBox.enabled = false;
             }
         }
+        if (currentAnimation.IsName("Hit"))
+        {
+            ishit = true;
+        }
+        else
+        {
+            ishit = false;
+        }
     }
 
     // 스켈레톤 검사 공격 함수
@@ -61,6 +71,10 @@ public class EnemySkeletonSword : Enemy
             return;
         }
         if (isAttack)
+        {
+            return;
+        }
+        if (ishit)
         {
             return;
         }
@@ -112,7 +126,6 @@ public class EnemySkeletonSword : Enemy
         }
 
         if (status.CurrentHP < 0) OnDie();
-        else yield return new WaitForSeconds(0.5f);
     }
 
     protected override void OnDie()

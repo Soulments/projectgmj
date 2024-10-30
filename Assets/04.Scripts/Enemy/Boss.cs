@@ -36,9 +36,9 @@ public class Boss : Enemy
     bool directAttack_A_Ready = false;
     bool directAttack_B_Ready = false;
 
-    protected override void Awake()
+    protected override void Start()
     {
-        base.Awake();
+        base.Start();
         status = new Status(UnitCode.Boss, "보스", 1);
         groundLayer = LayerMask.GetMask("Floor");
         StartCoroutine(Phase1());
@@ -49,6 +49,7 @@ public class Boss : Enemy
         // 플레이어를 항상 바라보게
         transform.LookAt(target);
         EnemyDestoryCheck();
+        Debug.Log(status.CurrentHP);
     }
 
     // 보스 페이즈 1
@@ -222,9 +223,6 @@ public class Boss : Enemy
                 summonRealPoint = RaycastCheck(summonRealPoint);
                 GameObject skeletonBow = Instantiate(bow, summonRealPoint, transform.rotation);
                 enemyPrefabs[i] = skeletonBow;
-                EnemySkeletonBow skeletonBowScript = skeletonBow.GetComponent<EnemySkeletonBow>();
-                skeletonBowScript.Spawn();
-                Animator skeletonBowAnimator = skeletonBow.GetComponentInChildren<Animator>();
             }
             enemyCount += 2;
         }
@@ -237,9 +235,6 @@ public class Boss : Enemy
                 summonRealPoint = RaycastCheck(summonRealPoint);
                 GameObject skeletonSword = Instantiate(sword, summonRealPoint, transform.rotation);
                 enemyPrefabs[i] = skeletonSword;
-                Animator skeletonSwordAnimator = skeletonSword.GetComponentInChildren<Animator>();
-                EnemySkeletonSword skeletonSwordScript = skeletonSword.GetComponent<EnemySkeletonSword>();
-                skeletonSwordScript.Spawn();
             }
             enemyCount += 4;
         }

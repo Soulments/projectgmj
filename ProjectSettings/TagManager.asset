@@ -13,6 +13,7 @@ TagManager:
   - Item
   - Boss
   - EnemyDead
+  - Portal
   layers:
   - Default
   - TransparentFX

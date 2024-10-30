@@ -1,56 +1,153 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Unity.VisualScripting;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public int stageCount = 1;
-    public bool portalTrigger;
+    public int waveCount = 1;
+    public bool portalTrigger = false;
+    public bool stageEnd = false;
+    public bool bossStage = false;
+    public bool bossAwake = false;
 
-    public GameObject[] portals;
+    public GameObject portal;
+    public GameObject boss;
     public GameObject[] enemies;
     public GameObject[] waves;
+    public PlayerController player;
     // Start is called before the first frame update
     void Start()
     {
-        foreach (GameObject w in waves)
+        player = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
+        InitScene();
+        if (!bossStage)
         {
-            w.SetActive(false);
+            WaveStart();
         }
-        portals[0].SetActive(false);
-        WaveStart();
     }
 
     // Update is called once per frame
     void Update()
     {
-        Portal();
-        CheckEnemy();
-    }
-
-    void WaveStart()
-    {
-        waves[stageCount - 1].SetActive(true);
-        return;
-    }
-
-    public void Portal()
-    {
-        if (portalTrigger)
+        if (!stageEnd)
         {
-            waves[stageCount - 1].SetActive(false);
-            stageCount++;
-            WaveStart();
-            portalTrigger = false;
+            if (bossStage)
+            {
+                BossCheck();
+            }
+            else
+            {
+                WaveChange();
+            }
+            ActivatePortal();
+        }
+    }
+    
+    // 씬 초기화
+    void InitScene()
+    {
+        if (!bossStage) FindWaves();
+        GetPortal();
+    }
+    
+    // 웨이브 찾기
+    void FindWaves()
+    {
+        GameObject enemyControl = GameObject.Find("EnemyControl");
+        List<GameObject> childrenWaves = new List<GameObject>();
+
+        foreach (Transform wave in enemyControl.transform)
+        {
+            childrenWaves.Add(wave.gameObject);
+        }
+
+        waves = childrenWaves.ToArray();
+
+        foreach (GameObject wave in waves)
+        {
+            wave.SetActive(false);
         }
     }
 
-    void CheckEnemy()
+    // 포탈 세팅
+    void GetPortal()
     {
-        if (waves[stageCount - 1].transform.childCount == 0)
+        portal = GameObject.FindWithTag("Portal");
+        portal.SetActive(false);
+    }
+
+    // 웨이브 내 적 탐지용
+    void GetEnemies(GameObject wave)
+    {
+        List<GameObject> enemiesInWave = new List<GameObject>();
+
+        foreach (Transform enemy in wave.transform)
         {
-            portals[0].SetActive(true);
+           enemiesInWave.Add(enemy.gameObject);
+        }
+
+        enemies = enemiesInWave.ToArray();
+    }
+
+    // 웨이브 시작
+    void WaveStart()
+    {
+        GetEnemies(waves[0]);
+        waves[0].SetActive(true);
+    }
+
+    // 웨이브 변경
+    void WaveChange()
+    {
+        if (CheckEnemy())
+        {
+            waves[waveCount - 1].SetActive(false);
+
+            if (waveCount == 3)
+            {
+                portalTrigger = true;
+                stageEnd = true;
+            }
+            else
+            {
+                GetEnemies(waves[waveCount]);
+                waves[waveCount].SetActive(true);
+                waveCount++;
+            }
+
+        }
+    }
+
+    // 포탈 활성화
+    public void ActivatePortal()
+    {
+        if (portalTrigger)
+        {
+            portal.SetActive(true);
+        }
+    }
+
+    // 웨이브 내 남은 적 체크
+    bool CheckEnemy()
+    {
+        foreach (GameObject e in enemies)
+        {
+            if (e != null)
+                return false;
+        }
+
+        return true;
+    }
+
+    // 보스 파괴 체크
+    void BossCheck()
+    {
+        if (boss == null)
+        {
+            portalTrigger = true;
+            stageEnd = true;
         }
     }
 }

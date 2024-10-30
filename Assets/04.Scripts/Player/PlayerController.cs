@@ -44,7 +44,6 @@ public class PlayerController : MonoBehaviour
     bool isEnhanced;
     bool usingPortal;
     bool comboTrigger;
-    public bool isDead = false;
 
     Vector2 moveInput;
     Vector3 lookForward;
@@ -72,6 +71,8 @@ public class PlayerController : MonoBehaviour
     public float jumpForce;
     public float speed = 10;
     private int comboIndex;
+    public bool dontDamage;
+    public bool isDead = false;
 
     [SerializeField]
     public Inventory inventory;
@@ -88,7 +89,7 @@ public class PlayerController : MonoBehaviour
 
     void Awake()
     {
-        status = new Status(UnitCode.Player, "플레이어", GameObject.Find("GameManager").GetComponent<GameManager>().stageCount);
+        status = new Status(UnitCode.Player, "플레이어", GameObject.Find("GameManager").GetComponent<GameManager>().waveCount);
         groundLayer = LayerMask.GetMask("Floor");
         HitBoxDamage();
     }
@@ -117,7 +118,8 @@ public class PlayerController : MonoBehaviour
         ComboAttack();
         ActionCheck();
         //Weapon();
-        OnDie();
+        if (!isDead) OnDie();
+        Debug.Log(isAirborne);
     }
 
     private void FixedUpdate()
@@ -177,11 +179,11 @@ public class PlayerController : MonoBehaviour
     // Input값 정리
     private void GetInput()
     {
-        horizontalAxis = Input.GetAxis("Horizontal") * (!isInventoryOpen ? 1 : 0);
-        verticalAxis = Input.GetAxis("Vertical") * (!isInventoryOpen ? 1 : 0);
-        jumpDown = Input.GetButtonDown("Jump") && !isInventoryOpen;
-        mouseLeft = Input.GetMouseButtonDown(0) && !isInventoryOpen;
-        mouseRight = Input.GetMouseButtonDown(1) && !isInventoryOpen;
+        horizontalAxis = Input.GetAxis("Horizontal") * (!isInventoryOpen ? 1 : 0) * (!isAirborne ? 1 : 0);
+        verticalAxis = Input.GetAxis("Vertical") * (!isInventoryOpen ? 1 : 0) * (!isAirborne ? 1 : 0);
+        jumpDown = Input.GetButtonDown("Jump") && !isInventoryOpen && !isAirborne;
+        mouseLeft = Input.GetMouseButtonDown(0) && !isInventoryOpen && !isAirborne;
+        mouseRight = Input.GetMouseButtonDown(1) && !isInventoryOpen && !isAirborne;
 
         // 인벤토리 on/off----------------
         if (Input.GetKeyDown(KeyCode.I))
@@ -204,11 +206,11 @@ public class PlayerController : MonoBehaviour
         }
         // ------------------------------------------------------
 
-        swordGustSkill = Input.GetKeyDown(KeyCode.Q) && !cooldownswordGustSkill && !isInventoryOpen;
-        upperSkill = Input.GetKeyDown(KeyCode.E) && !cooldownupperSkill && !isInventoryOpen;
-        windmillSkill[0] = Input.GetKeyDown(KeyCode.R) && !cooldownwindmillSkill && !isInventoryOpen;
-        windmillSkill[1] = Input.GetKeyUp(KeyCode.R) && !cooldownwindmillSkill && !isInventoryOpen;
-        bufSkill = Input.GetKeyDown(KeyCode.Tab) && !cooldownbufSkill && !isInventoryOpen;
+        swordGustSkill = Input.GetKeyDown(KeyCode.Q) && !cooldownswordGustSkill && !isInventoryOpen && !isAirborne;
+        upperSkill = Input.GetKeyDown(KeyCode.E) && !cooldownupperSkill && !isInventoryOpen && !isAirborne;
+        windmillSkill[0] = Input.GetKeyDown(KeyCode.R) && !cooldownwindmillSkill && !isInventoryOpen && !isAirborne;
+        windmillSkill[1] = Input.GetKeyUp(KeyCode.R) && !cooldownwindmillSkill && !isInventoryOpen && !isAirborne;
+        bufSkill = Input.GetKeyDown(KeyCode.Tab) && !cooldownbufSkill && !isInventoryOpen && !isAirborne;
     }
     private void ToggleInventory()
     {
@@ -591,10 +593,12 @@ public class PlayerController : MonoBehaviour
         if (currentAnimation.IsName("Airborne") || currentAnimation.IsName("GetUp"))
         {
             isAirborne = true;
+            dontDamage = true;
         }
         else
         {
             isAirborne = false;
+            dontDamage = false;
         }
     }
 
@@ -608,7 +612,7 @@ public class PlayerController : MonoBehaviour
     // 피격 함수
     private void OnHit()
     {
-        if (hitCount > 3)
+        if (hitCount > 1)
         {
             StartCoroutine(Enhance());
         }
@@ -625,18 +629,15 @@ public class PlayerController : MonoBehaviour
     // 피격 강화
     IEnumerator Enhance()
     {
-        animator.SetTrigger("doAirborn");
+        animator.SetTrigger("doAirborne");
+        //rigidBody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         DisableAllHitBox();
         isAttack = false;
-        capsuleCollider.enabled = false;
-        rigidBody.useGravity = false;
         isEnhanced = true;
         yield return new WaitForSeconds(5.0f);
         isEnhanced = false;
         hitCount = 0;
         comboIndex = 0;
-        capsuleCollider.enabled = true;
-        rigidBody.useGravity = true;
     }
 
     void DisableAllHitBox()
@@ -660,8 +661,12 @@ public class PlayerController : MonoBehaviour
         if (status.CurrentHP > 0) return;
 
         isDead = true;
-        animator.SetTrigger("doDie");
+        animator.SetTrigger("doAirborne");
         animator.SetBool("isDead", isDead);
+        DisableAllHitBox();
+        isAttack = false;
+        capsuleCollider.enabled = false;
+        rigidBody.useGravity = false;
     }
 
     private void OnCollisionEnter(Collision collision)

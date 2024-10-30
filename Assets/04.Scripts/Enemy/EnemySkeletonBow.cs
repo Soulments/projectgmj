@@ -8,12 +8,15 @@ public class EnemySkeletonBow : Enemy
     public GameObject arrow;
     public GameObject arrowPoint;
 
-    protected override void Awake()
+    bool ishit;
+
+    protected override void Start()
     {
-        base.Awake();
+        base.Start();
         status = new Status(UnitCode.Enemy, "원거리", 1);
         isChase = true;
         attackRange = 30.0f;
+        Spawn();
     }
 
     protected override void Update()
@@ -24,6 +27,7 @@ public class EnemySkeletonBow : Enemy
             navMeshAgent.SetDestination(target.position);
             navMeshAgent.isStopped = !isChase;
         }
+        AnimationCheck();
     }
 
     protected override void FixedUpdate()
@@ -31,9 +35,30 @@ public class EnemySkeletonBow : Enemy
         base.FixedUpdate();
         bool isOverRange = Vector3.Distance(transform.position, target.position) > attackRange;
         bool isTooClose = Vector3.Distance(transform.position, target.position) < closeRange;
-        Targeting(isOverRange);
+        if (status.CurrentHP > 0) Targeting(isOverRange);
         FreezeVelocity(isOverRange, isTooClose);
         transform.LookAt(target);
+    }
+    void AnimationCheck()
+    {
+        AnimatorStateInfo currentAnimation = animator.GetCurrentAnimatorStateInfo(0);
+        
+        if (currentAnimation.IsName("Hit"))
+        {
+            ishit = true;
+        }
+        else
+        {
+            ishit = false;
+        }
+        if (currentAnimation.IsName("Airborne") || currentAnimation.IsName("GetUp"))
+        {
+            dontDaamge = true;
+        }
+        else
+        {
+            dontDaamge = false;
+        }
     }
 
     // 스켈레톤 궁수 공격 함수
@@ -44,6 +69,10 @@ public class EnemySkeletonBow : Enemy
             return;
         }
         if (isAttack)
+        {
+            return;
+        }
+        if (ishit)
         {
             return;
         }
@@ -103,7 +132,6 @@ public class EnemySkeletonBow : Enemy
         }
 
         if (status.CurrentHP < 0) OnDie();
-        else yield return new WaitForSeconds(0.5f);
     }
 
     protected override void OnDie()
