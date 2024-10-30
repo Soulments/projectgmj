@@ -688,15 +688,6 @@ public class PlayerController : MonoBehaviour
             }
             return;
         }
-        int i = 0;
-        foreach (GameObject gameObject in startPortals)
-        {
-            if (other.gameObject == gameObject)
-            {
-                StartCoroutine(PortalMove(i));
-            }
-            i++;
-        }
         
         // 아이템 획득 관련 코드---------------------------------------
         IObjectItem clickInterface = other.GetComponent<IObjectItem>();
@@ -727,15 +718,6 @@ public class PlayerController : MonoBehaviour
             uiController.CloseMessagePanel();
             itemPickup = null;
         }
-    }
-    IEnumerator PortalMove(int i)
-    {
-        usingPortal = true;
-        manager.portalTrigger = true;
-        yield return new WaitForSeconds(1.5f);
-        transform.position = new Vector3(endPortals[i].transform.position.x, 0, endPortals[i].transform.position.z);
-        yield return new WaitForSeconds(1.5f);
-        usingPortal = false;
     }
 
     // 쿨타임 체크용 코루틴
