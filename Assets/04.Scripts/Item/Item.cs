@@ -18,11 +18,13 @@ public class Item : MonoBehaviour
         SkillPercent
     }
 
-    GameManager gameManager;
+    SDPT_StageManager stageManager;
 
     long tick;
 
     float addStats;
+
+    int stageLevel;
 
     public int randomSeed;
 
@@ -53,6 +55,8 @@ public class Item : MonoBehaviour
         // 수정 예정
         string itemName = "아이템 이름";
         unitCode = UnitCode.Item;
+        stageManager = GameObject.Find("SDPT_StageManager").GetComponent<SDPT_StageManager>();
+        stageLevel = (stageManager.stageSceneLoopLength * stageManager.currentStage) + stageManager.currentScene;
         // status = new Status(unitCode, itemName, gameManager.stageCount);
         status = new Status(unitCode, itemName, 1);
     }
