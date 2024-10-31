@@ -66,6 +66,28 @@ public class SDPT_StageManager : MonoBehaviour
         return false;
     }
 
+    public bool NextScene(SceneAsset scene)
+    {
+        if (!loading)
+        {
+            loading = true;
+            SceneManager.LoadScene(scene.name, LoadSceneMode.Single);
+            return true;
+        }
+        return false;
+    }
+
+    public bool NextScene(string sceneName)
+    {
+        if (!loading)
+        {
+            loading = true;
+            SceneManager.LoadScene(sceneName, LoadSceneMode.Single);
+            return true;
+        }
+        return false;
+    }
+
     // Get Next Scene Name
     private string GetNextSceneName(int currentStage, int currentScene)
     {

@@ -26,6 +26,7 @@ public class SDPT_AnchorManager : MonoBehaviour
             foreach(GameObject gameObject in gameObjects)
             {
                 gameObject.transform.position = anchor.transform.position;
+                gameObject.transform.rotation = anchor.transform.rotation;
             }
             Destroy(anchor);
         }
