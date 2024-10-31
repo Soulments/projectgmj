@@ -486,7 +486,7 @@ public class PlayerController : MonoBehaviour
         animator.SetTrigger("doAttack3");
         StartCoroutine(WindmillReady());
         StartCoroutine(Windmill());
-        StartCoroutine(WindmillDuration());
+        Invoke(nameof(SkillWindmillStop), 10f);
     }
 
     // 윈드밀 시전 대기
@@ -505,12 +505,6 @@ public class PlayerController : MonoBehaviour
             skillAttack[(int)SkillCode.Windmill].enabled = !skillAttack[(int)SkillCode.Windmill].enabled;
             yield return waitWindmil;
         }
-    }
-    
-    IEnumerator WindmillDuration()
-    {
-        yield return new WaitForSeconds(10.0f);
-        SkillWindmillStop();
     }
 
     // 윈드밀 종료

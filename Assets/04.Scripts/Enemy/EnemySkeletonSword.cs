@@ -56,6 +56,7 @@ public class EnemySkeletonSword : Enemy
         if (currentAnimation.IsName("Hit"))
         {
             ishit = true;
+            attackBox.enabled = false;
         }
         else
         {
@@ -107,6 +108,10 @@ public class EnemySkeletonSword : Enemy
 
     void OnTriggerEnter(Collider other)
     {
+        if (other.gameObject.layer != LayerMask.NameToLayer("Player"))
+        {
+            return;
+        }
         if (other.gameObject.CompareTag("Weapon"))
         {
             StartCoroutine(Hit(1));

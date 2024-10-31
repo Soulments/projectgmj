@@ -105,6 +105,10 @@ public class EnemySkeletonBow : Enemy
 
     void OnTriggerEnter(Collider other)
     {
+        if (other.gameObject.layer != LayerMask.NameToLayer("Player"))
+        {
+            return;
+        }
         if (other.gameObject.CompareTag("Weapon"))
         {
             StartCoroutine(Hit(1));

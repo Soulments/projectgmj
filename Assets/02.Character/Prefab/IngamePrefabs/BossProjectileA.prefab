@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1968339672861679088}
   - component: {fileID: 6147124181277585847}
   - component: {fileID: 2695862525630615308}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -130,7 +130,7 @@ GameObject:
   - component: {fileID: 8512499689911884206}
   - component: {fileID: 2802739678764797539}
   - component: {fileID: -5461916058075416548}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: BossProjectileA
   m_TagString: Arrow
   m_Icon: {fileID: 0}
@@ -230,7 +230,7 @@ GameObject:
   - component: {fileID: 1684422478312888759}
   - component: {fileID: 3847008287806456895}
   - component: {fileID: 6629628849202886204}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SphereParticle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5058,7 +5058,7 @@ GameObject:
   - component: {fileID: 7018998258120260079}
   - component: {fileID: 1150764347301007105}
   - component: {fileID: 2847481565773915733}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Smoke
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9887,7 +9887,7 @@ GameObject:
   - component: {fileID: 3229655518858606032}
   - component: {fileID: 8492811536717989137}
   - component: {fileID: 8176272494690372139}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Effect
   m_TagString: Untagged
   m_Icon: {fileID: 0}

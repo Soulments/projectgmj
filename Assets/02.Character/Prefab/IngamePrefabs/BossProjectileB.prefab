@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8539354122796423637}
   - component: {fileID: 8008277360978238460}
   - component: {fileID: 2134509457777538706}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Smoke
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4841,7 +4841,7 @@ GameObject:
   - component: {fileID: 6829610041688128698}
   - component: {fileID: 3985526559636671475}
   - component: {fileID: -2210911107698794243}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: BossProjectileB
   m_TagString: Arrow
   m_Icon: {fileID: 0}
@@ -4902,7 +4902,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fdac065eca164148982b2e26a297164, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  projectileType: 66
+  projectileType: 65
   speed: 20
   target: {fileID: 0}
 --- !u!54 &-2210911107698794243
@@ -4943,7 +4943,7 @@ GameObject:
   - component: {fileID: 6134824104913033854}
   - component: {fileID: 1021819840060939878}
   - component: {fileID: 8279833421781835702}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5061,7 +5061,7 @@ GameObject:
   - component: {fileID: 1384395446942537378}
   - component: {fileID: 3747868482396856411}
   - component: {fileID: 5707259621703256862}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Effect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9956,7 +9956,7 @@ GameObject:
   - component: {fileID: 3067492796806752656}
   - component: {fileID: 8606899898958053712}
   - component: {fileID: 7806852997661072224}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SphereParticle
   m_TagString: Untagged
   m_Icon: {fileID: 0}

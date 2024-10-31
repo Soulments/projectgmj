@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1243573210242417095}
   - component: {fileID: 3136331641936811015}
   - component: {fileID: 6012011070755885265}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: PlayerSwordMandRangeAttack
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -104,6 +104,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8210260948330433581}
     m_Modifications:
+    - target: {fileID: 534669535596253455, guid: a2b41ce0a57e19e4fb21eaefeac0437c,
+        type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2207183973309240630, guid: a2b41ce0a57e19e4fb21eaefeac0437c,
+        type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2434623978625950648, guid: a2b41ce0a57e19e4fb21eaefeac0437c,
+        type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 4782066301465075563, guid: a2b41ce0a57e19e4fb21eaefeac0437c,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -154,10 +169,25 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5377833626765320065, guid: a2b41ce0a57e19e4fb21eaefeac0437c,
+        type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 7434412101126963417, guid: a2b41ce0a57e19e4fb21eaefeac0437c,
         type: 3}
       propertyPath: m_Name
       value: PlayerSwordManRangeAttack_20241018
+      objectReference: {fileID: 0}
+    - target: {fileID: 7434412101126963417, guid: a2b41ce0a57e19e4fb21eaefeac0437c,
+        type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8106589471252015962, guid: a2b41ce0a57e19e4fb21eaefeac0437c,
+        type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

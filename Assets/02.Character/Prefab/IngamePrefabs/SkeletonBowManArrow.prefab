@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: -1303264295370180587}
   - component: {fileID: 2734146488232315961}
   - component: {fileID: -1562788833204203627}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SkeletonBowManArrow
   m_TagString: Arrow
   m_Icon: {fileID: 0}
@@ -159,7 +159,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6400214618274146744}
   - component: {fileID: 8500968584855724944}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
