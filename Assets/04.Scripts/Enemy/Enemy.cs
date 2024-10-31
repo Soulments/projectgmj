@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using Random = UnityEngine.Random;
 
 public class Enemy : MonoBehaviour
 {
@@ -102,8 +103,13 @@ public class Enemy : MonoBehaviour
     {
         if (status.CurrentHP > 0) return;
         capsuleCollider.enabled = false;
-        Vector3 position = new Vector3 (transform.position.x, transform.position.y + 1, transform.position.z);
-        Instantiate(item, position, Quaternion.identity);
+
+        int randomEnhance = Random.Range(0, 10);
+        if (randomEnhance < 3)
+        {
+            Vector3 position = new Vector3(transform.position.x, transform.position.y + 1, transform.position.z);
+            Instantiate(item, position, Quaternion.identity);
+        }
     }
 
     public void Spawn()

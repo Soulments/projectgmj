@@ -443,6 +443,7 @@ public class PlayerController : MonoBehaviour
     {
         isAttack = true;
         animator.SetTrigger("doAttack4");
+        status.CurrentHP += (int)status.Defense;
         CoolTimeTrigger(3);
         StartCoroutine(WaitForCooltime(skillControls[3].GetComponent<SkillControl>().coolTime, 3));
         StartCoroutine(CoroutineBuf());
