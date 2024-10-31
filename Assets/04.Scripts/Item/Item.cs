@@ -42,6 +42,12 @@ public class Item : MonoBehaviour
         //PrintStatusDebug();
     }
 
+    void Start()
+    {
+        stageManager = GameObject.Find("SDPT_StageManager").GetComponent<SDPT_StageManager>();
+        stageLevel = (stageManager.stageSceneLoopLength * stageManager.currentStage) + stageManager.currentScene;
+    }
+
     void RandomSeed()
     {
         tick = DateTime.Now.Ticks;
@@ -55,10 +61,7 @@ public class Item : MonoBehaviour
         // 수정 예정
         string itemName = "아이템 이름";
         unitCode = UnitCode.Item;
-        stageManager = GameObject.Find("SDPT_StageManager").GetComponent<SDPT_StageManager>();
-        stageLevel = (stageManager.stageSceneLoopLength * stageManager.currentStage) + stageManager.currentScene;
-        // status = new Status(unitCode, itemName, gameManager.stageCount);
-        status = new Status(unitCode, itemName, 1);
+        status = new Status(unitCode, itemName, stageLevel);
     }
 
     // 장비 랜덤식 함수
@@ -66,8 +69,7 @@ public class Item : MonoBehaviour
     {
         int randomEnhance = Random.Range(0, 5);
 
-        addStats = (float)(1 + (0.05 * 1));
-        //addStats = (float)(1 + (0.05 * gameManager.stageCount));
+        addStats = (float)(1 + (0.05 * stageLevel));
 
         switch (randomEnhance)
         {
