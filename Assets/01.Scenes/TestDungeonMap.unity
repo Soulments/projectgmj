@@ -3810,6 +3810,7 @@ MonoBehaviour:
   waveCount: 1
   portalTrigger: 0
   stageEnd: 0
+  townStage: 0
   bossStage: 0
   bossAwake: 0
   portal: {fileID: 0}

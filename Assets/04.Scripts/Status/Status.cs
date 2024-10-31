@@ -71,7 +71,7 @@ public class Status
         SkillPercent = new float[Enum.GetValues(typeof(SkillCode)).Length];
 
         ObjectName = objectName;
-        MaxHP = 15;
+        MaxHP = 100;
         CurrentHP = MaxHP;
         AttackDamage = 60.0f;
         Defense = 5;

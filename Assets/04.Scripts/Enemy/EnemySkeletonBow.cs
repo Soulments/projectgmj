@@ -53,11 +53,11 @@ public class EnemySkeletonBow : Enemy
         }
         if (currentAnimation.IsName("Airborne") || currentAnimation.IsName("GetUp"))
         {
-            dontDaamge = true;
+            dontDamage = true;
         }
         else
         {
-            dontDaamge = false;
+            dontDamage = false;
         }
     }
 

@@ -13,7 +13,7 @@ public class Enemy : MonoBehaviour
     public GameObject dead;
     public GameObject spawnObject;
 
-    public bool dontDaamge;
+    public bool dontDamage;
 
     protected bool isSpawn;
     protected bool isChase;

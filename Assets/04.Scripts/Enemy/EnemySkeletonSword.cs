@@ -61,6 +61,14 @@ public class EnemySkeletonSword : Enemy
         {
             ishit = false;
         }
+        if (currentAnimation.IsName("Airborne") || currentAnimation.IsName("GetUp"))
+        {
+            dontDamage = true;
+        }
+        else
+        {
+            dontDamage = false;
+        }
     }
 
     // ½ºÄÌ·¹Åæ °Ë»ç °ø°Ý ÇÔ¼ö

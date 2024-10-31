@@ -49,7 +49,6 @@ public class Boss : Enemy
         // 플레이어를 항상 바라보게
         transform.LookAt(target);
         EnemyDestoryCheck();
-        Debug.Log(status.CurrentHP);
     }
 
     // 보스 페이즈 1

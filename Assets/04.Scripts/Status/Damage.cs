@@ -20,7 +20,7 @@ public class Damage
             damagedEnemy = otherObject.GetComponent<Enemy>();
 
             if (damagedEnemy.status.CurrentHP < 0) return;
-            if (!damagedPlayer.dontDamage)
+            if (!damagedEnemy.dontDamage)
                 damagedEnemy.status.CurrentHP -= (int)damagePercent;
         }
     }
