@@ -47,6 +47,22 @@ public class SDPT_StageManager : MonoBehaviour
     private Scene baseScene;
     private Scene loadedScene;
 
+
+    // temp item cleaner
+    public bool ItemCleaner()
+    {
+        GameObject[] items = GameObject.FindGameObjectsWithTag("Item");
+
+        foreach (GameObject item in items)
+        {
+            Destroy(item);
+        }
+
+        Debug.Log(items.Length + "개의 Item 오브젝트가 삭제되었습니다.");
+        
+        return true;
+    }
+
     // Change to Next Scene
     public bool NextScene()
     {
@@ -138,6 +154,9 @@ public class SDPT_StageManager : MonoBehaviour
     // Load Scene Async then finalize
     private void LoadScene()
     {
+        ItemCleaner();
+        if (sceneRoot != null) Destroy(sceneRoot);
+
         SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive).completed += FinalizeSceneLoading;
         return;
     }
@@ -146,8 +165,6 @@ public class SDPT_StageManager : MonoBehaviour
     // Destroy previous scene then move scene to scene root
     private void FinalizeSceneLoading(AsyncOperation asyncOperation)
     {
-        if (sceneRoot != null) Destroy(sceneRoot);
-
         sceneRoot = new GameObject(sceneName + "_Root");
 
         loadedScene = SceneManager.GetSceneByName(sceneName);

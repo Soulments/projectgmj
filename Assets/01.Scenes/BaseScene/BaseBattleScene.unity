@@ -1805,18 +1805,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentStage: 0
   currentScene: 0
-  stageSceneLoopLength: 3
+  stageSceneLoopLength: 7
   stageList:
   - sceneList:
     - scene: {fileID: 102900000, guid: e0526c6288732224c8bc730c211509eb, type: 3}
       minScene: 0
-      maxScene: 2
+      maxScene: 6
     - scene: {fileID: 102900000, guid: cdc17131e41c98949a6959e9c25551c3, type: 3}
-      minScene: 0
-      maxScene: 2
+      minScene: 2
+      maxScene: 6
     - scene: {fileID: 102900000, guid: 0439a276d2c159d45933600441fc085a, type: 3}
-      minScene: 3
-      maxScene: 7
+      minScene: 7
+      maxScene: 10
     minStage: 0
     maxStage: 99999
   mapTransform: {fileID: 1305120448}
