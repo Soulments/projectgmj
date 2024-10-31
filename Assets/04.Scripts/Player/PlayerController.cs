@@ -1,10 +1,8 @@
 using System;
 using System.Collections;
 using TMPro;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEditor.Progress;
 
 public class PlayerController : MonoBehaviour
 {
@@ -488,7 +486,7 @@ public class PlayerController : MonoBehaviour
         animator.SetTrigger("doAttack3");
         StartCoroutine(WindmillReady());
         StartCoroutine(Windmill());
-        //StartCoroutine(WindmillDuration());
+        StartCoroutine(WindmillDuration());
     }
 
     // 윈드밀 시전 대기
@@ -631,7 +629,6 @@ public class PlayerController : MonoBehaviour
     IEnumerator Enhance()
     {
         animator.SetTrigger("doAirborne");
-        //rigidBody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         DisableAllHitBox();
         isAttack = false;
         isEnhanced = true;

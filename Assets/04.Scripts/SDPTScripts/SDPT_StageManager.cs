@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEditor;
 using System.Collections.Generic;
 
 public class SDPT_StageManager : MonoBehaviour
@@ -17,15 +16,29 @@ public class SDPT_StageManager : MonoBehaviour
         [Tooltip("Maximum scene to use this scene")]
         public int maxStage;
     }
+
     [System.Serializable]
     public struct sceneSetting
     {
-        public SceneAsset scene;
+#if UNITY_EDITOR
+        public UnityEditor.SceneAsset scene;
+#endif
+        public string sceneName;
 
         [Tooltip("Minimum stage to use this scene")]
         public int minScene;
         [Tooltip("Maximum stage to use this scene")]
         public int maxScene;
+
+#if UNITY_EDITOR
+        public void UpdateSceneName()
+        {
+            if (scene != null)
+            {
+                sceneName = scene.name;
+            }
+        }
+#endif
     }
 
     public int currentStage;
@@ -47,7 +60,6 @@ public class SDPT_StageManager : MonoBehaviour
     private Scene baseScene;
     private Scene loadedScene;
 
-
     // temp item cleaner
     public bool ItemCleaner()
     {
@@ -59,7 +71,7 @@ public class SDPT_StageManager : MonoBehaviour
         }
 
         Debug.Log(items.Length + "개의 Item 오브젝트가 삭제되었습니다.");
-        
+
         return true;
     }
 
@@ -73,21 +85,10 @@ public class SDPT_StageManager : MonoBehaviour
             if (currentScene > stageSceneLoopLength)
             {
                 currentScene = 0;
-                currentStage ++;
+                currentStage++;
             }
             sceneName = GetNextSceneName(currentStage, currentScene);
             LoadScene();
-            return true;
-        }
-        return false;
-    }
-
-    public bool NextScene(SceneAsset scene)
-    {
-        if (!loading)
-        {
-            loading = true;
-            SceneManager.LoadScene(scene.name, LoadSceneMode.Single);
             return true;
         }
         return false;
@@ -112,7 +113,7 @@ public class SDPT_StageManager : MonoBehaviour
         // Deep copy & Stage filtering 
         foreach (var stageSetting in stageList)
         {
-            if (stageSetting.minStage <= currentStage && stageSetting.maxStage >= currentStage )
+            if (stageSetting.minStage <= currentStage && stageSetting.maxStage >= currentStage)
             {
                 StageSetting newStageSetting = new StageSetting
                 {
@@ -126,8 +127,12 @@ public class SDPT_StageManager : MonoBehaviour
                     {
                         newStageSetting.sceneList.Add(new sceneSetting
                         {
+#if UNITY_EDITOR
                             scene = scene.scene,
-                            minScene = scene.minScene
+#endif
+                            sceneName = scene.sceneName,
+                            minScene = scene.minScene,
+                            maxScene = scene.maxScene
                         });
                     }
                 }
@@ -138,14 +143,14 @@ public class SDPT_StageManager : MonoBehaviour
         int randomStage = 0;
         int randomScene = 0;
 
-        if (availableStageList.Count > 0) 
+        if (availableStageList.Count > 0)
         {
             randomStage = Random.Range(0, availableStageList.Count);
             if (availableStageList[randomStage].sceneList.Count > 0)
             {
                 randomScene = Random.Range(0, availableStageList[randomStage].sceneList.Count);
-                return availableStageList[randomStage].sceneList[randomScene].scene.name;
-            }    
+                return availableStageList[randomStage].sceneList[randomScene].sceneName;
+            }
         }
 
         return "";
@@ -187,6 +192,17 @@ public class SDPT_StageManager : MonoBehaviour
     {
         Instance = this;
         baseScene = SceneManager.GetActiveScene();
+
+        // Update scene names in the editor only
+#if UNITY_EDITOR
+        foreach (var stage in stageList)
+        {
+            foreach (var scene in stage.sceneList)
+            {
+                scene.UpdateSceneName();
+            }
+        }
+#endif
         NextScene();
     }
 }

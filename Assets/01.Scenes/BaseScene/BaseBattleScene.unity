@@ -168,6 +168,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   scene: {fileID: 102900000, guid: 82231e2ac1e0e0e42a28855ed7ae3abb, type: 3}
+  sceneName: BaseTownScene
 --- !u!1 &494305046
 GameObject:
   m_ObjectHideFlags: 0
@@ -1808,13 +1809,16 @@ MonoBehaviour:
   stageSceneLoopLength: 7
   stageList:
   - sceneList:
-    - scene: {fileID: 102900000, guid: e0526c6288732224c8bc730c211509eb, type: 3}
+    - scene: {fileID: 102900000, guid: 476a78c460541284ca1a13d295e2eabe, type: 3}
+      sceneName: Map1
       minScene: 0
       maxScene: 6
-    - scene: {fileID: 102900000, guid: cdc17131e41c98949a6959e9c25551c3, type: 3}
+    - scene: {fileID: 102900000, guid: fc50dfba1380f86408a793b588ce81ad, type: 3}
+      sceneName: Map4
       minScene: 2
       maxScene: 6
-    - scene: {fileID: 102900000, guid: 0439a276d2c159d45933600441fc085a, type: 3}
+    - scene: {fileID: 102900000, guid: c26dba9e14fac8d41a1991bff15e3f71, type: 3}
+      sceneName: Map6
       minScene: 7
       maxScene: 10
     minStage: 0

@@ -633,6 +633,7 @@ MonoBehaviour:
   stageList:
   - sceneList:
     - scene: {fileID: 102900000, guid: 3798bc4fbb786cf489312cf837a708eb, type: 3}
+      sceneName: 1.MainScene
       minScene: 0
       maxScene: 999
     minStage: 0
