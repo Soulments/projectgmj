@@ -39,26 +39,26 @@ public class Boss : Enemy
     protected override void Start()
     {
         base.Start();
-        status = new Status(UnitCode.Boss, "º¸½º", 1);
+        status = new Status(UnitCode.Boss, "ë³´ìŠ¤", 1);
         groundLayer = LayerMask.GetMask("Floor");
         StartCoroutine(Phase1());
     }
 
     protected override void FixedUpdate()
     {
-        // ÇÃ·¹ÀÌ¾î¸¦ Ç×»ó ¹Ù¶óº¸°Ô
+        // í”Œë ˆì´ì–´ë¥¼ í•­ìƒ ë°”ë¼ë³´ê²Œ
         transform.LookAt(target);
         EnemyDestoryCheck();
     }
 
-    // º¸½º ÆäÀÌÁî 1
+    // ë³´ìŠ¤ í˜ì´ì¦ˆ 1
     IEnumerator Phase1()
     {
         yield return new WaitForSeconds(3.0f);
         enemyPrefabs = new GameObject[4];
         while (status.CurrentHP > 2000)
         {
-            // ¸÷ ¼ÒÈ¯
+            // ëª¹ ì†Œí™˜
             if (summonCount > 0 && enemyCount == 0)
             {
                 summonCount--;
@@ -66,7 +66,7 @@ public class Boss : Enemy
                 yield return new WaitForSeconds(5.0f);
                 bufReady = true;
             }
-            // ¸÷ ¹öÇÁ
+            // ëª¹ ë²„í”„
             if (bufReady == true)
             {
                 Attack('A', 1);
@@ -74,14 +74,14 @@ public class Boss : Enemy
             }
             yield return null;
         }
-        // Phase2·Î ³Ñ¾î°¡±â À§ÇÑ ´Ü°è
+        // Phase2ë¡œ ë„˜ì–´ê°€ê¸° ìœ„í•œ ë‹¨ê³„
         phaseCount++;
         summonCount = 1;
         BossResize(phaseCount);
         StartCoroutine(Phase2());
     }
 
-    // º¸½º ÆäÀÌÁî 2
+    // ë³´ìŠ¤ í˜ì´ì¦ˆ 2
     IEnumerator Phase2()
     {
         enemyPrefabs = new GameObject[6];
@@ -89,13 +89,13 @@ public class Boss : Enemy
         StartCoroutine(CoolDown(false, DirectAttack_A_cooldownTime));
         while (status.CurrentHP > 1000)
         {
-            // ¸÷ ¼ÒÈ¯
+            // ëª¹ ì†Œí™˜
             if (summonCount > 0 && enemyCount == 0)
             {
                 Attack('B', 0);
                 Attack('A', 0);
             }
-            // Á÷Á¢ °ø°İ A
+            // ì§ì ‘ ê³µê²© A
             if (directAttack_A_Ready == true)
             {
                 Attack('B', 1);
@@ -103,30 +103,30 @@ public class Boss : Enemy
             }
             yield return null;
         }
-        // Phase3·Î ³Ñ¾î°¡±â À§ÇÑ ´Ü°è
+        // Phase3ë¡œ ë„˜ì–´ê°€ê¸° ìœ„í•œ ë‹¨ê³„
         phaseCount++;
         capsuleCollider.enabled = false;
         BossResize(phaseCount);
         StartCoroutine(Phase3());
     }
 
-    // º¸½º ÆäÀÌÁî 3
+    // ë³´ìŠ¤ í˜ì´ì¦ˆ 3
     IEnumerator Phase3()
     {
-        if (status.CurrentHP != 1000) status.CurrentHP = 1000;
+        if (status.CurrentHP < 1000) status.CurrentHP = 1000;
 
         capsuleCollider.enabled = true;
         StartCoroutine(CoolDown(false, DirectAttack_A_cooldownTime));
         StartCoroutine(CoolDown(true, DirectAttack_B_cooldownTime));
-        while (phaseCount == 3)
+        while (status.CurrentHP > 0)
         {
-            // Á÷Á¢ °ø°İ A
+            // ì§ì ‘ ê³µê²© A
             if (directAttack_A_Ready == true)
             {
                 Attack('B', 1);
                 StartCoroutine(CoolDown(false, DirectAttack_A_cooldownTime));
             }
-            // Á÷Á¢ °ø°İ B
+            // ì§ì ‘ ê³µê²© B
             if (directAttack_B_Ready == true)
             {
                 Attack('C', 1);
@@ -134,86 +134,86 @@ public class Boss : Enemy
             }
             yield return null;
         }
-        // º¸½º »ç¸Á
+        // ë³´ìŠ¤ ì‚¬ë§
         capsuleCollider.enabled = false;
         OnDie();
     }
 
-    // º¸½º ÀÌµ¿ ÇÔ¼ö
+    // ë³´ìŠ¤ ì´ë™ í•¨ìˆ˜
     void Move()
     {
-        // ÀüÈÄÁÂ¿ì ¹æÇâ ¼³Á¤
+        // ì „í›„ì¢Œìš° ë°©í–¥ ì„¤ì •
     }
 
-    // º¸½º °ø°İ ÇÔ¼ö
+    // ë³´ìŠ¤ ê³µê²© í•¨ìˆ˜
     void Attack(char castType, int castNum)
     {
-        // °¢Á¾ Ä³½ºÆ®·Î ÀÌµ¿
-        switch(castType)
+        // ê°ì¢… ìºìŠ¤íŠ¸ë¡œ ì´ë™
+        switch (castType)
         {
-            // Ä³½ºÆ® A·Î °¡¾ßÇÒ °æ¿ì
+            // ìºìŠ¤íŠ¸ Aë¡œ ê°€ì•¼í•  ê²½ìš°
             case 'A':
                 CastA(castNum);
                 break;
-            // Ä³½ºÆ® B·Î °¡¾ßÇÒ °æ¿ì
+            // ìºìŠ¤íŠ¸ Bë¡œ ê°€ì•¼í•  ê²½ìš°
             case 'B':
                 CastB(castNum);
                 break;
-            // Ä³½ºÆ® C·Î °¡¾ßÇÒ °æ¿ì
+            // ìºìŠ¤íŠ¸ Cë¡œ ê°€ì•¼í•  ê²½ìš°
             case 'C':
                 CastC();
                 break;
-            // °ø°İ Å¸ÀÌ¹Ö ¾Æ´Ò °æ¿ì
+            // ê³µê²© íƒ€ì´ë° ì•„ë‹ ê²½ìš°
             default:
                 break;
         }
     }
 
-    // Ä³½ºÆ® A ¸ğ¼Ç¿ë
+    // ìºìŠ¤íŠ¸ A ëª¨ì…˜ìš©
     void CastA(int castNum)
     {
         animator.SetTrigger("doCastA");
-        // ±Ã¼ö ½ºÄÌ·¹Åæ ¼ÒÈ¯
+        // ê¶ìˆ˜ ìŠ¤ì¼ˆë ˆí†¤ ì†Œí™˜
         if (castNum == 0)
         {
             Summon(0);
         }
-        // ½ºÄÌ·¹Åæ ¹öÇÁ
+        // ìŠ¤ì¼ˆë ˆí†¤ ë²„í”„
         else
         {
             Buff();
         }
     }
 
-    // Ä³½ºÆ® B ¸ğ¼Ç¿ë
+    // ìºìŠ¤íŠ¸ B ëª¨ì…˜ìš©
     void CastB(int castNum)
     {
         animator.SetTrigger("doCastB");
-        // °Ë»ç ½ºÄÌ·¹Åæ ¼ÒÈ¯
+        // ê²€ì‚¬ ìŠ¤ì¼ˆë ˆí†¤ ì†Œí™˜
         if (castNum == 0)
         {
             Summon(1);
         }
-        // ´À¸° À¯µµ °ø°İ
+        // ëŠë¦° ìœ ë„ ê³µê²©
         else
         {
             DirectAttack(0);
         }
     }
 
-    // Ä³½ºÆ® C ¸ğ¼Ç¿ë
+    // ìºìŠ¤íŠ¸ C ëª¨ì…˜ìš©
     void CastC()
     {
         animator.SetTrigger("doCastC");
-        // Á÷¼± °ø°İ
+        // ì§ì„  ê³µê²©
         DirectAttack(1);
     }
 
-    // ½ºÄÌ·¹Åæ ¼ÒÈ¯
+    // ìŠ¤ì¼ˆë ˆí†¤ ì†Œí™˜
     void Summon(int summonNum)
     {
         Vector3 summonRealPoint;
-        // ±Ã¼ö
+        // ê¶ìˆ˜
         if (summonNum == 0)
         {
             for (int i = 0; i < 2; i++)
@@ -225,7 +225,7 @@ public class Boss : Enemy
             }
             enemyCount += 2;
         }
-        // Àü»ç
+        // ì „ì‚¬
         else
         {
             for (int i = 0; i < 4; i++)
@@ -251,27 +251,27 @@ public class Boss : Enemy
         return summonPoint;
     }
 
-    // ½ºÄÌ·¹Åæ ¹öÇÁ
+    // ìŠ¤ì¼ˆë ˆí†¤ ë²„í”„
     void Buff()
     {
-        // ¹¹³ÖÁö
+        // ë­ë„£ì§€
     }
 
-    // º¸½º Á÷Á¢ °ø°İ
+    // ë³´ìŠ¤ ì§ì ‘ ê³µê²©
     void DirectAttack(int attackNum)
     {
         if (attackNum == 0)
         {
-            // ´À¸° °ø°İ
-            for(int i = 0; i < 5; i++)
+            // ëŠë¦° ê³µê²©
+            for (int i = 0; i < 5; i++)
             {
-                // °ø°İ ¼ÒÈ¯
+                // ê³µê²© ì†Œí™˜
                 _ = Instantiate(attackA, castBPoints[i].transform.position, transform.rotation);
             }
         }
         else
         {
-            // ºü¸¥ °ø°İ
+            // ë¹ ë¥¸ ê³µê²©
             _ = Instantiate(attackB, castCPoint.transform.position, transform.rotation);
         }
     }
@@ -317,7 +317,7 @@ public class Boss : Enemy
         StartCoroutine(Wait());
     }
 
-    // ÄğÅ¸ÀÓ °Å´Â¿ë
+    // ì¿¨íƒ€ì„ ê±°ëŠ”ìš©
     IEnumerator CoolDown(bool ready, float cooldownTime)
     {
         if (!ready)

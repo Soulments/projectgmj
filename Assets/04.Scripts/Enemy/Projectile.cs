@@ -60,10 +60,10 @@ public class Projectile : MonoBehaviour
     {
         if (target != null)
         {
-            // Å¸°ÙÀ» ÇâÇØ ¹ß»çÇÏ±â À§ÇÑ ¹æÇâ ¼³Á¤
+            // íƒ€ê²Ÿì„ í–¥í•´ ë°œì‚¬í•˜ê¸° ìœ„í•œ ë°©í–¥ ì„¤ì •
             Vector3 shootDirection = (target.position - transform.position).normalized;
 
-            // Rigidbody¿¡ velocity¸¦ ÁÖ¾î ¹ß»ç
+            // Rigidbodyì— velocityë¥¼ ì£¼ì–´ ë°œì‚¬
             rigidBody.velocity = shootDirection * speed;
         }
     }
@@ -74,10 +74,10 @@ public class Projectile : MonoBehaviour
         {
             if (other.gameObject.tag == "Player")
             {
-                // µ¥¹ÌÁö ÁÖ´Â ±â´É
+                // ë°ë¯¸ì§€ ì£¼ëŠ” ê¸°ëŠ¥
                 if (projectileType == 'A')
                 {
-                    _ = new Damage(boss.status.AttackDamage, other.gameObject);
+                    _ = new Damage((int)boss.status.AttackDamage / 2, other.gameObject);
                 }
                 else
                 {

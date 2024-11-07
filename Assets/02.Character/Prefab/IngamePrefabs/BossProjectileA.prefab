@@ -190,7 +190,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   projectileType: 65
-  speed: 10
+  speed: 5
   target: {fileID: 0}
 --- !u!54 &-5461916058075416548
 Rigidbody:

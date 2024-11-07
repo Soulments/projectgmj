@@ -6,31 +6,31 @@ using UnityEngine;
 
 public class Status
 {
-    // À¯´Ö ÄÚµå
+    // ìœ ë‹› ì½”ë“œ
     private UnitCode UnitCode { get; }
-    // ÀÌ¸§
+    // ì´ë¦„
     public string ObjectName { get; set; }
-    // Ã¼·Â
+    // ì²´ë ¥
     public int MaxHP { get; set; }
     public int CurrentHP { get; set; }
-    // °ø°İ·Â
+    // ê³µê²©ë ¥
     public float AttackDamage { get; set; }
-    // ¹æ¾î·Â
-    public float Defense {  get; set; }
-    // ½ºÅ³ °è¼ö
+    // ë°©ì–´ë ¥
+    public float Defense { get; set; }
+    // ìŠ¤í‚¬ ê³„ìˆ˜
     public float[] SkillPercent { get; set; }
-    // ÀÌµ¿¼Óµµ
+    // ì´ë™ì†ë„
     public float MoveSpeed { get; set; }
-    // Á¡ÇÁ·Â
+    // ì í”„ë ¥
     public float JumpForce { get; set; }
-    // °ø°İ¼Óµµ
+    // ê³µê²©ì†ë„
     public float AttackSpeed { get; set; }
-    // ÆÄ¿ö·¹º§
+    // íŒŒì›Œë ˆë²¨
     public int PowerLevel { get; set; }
 
     public Status()
     {
-            
+
     }
     public Status(UnitCode unitCode, string objectName, int stageCount)
     {
@@ -38,19 +38,19 @@ public class Status
         PowerLevel = stageCount;
         switch (unitCode)
         {
-            // ÇÃ·¹ÀÌ¾î¿ë
+            // í”Œë ˆì´ì–´ìš©
             case UnitCode.Player:
                 InitPlayerStatus(objectName);
                 break;
-            // ¿¡³Ê¹Ì¿ë
+            // ì—ë„ˆë¯¸ìš©
             case UnitCode.Enemy:
                 InitEnemyStatus(objectName);
                 break;
-            // º¸½º¿ë
+            // ë³´ìŠ¤ìš©
             case UnitCode.Boss:
                 InitBossStatus(objectName);
                 break;
-            // ¾ÆÀÌÅÛ¿ë
+            // ì•„ì´í…œìš©
             case UnitCode.Item:
                 InitItemStatus(objectName, stageCount);
                 break;
@@ -65,7 +65,7 @@ public class Status
     }
 
 
-    // ÇÃ·¹ÀÌ¾î¿ë
+    // í”Œë ˆì´ì–´ìš©
     public void InitPlayerStatus(string objectName)
     {
         SkillPercent = new float[Enum.GetValues(typeof(SkillCode)).Length];
@@ -84,18 +84,18 @@ public class Status
         AttackSpeed = 1.5f;
         PowerLevel = 1;
     }
-    // ¿¡³Ê¹Ì¿ë
+    // ì—ë„ˆë¯¸ìš©
     public void InitEnemyStatus(string objectName)
     {
         ObjectName = objectName;
-        if (ObjectName == "±Ù°Å¸®")
+        if (ObjectName == "ê·¼ê±°ë¦¬")
         {
             MaxHP = 400;
             CurrentHP = MaxHP;
             AttackDamage = 5;
             Defense = 5;
         }
-        else if(ObjectName == "¿ø°Å¸®")
+        else if (ObjectName == "ì›ê±°ë¦¬")
         {
             MaxHP = 300;
             CurrentHP = MaxHP;
@@ -103,7 +103,7 @@ public class Status
             Defense = 7;
         }
     }
-    // º¸½º¿ë
+    // ë³´ìŠ¤ìš©
     public void InitBossStatus(string objectName)
     {
         ObjectName = objectName;
@@ -113,7 +113,7 @@ public class Status
         AttackDamage = 7;
         Defense = 5;
     }
-    // ¾ÆÀÌÅÛ¿ë
+    // ì•„ì´í…œìš©
     public void InitItemStatus(string objectName, int stageCount)
     {
         SkillPercent = new float[Enum.GetValues(typeof(SkillCode)).Length];

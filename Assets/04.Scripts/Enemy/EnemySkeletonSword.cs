@@ -11,7 +11,7 @@ public class EnemySkeletonSword : Enemy
     protected override void Start()
     {
         base.Start();
-        status = new Status(UnitCode.Enemy, "±Ù°Å¸®", 1);
+        status = new Status(UnitCode.Enemy, "ê·¼ê±°ë¦¬", 1);
         isMove = true;
         isChase = true;
         animator.SetBool("isMove", true);
@@ -72,7 +72,7 @@ public class EnemySkeletonSword : Enemy
         }
     }
 
-    // ½ºÄÌ·¹Åæ °Ë»ç °ø°Ý ÇÔ¼ö
+    // ìŠ¤ì¼ˆë ˆí†¤ ì „ì‚¬ ê³µê²© í•¨ìˆ˜
     protected override void Targeting(bool isOverRange)
     {
         if (isOverRange && !isAttack)

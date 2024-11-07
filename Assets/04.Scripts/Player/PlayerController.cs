@@ -510,11 +510,14 @@ public class PlayerController : MonoBehaviour
     // 윈드밀 종료
     private void SkillWindmillStop()
     {
-        isAttack3 = false;
-        animator.SetTrigger("stopAttack3");
-        skillAttack[(int)SkillCode.Windmill].enabled = false;
-        CoolTimeTrigger(2);
-        StartCoroutine(WaitForCooltime(skillControls[3].GetComponent<SkillControl>().coolTime, 2));
+        if (isAttack3)
+        {
+            isAttack3 = false;
+            animator.SetTrigger("stopAttack3");
+            skillAttack[(int)SkillCode.Windmill].enabled = false;
+            CoolTimeTrigger(2);
+            StartCoroutine(WaitForCooltime(skillControls[3].GetComponent<SkillControl>().coolTime, 2));
+        }
     }
 
     private void ActionCheck()
@@ -605,7 +608,7 @@ public class PlayerController : MonoBehaviour
     // 피격 함수
     private void OnHit()
     {
-        if (hitCount > 1)
+        if (hitCount > 1 && !isEnhanced)
         {
             StartCoroutine(Enhance());
         }
