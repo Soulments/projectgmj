@@ -22,13 +22,13 @@ public class ESC_Button : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     // Update is called once per frame
     void Update()
     {
-        
+
     }
     public void OnBtnClick()
     {
-        Debug.Log("Á¾·á");
-        Application.Quit();     // ºôµå ÆÄÀÏ Á¾·á
-        UnityEditor.EditorApplication.isPlaying = false;    // Å×½ºÆ® Á¾·á
+        Debug.Log("ì¢…ë£Œ");
+        Application.Quit();     // ë¹Œë“œ íŒŒì¼ ì¢…ë£Œ
+        //UnityEditor.EditorApplication.isPlaying = false;    // í…ŒìŠ¤íŠ¸ ì¢…ë£Œ
     }
 
     public void OnPointerDown(PointerEventData eventData)
