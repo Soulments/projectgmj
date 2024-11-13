@@ -16,6 +16,7 @@
 
 ## 출시 플랫폼
 [STOVE INDIE](https://store.onstove.com/ko/games/4312)
+
 [itch.io](https://soulments.itch.io/eternalsmash)
 
 ## 팀원
