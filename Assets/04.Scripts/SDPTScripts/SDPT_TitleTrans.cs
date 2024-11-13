@@ -9,6 +9,7 @@ public class SDPT_TitleTrans : MonoBehaviour
     public CanvasGroup canvasGroup = null;
     public float transTime = 1.0f;
     public float transSpeed = 0.1f;
+    public bool reverse = false;
 
     // Start is called before the first frame update
     void Start()
@@ -19,8 +20,15 @@ public class SDPT_TitleTrans : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transTime -= transSpeed * Time.deltaTime;
-        if (transTime < 0) canvasGroup.alpha -= transSpeed * Time.deltaTime;
-        if (canvasGroup.alpha == 0) Destroy(this);
+        if (reverse)
+        {
+            transTime -= transSpeed * Time.deltaTime;
+            if (transTime < 0) canvasGroup.alpha += transSpeed * Time.deltaTime;
+        }
+        else{
+            transTime -= transSpeed * Time.deltaTime;
+            if (transTime < 0) canvasGroup.alpha -= transSpeed * Time.deltaTime;
+            if (canvasGroup.alpha == 0) Destroy(this);
+        }
     }
 }

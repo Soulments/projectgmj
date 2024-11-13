@@ -78,6 +78,10 @@ public class PlayerController : MonoBehaviour
     private CanvasGroup inventoryCanvasGroup;
     private bool isInventoryOpen = false; // 인벤토리 활성화 상태
 
+    // ESC 변수--------------------------
+    public GameObject escCanvas;
+    private bool isEscOpen = false;
+
     // 아이템 메세지 관련 변수-------------
     private IObjectItem itemPickup = null;
 
@@ -184,7 +188,7 @@ public class PlayerController : MonoBehaviour
         mouseRight = Input.GetMouseButtonDown(1) && !isInventoryOpen && !isAirborne;
 
         // 인벤토리 on/off----------------
-        if (Input.GetKeyDown(KeyCode.I))
+        if (Input.GetKeyDown(KeyCode.I) || (Input.GetKeyDown(KeyCode.Escape) && isInventoryOpen))
         {
             ToggleInventory();
         }
@@ -203,6 +207,12 @@ public class PlayerController : MonoBehaviour
             uiController.CloseMessagePanel();
         }
         // ------------------------------------------------------
+        // ESC 키 눌렀을 때 ---------------------
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            isEscOpen = !isEscOpen;
+            escCanvas.SetActive(isEscOpen);
+        }
 
         swordGustSkill = Input.GetKeyDown(KeyCode.Q) && !cooldownswordGustSkill && !isInventoryOpen && !isAirborne;
         upperSkill = Input.GetKeyDown(KeyCode.E) && !cooldownupperSkill && !isInventoryOpen && !isAirborne;

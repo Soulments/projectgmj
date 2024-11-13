@@ -1,13 +1,14 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
+using System;
 
 public class SDPT_StageManager : MonoBehaviour
 {
     public static SDPT_StageManager Instance;
 
     [System.Serializable]
-    public struct StageSetting
+    public class StageSetting
     {
         public List<sceneSetting> sceneList;
 
@@ -18,31 +19,43 @@ public class SDPT_StageManager : MonoBehaviour
     }
 
     [System.Serializable]
-    public struct sceneSetting
+    public class sceneSetting
     {
+
 #if UNITY_EDITOR
         public UnityEditor.SceneAsset scene;
 #endif
+
+        public void UpdateSceneName()
+        {
+#if UNITY_EDITOR
+            if (scene != null)
+            {
+                sceneName = scene.name;
+            }
+#endif
+        }
+
+
         public string sceneName;
 
         [Tooltip("Minimum stage to use this scene")]
         public int minScene;
         [Tooltip("Maximum stage to use this scene")]
         public int maxScene;
-
-#if UNITY_EDITOR
-        public void UpdateSceneName()
-        {
-            if (scene != null)
-            {
-                sceneName = scene.name;
-            }
-        }
-#endif
     }
 
     public int currentStage;
     public int currentScene;
+
+    private int currentSceneIndex;
+    private int currentStageIndex;
+
+    private List<int> availableSceneIndex = new List<int>();
+    private List<int> availableStageIndex = new List<int>();
+
+    private string sceneName;
+
 
     [Tooltip("stageSceneLoopLength")]
     public int stageSceneLoopLength;
@@ -56,7 +69,7 @@ public class SDPT_StageManager : MonoBehaviour
 
     public bool loading = false;
 
-    private string sceneName;
+
     private Scene baseScene;
     private Scene loadedScene;
 
@@ -86,8 +99,30 @@ public class SDPT_StageManager : MonoBehaviour
             {
                 currentScene = 0;
                 currentStage++;
+                ResetAvailableStageIndex();
+                currentStageIndex = GetAvailableStageIndex();
             }
-            sceneName = GetNextSceneName(currentStage, currentScene);
+            ResetAvailableSceneIndex(currentStageIndex);
+            currentSceneIndex = GetAvailableSceneIndex();
+            sceneName = stageList[currentStageIndex].sceneList[currentSceneIndex].sceneName;
+            LoadScene();
+            return true;
+        }
+        return false;
+    }
+
+    public bool NextScene(int stageIndex, int sceneIndex)
+    {
+        if (!loading)
+        {
+            loading = true;
+            currentScene++;
+            if (currentScene > stageSceneLoopLength)
+            {
+                currentScene = 0;
+                currentStage++;
+            }
+            sceneName = stageList[stageIndex].sceneList[sceneIndex].sceneName;
             LoadScene();
             return true;
         }
@@ -105,56 +140,33 @@ public class SDPT_StageManager : MonoBehaviour
         return false;
     }
 
-    // Get Next Scene Name
-    private string GetNextSceneName(int currentStage, int currentScene)
+    private int GetAvailableSceneIndex()
     {
-        List<StageSetting> availableStageList = new List<StageSetting>();
-
-        // Deep copy & Stage filtering 
-        foreach (var stageSetting in stageList)
-        {
-            if (stageSetting.minStage <= currentStage && stageSetting.maxStage >= currentStage)
-            {
-                StageSetting newStageSetting = new StageSetting
-                {
-                    minStage = stageSetting.minStage,
-                    sceneList = new List<sceneSetting>()
-                };
-
-                foreach (var scene in stageSetting.sceneList)
-                {
-                    if (scene.minScene <= currentScene && scene.maxScene >= currentScene)
-                    {
-                        newStageSetting.sceneList.Add(new sceneSetting
-                        {
-#if UNITY_EDITOR
-                            scene = scene.scene,
-#endif
-                            sceneName = scene.sceneName,
-                            minScene = scene.minScene,
-                            maxScene = scene.maxScene
-                        });
-                    }
-                }
-                availableStageList.Add(newStageSetting);
-            }
-        }
-
-        int randomStage = 0;
-        int randomScene = 0;
-
-        if (availableStageList.Count > 0)
-        {
-            randomStage = Random.Range(0, availableStageList.Count);
-            if (availableStageList[randomStage].sceneList.Count > 0)
-            {
-                randomScene = Random.Range(0, availableStageList[randomStage].sceneList.Count);
-                return availableStageList[randomStage].sceneList[randomScene].sceneName;
-            }
-        }
-
-        return "";
+        return availableSceneIndex[UnityEngine.Random.Range(0, availableSceneIndex.Count)];
     }
+    private int GetAvailableStageIndex()
+    {
+        return availableStageIndex[UnityEngine.Random.Range(0, availableStageIndex.Count)];
+    }
+
+    private void ResetAvailableSceneIndex(int stageIndex)
+    {
+        availableSceneIndex.Clear();
+        var stageSetting = stageList[stageIndex]; 
+
+        for(int i = 0; i < stageSetting.sceneList.Count; i++)
+            if (stageSetting.sceneList[i].minScene <= currentScene && stageSetting.sceneList[i].maxScene >= currentScene)
+                availableSceneIndex.Add(i);
+    }
+    private void ResetAvailableStageIndex()
+    {
+        availableStageIndex.Clear();
+
+        for(int i = 0; i < stageList.Count; i++)
+            if (stageList[i].minStage <= currentStage && stageList[i].maxStage >= currentStage)
+                availableStageIndex.Add(i);
+    }
+    
 
     // Load Scene Async then finalize
     private void LoadScene()
@@ -193,8 +205,15 @@ public class SDPT_StageManager : MonoBehaviour
         Instance = this;
         baseScene = SceneManager.GetActiveScene();
 
-        // Update scene names in the editor only
-#if UNITY_EDITOR
+        ResetAvailableStageIndex();
+        currentStageIndex = GetAvailableStageIndex();
+
+        NextScene();
+    }
+
+
+    private void OnValidate()
+    {
         foreach (var stage in stageList)
         {
             foreach (var scene in stage.sceneList)
@@ -202,7 +221,5 @@ public class SDPT_StageManager : MonoBehaviour
                 scene.UpdateSceneName();
             }
         }
-#endif
-        NextScene();
     }
 }

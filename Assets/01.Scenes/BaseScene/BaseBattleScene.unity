@@ -2171,6 +2171,7 @@ MonoBehaviour:
   canvasGroup: {fileID: 6483447696579713727}
   transTime: 0.1
   transSpeed: 0.05
+  reverse: 0
 --- !u!1 &5949068803757275108
 GameObject:
   m_ObjectHideFlags: 0
@@ -2390,7 +2391,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 21127625f3afb944198938c7c743d480, type: 3}
+    m_Font: {fileID: 12800000, guid: 8a2b9e2a607dd2143b58c44bc32410b4, type: 3}
     m_FontSize: 150
     m_FontStyle: 0
     m_BestFit: 0
