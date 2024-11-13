@@ -14,6 +14,10 @@
 - 인벤토리 : I
 - 상호작용 : F
 
+## 출시 플랫폼
+[STOVE INDIE](https://store.onstove.com/ko/games/4312)
+[itch.io](https://soulments.itch.io/eternalsmash)
+
 ## 팀원
 ### [Soulments](https://github.com/Soulments) : 팀장
 ### [Ari9ueen](https://github.com/Ari9ueen)
