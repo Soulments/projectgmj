@@ -592,6 +592,7 @@ MonoBehaviour:
   isDead: 0
   inventory: {fileID: 0}
   inventoryCanvasGroup: {fileID: 0}
+  escCanvas: {fileID: 0}
   uiController: {fileID: 0}
   itemStatus: {fileID: 0}
 --- !u!54 &5705786122586072595

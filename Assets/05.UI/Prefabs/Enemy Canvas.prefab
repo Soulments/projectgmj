@@ -84,7 +84,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 0
+  m_PresetInfoIsWorld: 1
 --- !u!114 &6824213643660394025
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -155,8 +155,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   healthSlider: {fileID: 1075018805662866076}
   yellHealthSlider: {fileID: 677446120507264356}
-  maxhealth: 100
+  enemy: {fileID: 0}
   health: 0
+  lerpSpeed: 0.01
 --- !u!114 &669172164470680715
 MonoBehaviour:
   m_ObjectHideFlags: 0
