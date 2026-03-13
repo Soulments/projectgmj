@@ -1,5 +1,7 @@
 # EternalSmash
 
+# 개인 수정용 브랜치
+
 ## 게임 소개
 ![05](https://github.com/user-attachments/assets/fc7b24c6-bf46-4359-bb8c-3659820ec97d)
 ### 멈추지 않고 탑을 오른다! 오를 수 있는 한계까지 도전해보세요!
