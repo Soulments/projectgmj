@@ -1,6 +1,10 @@
 # EternalSmash
 
 # 개인 수정용 브랜치
+## 작업 예정
+- fsm 추가
+- 주석 추가
+- 기타 문제점 수정 및 리팩토링
 
 ## 게임 소개
 ![05](https://github.com/user-attachments/assets/fc7b24c6-bf46-4359-bb8c-3659820ec97d)
