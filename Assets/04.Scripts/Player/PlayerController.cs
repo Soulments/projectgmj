@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using CharacterController;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -64,8 +65,8 @@ public class PlayerController : MonoBehaviour
     public Status status;
     public GameObject swordGust;
 
-    public float groundCheckDistance = 0;  // 바닥으로부터 플레이어가 유지하고 싶은 거리
-    public float adjustmentSpeed = 5f;  // 보정 속도
+    public float groundCheckDistance = 0;
+    public float adjustmentSpeed = 5f;
     public float jumpForce;
     public float speed = 10;
     private int comboIndex;
@@ -76,62 +77,114 @@ public class PlayerController : MonoBehaviour
     public Inventory inventory;
     [SerializeField]
     private CanvasGroup inventoryCanvasGroup;
-    private bool isInventoryOpen = false; // 인벤토리 활성화 상태
+    private bool isInventoryOpen = false;
 
-    // ESC 변수--------------------------
     public GameObject escCanvas;
     private bool isEscOpen = false;
 
-    // 아이템 메세지 관련 변수-------------
     private IObjectItem itemPickup = null;
 
     public UIController uiController;
     public TextMeshProUGUI itemStatus;
-    // -----------------------------------
+
+    // FSM
+    private StateMachine stateMachine;
 
     void Awake()
     {
-        // status = new Status(UnitCode.Player, "플레이어", GameObject.Find("GameManager").GetComponent<GameManager>().waveCount);
         status = new Status(UnitCode.Player, "플레이어", 1);
         groundLayer = LayerMask.GetMask("Ground");
         HitBoxDamage();
     }
 
-    // Start is called before the first frame update
     void Start()
     {
         animator = playerBody.GetComponent<Animator>();
         rigidBody = GetComponent<Rigidbody>();
         capsuleCollider = playerBody.GetComponent<CapsuleCollider>();
         SkillControlAttach();
+        InitStateMachine();
     }
 
-    // Update is called once per frame
+    void InitStateMachine()
+    {
+        stateMachine = new StateMachine(StateName.IDLE, new IdleState(this));
+        stateMachine.AddState(StateName.MOVE, new MoveState(this));
+        stateMachine.AddState(StateName.JUMP, new JumpState(this));
+        stateMachine.AddState(StateName.ATTACK, new AttackState(this));
+        stateMachine.AddState(StateName.SKILL, new SkillState(this));
+        stateMachine.AddState(StateName.WINDMILL, new WindmillState(this));
+        stateMachine.AddState(StateName.HIT, new HitState(this));
+        stateMachine.AddState(StateName.DIE, new DieState(this));
+    }
+
     void Update()
     {
-        DisableHitBox();
-        DisableAttack();
         GetInput();
-        LookAround();
-        Move();
-        Jump();
-        //AdjustPlayerHeight();
-        //GroundCheck();
-        ActionPlayer();
-        ComboAttack();
-        ActionCheck();
-        //Weapon();
-        if (!isDead) OnDie();
+        DetermineState();
+        stateMachine.UpdateState();
     }
 
     private void FixedUpdate()
     {
-        if (!isAttack)
-            playerBody.transform.position = Vector3.Lerp(playerBody.transform.position, transform.position, 0.5f);
-        //playerBody.transform.position = Vector3.Lerp(playerBody.transform.position, transform.position, 0.1f);
+        stateMachine.FixedUpdateState();
     }
 
-    // 스킬 아이콘 연결
+    // 매 프레임 상태 전환 판단
+    void DetermineState()
+    {
+        if (isDead)
+        {
+            if (stateMachine.CurrentState is not DieState)
+                stateMachine.ChangeState(StateName.DIE);
+            return;
+        }
+
+        if (isAirborne && stateMachine.CurrentState is not HitState)
+        {
+            stateMachine.ChangeState(StateName.HIT);
+            return;
+        }
+
+        // Windmill은 지속 스킬이므로 별도 처리
+        if (isAttack3 && stateMachine.CurrentState is not WindmillState)
+        {
+            stateMachine.ChangeState(StateName.WINDMILL);
+            return;
+        }
+
+        // 점프 중 (Windmill/Hit/Die 제외)
+        if (isJump && !isAttack3 && !isAirborne &&
+            stateMachine.CurrentState is not JumpState &&
+            stateMachine.CurrentState is not HitState &&
+            stateMachine.CurrentState is not DieState)
+        {
+            stateMachine.ChangeState(StateName.JUMP);
+            return;
+        }
+
+        if (isAttack && !isAttack3 && !isJump &&
+            stateMachine.CurrentState is not AttackState &&
+            stateMachine.CurrentState is not SkillState)
+        {
+            AnimatorStateInfo anim = animator.GetCurrentAnimatorStateInfo(0);
+            bool isSkillAnim = anim.IsName("Upper") || anim.IsName("SwordGust") || anim.IsName("Attack4a");
+            if (isSkillAnim)
+                stateMachine.ChangeState(StateName.SKILL);
+            else
+                stateMachine.ChangeState(StateName.ATTACK);
+            return;
+        }
+
+        if (!isAttack && !isAttack3 && !isJump && !isAirborne)
+        {
+            if (isMove && stateMachine.CurrentState is not MoveState)
+                stateMachine.ChangeState(StateName.MOVE);
+            else if (!isMove && stateMachine.CurrentState is not IdleState)
+                stateMachine.ChangeState(StateName.IDLE);
+        }
+    }
+
     void SkillControlAttach()
     {
         skillControls[0] = GameObject.Find("Player Canvas/Player Panel/Skill Group/Skill Q").GetComponent<SkillControl>();
@@ -140,12 +193,10 @@ public class PlayerController : MonoBehaviour
         skillControls[3] = GameObject.Find("Player Canvas/Player Panel/Skill Group/Skill TAB").GetComponent<SkillControl>();
     }
 
-    // 공격별 데미지 설정
     void HitBoxDamage()
     {
         normalAttack.GetComponent<HitBox>().skillPercent = status.AttackDamage;
         jumpAttack.GetComponent<HitBox>().skillPercent = status.SkillPercent[(int)SkillCode.Jump];
-        
 
         skillAttack[(int)SkillCode.SwordGust].GetComponent<HitBox>().skillPercent = status.SkillPercent[(int)SkillCode.SwordGust];
         skillAttack[(int)SkillCode.Upper].GetComponent<HitBox>().skillPercent = status.SkillPercent[(int)SkillCode.Upper];
@@ -154,8 +205,9 @@ public class PlayerController : MonoBehaviour
         swordGust.GetComponent<SwordGust>().skillPercent = (int)(status.SkillPercent[(int)SkillCode.SwordGust] * 0.75);
     }
 
-    // 히트박스 관리용
-    void DisableHitBox()
+    // --- State에서 호출하는 public 메서드들 ---
+
+    public void DisableHitBox()
     {
         AnimatorStateInfo currentAnimation = animator.GetCurrentAnimatorStateInfo(0);
         if (currentAnimation.IsTag("NotAttack"))
@@ -168,7 +220,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void DisableAttack()
+    public void DisableAttack()
     {
         AnimatorStateInfo currentAnimation = animator.GetCurrentAnimatorStateInfo(0);
         if (currentAnimation.IsTag("NotAttack"))
@@ -176,60 +228,38 @@ public class PlayerController : MonoBehaviour
             isAttack = false;
         }
     }
-    
 
-    // Input값 정리
-    private void GetInput()
+    public void HandleInventoryInput()
     {
-        horizontalAxis = Input.GetAxis("Horizontal") * (!isInventoryOpen ? 1 : 0) * (!isAirborne ? 1 : 0);
-        verticalAxis = Input.GetAxis("Vertical") * (!isInventoryOpen ? 1 : 0) * (!isAirborne ? 1 : 0);
-        jumpDown = Input.GetButtonDown("Jump") && !isInventoryOpen && !isAirborne;
-        mouseLeft = Input.GetMouseButtonDown(0) && !isInventoryOpen && !isAirborne;
-        mouseRight = Input.GetMouseButtonDown(1) && !isInventoryOpen && !isAirborne;
-
-        // 인벤토리 on/off----------------
         if (Input.GetKeyDown(KeyCode.I) || (Input.GetKeyDown(KeyCode.Escape) && isInventoryOpen))
         {
             ToggleInventory();
         }
-        // ------------------------------
-        // 아이템 획득-------------------------------------------
-        if (itemPickup != null && Input.GetKeyDown(KeyCode.F) && !isInventoryOpen)
-        {
-            ItemData item = itemPickup.ClickItem();
-            Status itemStatus = itemPickup.GetStatus();
+    }
 
-            inventory.AddItem(item, itemStatus);
-
-            itemPickup.OnPickup(); // 아이템 획득하면 오브젝트 파괴
-            itemPickup = null;
-
-            uiController.CloseMessagePanel();
-        }
-        // ------------------------------------------------------
-        // ESC 키 눌렀을 때 ---------------------
+    public void HandleEscInput()
+    {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             isEscOpen = !isEscOpen;
             escCanvas.SetActive(isEscOpen);
         }
-
-        swordGustSkill = Input.GetKeyDown(KeyCode.Q) && !cooldownswordGustSkill && !isInventoryOpen && !isAirborne;
-        upperSkill = Input.GetKeyDown(KeyCode.E) && !cooldownupperSkill && !isInventoryOpen && !isAirborne;
-        windmillSkill[0] = Input.GetKeyDown(KeyCode.R) && !cooldownwindmillSkill && !isInventoryOpen && !isAirborne;
-        windmillSkill[1] = Input.GetKeyUp(KeyCode.R) && !cooldownwindmillSkill && !isInventoryOpen && !isAirborne;
-        bufSkill = Input.GetKeyDown(KeyCode.Tab) && !cooldownbufSkill && !isInventoryOpen && !isAirborne;
     }
-    private void ToggleInventory()
+
+    public void HandleItemPickupInput()
     {
-        isInventoryOpen = !isInventoryOpen;
-        inventoryCanvasGroup.alpha = isInventoryOpen ? 1 : 0;
-        inventoryCanvasGroup.interactable = isInventoryOpen; // UI 상호작용 가능 여부 설정
-        inventoryCanvasGroup.blocksRaycasts = isInventoryOpen; // UI 클릭 가능 여부 설정
+        if (itemPickup != null && Input.GetKeyDown(KeyCode.F) && !isInventoryOpen)
+        {
+            ItemData item = itemPickup.ClickItem();
+            Status itemStat = itemPickup.GetStatus();
+            inventory.AddItem(item, itemStat);
+            itemPickup.OnPickup();
+            itemPickup = null;
+            uiController.CloseMessagePanel();
+        }
     }
 
-    // 화면 회전
-    private void LookAround()
+    public void LookAround()
     {
         if (!isInventoryOpen)
         {
@@ -238,28 +268,21 @@ public class PlayerController : MonoBehaviour
             float x = cameraAngle.x - mouseDelta.y;
 
             if (x < 180f)
-            {
                 x = Mathf.Clamp(x, -1f, 70f);
-            }
             else
-            {
                 x = Mathf.Clamp(x, 335f, 361f);
-            }
 
             cameraArm.rotation = Quaternion.Euler(x, cameraAngle.y + mouseDelta.x, cameraAngle.z);
         }
     }
 
-    // 이동
-    private void Move()
+    public void Move()
     {
-        // 플레이어 이동 값 가져오기
         moveInput = new Vector2(horizontalAxis, verticalAxis);
-        // 이동 수평 값 확인
         isMove = moveInput.magnitude != 0;
         if (usingPortal) animator.SetBool("isMove", false);
         else animator.SetBool("isMove", isMove);
-        // isMove 값 true일 때 이동
+
         if (ishit) moveDirection = Vector3.zero;
         else if (isMove && !isAttack && !isAirborne && !usingPortal)
         {
@@ -271,11 +294,9 @@ public class PlayerController : MonoBehaviour
             if (!isAttack || !ishit) transform.position += moveDirection * Time.deltaTime * speed;
             else moveDirection = Vector3.zero;
         }
-
     }
 
-    // 점프
-    private void Jump()
+    public void Jump()
     {
         if (jumpDown && !isJump && !isAttack && !animator.GetCurrentAnimatorStateInfo(0).IsName("Jump"))
         {
@@ -286,41 +307,14 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void AdjustPlayerHeight()
+    public void SyncBodyPosition()
     {
-        RaycastHit hit;
-        Vector3 rayOrigin = transform.position;
-
-        // 플레이어 아래로 Ray를 쏴서 바닥과의 거리 확인
-        if (Physics.Raycast(rayOrigin, Vector3.down, out hit, Mathf.Infinity))
-        {
-            float distanceToGround = hit.distance;
-            Debug.Log(distanceToGround);
-
-            // 바닥과의 거리가 지정한 거리보다 가까울 경우 위치 재조정
-            if (distanceToGround < groundCheckDistance)
-            {
-                float targetYPosition = hit.point.y + groundCheckDistance;  // 목표 높이
-                Vector3 targetPosition = new Vector3(transform.position.x, targetYPosition, transform.position.z);
-
-                // SmoothDamp을 사용해 부드럽게 높이 보정
-                transform.position = Vector3.Lerp(transform.position, targetPosition, adjustmentSpeed * Time.deltaTime);
-            }
-        }
+        if (!isAttack)
+            playerBody.transform.position = Vector3.Lerp(playerBody.transform.position, transform.position, 0.5f);
     }
 
-    //private void GroundCheck()
-    //{
-    //    isGrounded = Physics.Raycast(transform.position, Vector3.down, 0.1f, LayerMask.GetMask("Ground"));
-    //    if (isGrounded)
-    //    {
-    //        animator.SetBool("isJump", false);
-    //        isJump = false;
-    //    }
-    //}
-
-    // 공격 액션
-    private void ActionPlayer()
+    // 일반공격 + 점프공격 처리 (AttackState에서 호출)
+    public void ProcessNormalAttack()
     {
         if (!isJump && mouseLeft)
         {
@@ -331,219 +325,59 @@ public class PlayerController : MonoBehaviour
         {
             JumpAttack();
         }
-        if (!isJump && swordGustSkill)
-        {
-            SkillSwordGust();
-        }
-        if (!isJump && upperSkill)
-        {
-            SkillUpper();
-        }
-        if (!isJump && windmillSkill[0])
-        {
-            SkiilWindmill();
-        }
-        if (!isJump && windmillSkill[1])
-        {
-            SkillWindmillStop();
-        }
-        if (!isJump && bufSkill)
-        {
-            SkillBuf();
-        }
-
     }
 
-    // 일반공격
-    private void NormalAttack()
+    public void ProcessComboAttack()
     {
-        if (!isAttack)
-        {
-            isAttack = true;
-            comboIndex = 1;
-            animator.SetTrigger("doAttack1a");
-        }
+        ComboAttack();
     }
 
-    // 콤보 활성화 여부 확인
-    void ComboCheck()
+    // 스킬 입력 처리 - Windmill 제외 (SkillState에서 호출)
+    public void ProcessSkillInputWithoutWindmill()
     {
-        AnimatorStateInfo currentAnimation = animator.GetCurrentAnimatorStateInfo(0);
-
-        if (currentAnimation.IsName("Attack1a"))
-        {
-            if (currentAnimation.normalizedTime > 0.5f && currentAnimation.normalizedTime < 0.99f)
-            {
-                comboTrigger = true;
-            }
-        }
-        if (currentAnimation.IsName("Attack1b"))
-        {
-            if (currentAnimation.normalizedTime > 0.5f && currentAnimation.normalizedTime < 0.99f)
-            {
-                comboTrigger = true;
-            }
-        }
+        if (!isJump && swordGustSkill) SkillSwordGust();
+        if (!isJump && upperSkill) SkillUpper();
+        if (!isJump && bufSkill) SkillBuf();
     }
-    
-    // 콤보 공격
-    void ComboAttack()
+
+    // MoveState/AttackState에서 Windmill 시작 입력 감지
+    public void ProcessWindmillStart()
     {
-        if (!comboTrigger) return;
-
-        AnimatorStateInfo currentAnimation = animator.GetCurrentAnimatorStateInfo(0);
-
-        if (currentAnimation.normalizedTime >= 0.99f)
-        {
-            if (currentAnimation.IsName("Attack1a"))
-            {
-                animator.SetTrigger("doAttack1b");
-                comboIndex = 2;
-            }
-            else if (currentAnimation.IsName("Attack1b"))
-            {
-                animator.SetTrigger("doAttack1c");
-                comboIndex = 3;
-            }
-            isAttack = true;
-            StartCoroutine(WaitForCombo());
-        }
+        if (!isJump && windmillSkill[0]) SkiilWindmill();
     }
 
-    IEnumerator WaitForCombo()
+    // WindmillState에서 종료 입력 감지
+    public void ProcessWindmillStop()
     {
-        yield return new WaitForSeconds(0.1f);
-
-        comboTrigger = false;
+        if (windmillSkill[1]) SkillWindmillStop();
     }
 
-    float RaycastCheck()
+    // WindmillState OnEnter에서 호출 - 코루틴 등 시작
+    public void StartWindmill()
     {
-        RaycastHit hit;
-        float distance = -1;
-
-        if (Physics.Raycast(transform.position, Vector3.down, out hit, Mathf.Infinity, groundLayer))
-        {
-            distance = transform.position.y - hit.point.y;
-        }
-
-        return distance;
+        // isAttack3, 애니메이터, 코루틴은 SkiilWindmill()에서 처리됨
+        // DetermineState에서 windmillSkill[0] 감지 후 SkiilWindmill() 호출 → WINDMILL 전환
+        // 이미 SkiilWindmill()이 호출된 상태이므로 OnEnter에서 추가 작업 없음
     }
 
-    // 점프공격
-    private void JumpAttack()
+    // JumpState에서 점프공격 입력 감지
+    public void ProcessJumpAttack()
     {
-        isAttack = true;
-        float distance = RaycastCheck() != 1 ? RaycastCheck() : 0;
-        Debug.Log(distance);
-        if (distance <= 0.75f) return;
-        if (isUpper)
-        {
-            distance = (float)Math.Ceiling(distance);
-            skillAttack[(int)SkillCode.Upper].GetComponent<HitBox>().skillPercent = status.SkillPercent[(int)SkillCode.Upper] * (1 + (0.1f * distance / 2));
-        }
-        animator.SetTrigger("doAttack2");
-        rigidBody.AddForce(Vector3.down * jumpForce * 5, ForceMode.Impulse);
+        if (mouseLeft) JumpAttack();
     }
 
-    // 스킬 1번 버프
-    private void SkillBuf()
-    {
-        isAttack = true;
-        animator.SetTrigger("doAttack4");
-        status.CurrentHP += (int)status.Defense;
-        CoolTimeTrigger(3);
-        StartCoroutine(WaitForCooltime(skillControls[3].GetComponent<SkillControl>().coolTime, 3));
-        StartCoroutine(CoroutineBuf());
-    }
-
-    IEnumerator CoroutineBuf()
-    {
-        yield return new WaitForSeconds(5.0f);
-    }
-
-    // 스킬 2번 올려치기 + 검풍
-    private void SkillSwordGust()
-    {
-        isAttack = true;
-        animator.SetTrigger("doAttack5");
-        CoolTimeTrigger(0);
-        StartCoroutine(WaitForCooltime(skillControls[0].GetComponent<SkillControl>().coolTime, 0));
-    }
-
-    // 검풍 날리기
-    void SwordGust()
-    {
-        GameObject instantSwordGust = Instantiate(swordGust, transform.position, playerBody.transform.rotation);
-        Rigidbody rigidGust = instantSwordGust.GetComponent<Rigidbody>();
-        rigidGust.velocity = playerBody.forward * 20;
-    }
-
-    // 스킬 3번 도약 내려치기
-    void SkillUpper()
-    {
-        isUpper = true;
-        animator.SetBool("isJump", true);
-        animator.SetTrigger("doAttack6");
-        CoolTimeTrigger(1);
-        StartCoroutine(WaitForCooltime(skillControls[1].GetComponent<SkillControl>().coolTime, 1));
-    }
-
-    // 스킬 4번 윈드밀
-    private void SkiilWindmill()
-    {
-        isAttack3 = true;
-        animator.SetTrigger("doAttack3");
-        StartCoroutine(WindmillReady());
-        StartCoroutine(Windmill());
-        Invoke(nameof(SkillWindmillStop), 10f);
-    }
-
-    // 윈드밀 시전 대기
-    IEnumerator WindmillReady()
-    {
-        yield return new WaitForSeconds(0.5f);
-    }
-
-    // 윈드밀 시전중
-    IEnumerator Windmill()
-    {
-        WaitForSeconds waitWindmil = new WaitForSeconds(0.3f);
-        while (true)
-        {
-            if (!isAttack3) break;
-            skillAttack[(int)SkillCode.Windmill].enabled = !skillAttack[(int)SkillCode.Windmill].enabled;
-            yield return waitWindmil;
-        }
-    }
-
-    // 윈드밀 종료
-    private void SkillWindmillStop()
-    {
-        if (isAttack3)
-        {
-            isAttack3 = false;
-            animator.SetTrigger("stopAttack3");
-            skillAttack[(int)SkillCode.Windmill].enabled = false;
-            CoolTimeTrigger(2);
-            StartCoroutine(WaitForCooltime(skillControls[3].GetComponent<SkillControl>().coolTime, 2));
-        }
-    }
-
-    private void ActionCheck()
+    public void ActionCheck()
     {
         AnimatorStateInfo currentAnimation = animator.GetCurrentAnimatorStateInfo(0);
         if (currentAnimation.IsTag("NormalAttack"))
         {
             if (!isNormal && currentAnimation.normalizedTime > 0.2f && currentAnimation.normalizedTime < 0.8f)
             {
-                Debug.Log("노말공격 시작");
                 normalAttack.enabled = true;
                 isNormal = true;
             }
             if (currentAnimation.normalizedTime >= 0.8f)
             {
-                Debug.Log("노말공격 종료");
                 isNormal = false;
                 normalAttack.enabled = false;
             }
@@ -566,7 +400,6 @@ public class PlayerController : MonoBehaviour
                 if (isUpper) skillAttack[(int)SkillCode.Upper].enabled = false;
                 else jumpAttack.enabled = false;
             }
-            
             if (currentAnimation.normalizedTime >= 0.99f)
             {
                 isUpper = false;
@@ -579,12 +412,10 @@ public class PlayerController : MonoBehaviour
             {
                 skillAttack[(int)SkillCode.SwordGust].enabled = true;
                 isGust = true;
-                SwordGust();
+                SpawnSwordGust();
             }
             if (currentAnimation.normalizedTime >= 0.8f)
-            {
                 skillAttack[(int)SkillCode.SwordGust].enabled = false;
-            }
             if (currentAnimation.normalizedTime >= 0.99f)
             {
                 isGust = false;
@@ -608,15 +439,13 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // UI 쿨타임 관리
-    private void CoolTimeTrigger(int num)
+    public void CheckDeath()
     {
-        skillControls[num].GetComponent<SkillControl>().isUseSkill = true;
-        skillControls[num].GetComponent<SkillControl>().StartCooltime();
+        if (!isDead) OnDie();
     }
 
-    // 피격 함수
-    private void OnHit()
+    // HitState 진입 시 호출
+    public void OnHitEnter()
     {
         if (hitCount > 1 && !isEnhanced)
         {
@@ -632,8 +461,214 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // 피격 강화
-    IEnumerator Enhance()
+    // DieState 진입 시 호출
+    public void OnDieEnter()
+    {
+        isDead = true;
+        animator.SetTrigger("doAirborne");
+        animator.SetBool("isDead", isDead);
+        DisableAllHitBox();
+        isAttack = false;
+        capsuleCollider.enabled = false;
+        rigidBody.useGravity = false;
+    }
+
+    // --- private 내부 메서드 ---
+
+    private void GetInput()
+    {
+        horizontalAxis = Input.GetAxis("Horizontal") * (!isInventoryOpen ? 1 : 0) * (!isAirborne ? 1 : 0);
+        verticalAxis = Input.GetAxis("Vertical") * (!isInventoryOpen ? 1 : 0) * (!isAirborne ? 1 : 0);
+        jumpDown = Input.GetButtonDown("Jump") && !isInventoryOpen && !isAirborne;
+        mouseLeft = Input.GetMouseButtonDown(0) && !isInventoryOpen && !isAirborne;
+        mouseRight = Input.GetMouseButtonDown(1) && !isInventoryOpen && !isAirborne;
+
+        swordGustSkill = Input.GetKeyDown(KeyCode.Q) && !cooldownswordGustSkill && !isInventoryOpen && !isAirborne;
+        upperSkill = Input.GetKeyDown(KeyCode.E) && !cooldownupperSkill && !isInventoryOpen && !isAirborne;
+        windmillSkill[0] = Input.GetKeyDown(KeyCode.R) && !cooldownwindmillSkill && !isInventoryOpen && !isAirborne;
+        windmillSkill[1] = Input.GetKeyUp(KeyCode.R) && !cooldownwindmillSkill && !isInventoryOpen && !isAirborne;
+        bufSkill = Input.GetKeyDown(KeyCode.Tab) && !cooldownbufSkill && !isInventoryOpen && !isAirborne;
+    }
+
+    private void ToggleInventory()
+    {
+        isInventoryOpen = !isInventoryOpen;
+        inventoryCanvasGroup.alpha = isInventoryOpen ? 1 : 0;
+        inventoryCanvasGroup.interactable = isInventoryOpen;
+        inventoryCanvasGroup.blocksRaycasts = isInventoryOpen;
+    }
+
+    private void NormalAttack()
+    {
+        if (!isAttack)
+        {
+            isAttack = true;
+            comboIndex = 1;
+            animator.SetTrigger("doAttack1a");
+        }
+    }
+
+    private void ComboCheck()
+    {
+        AnimatorStateInfo currentAnimation = animator.GetCurrentAnimatorStateInfo(0);
+        if (currentAnimation.IsName("Attack1a"))
+        {
+            if (currentAnimation.normalizedTime > 0.5f && currentAnimation.normalizedTime < 0.99f)
+                comboTrigger = true;
+        }
+        if (currentAnimation.IsName("Attack1b"))
+        {
+            if (currentAnimation.normalizedTime > 0.5f && currentAnimation.normalizedTime < 0.99f)
+                comboTrigger = true;
+        }
+    }
+
+    private void ComboAttack()
+    {
+        if (!comboTrigger) return;
+
+        AnimatorStateInfo currentAnimation = animator.GetCurrentAnimatorStateInfo(0);
+        if (currentAnimation.normalizedTime >= 0.99f)
+        {
+            if (currentAnimation.IsName("Attack1a"))
+            {
+                animator.SetTrigger("doAttack1b");
+                comboIndex = 2;
+            }
+            else if (currentAnimation.IsName("Attack1b"))
+            {
+                animator.SetTrigger("doAttack1c");
+                comboIndex = 3;
+            }
+            isAttack = true;
+            StartCoroutine(WaitForCombo());
+        }
+    }
+
+    IEnumerator WaitForCombo()
+    {
+        yield return new WaitForSeconds(0.1f);
+        comboTrigger = false;
+    }
+
+    private float RaycastCheck()
+    {
+        RaycastHit hit;
+        float distance = -1;
+        if (Physics.Raycast(transform.position, Vector3.down, out hit, Mathf.Infinity, groundLayer))
+            distance = transform.position.y - hit.point.y;
+        return distance;
+    }
+
+    private void JumpAttack()
+    {
+        isAttack = true;
+        float distance = RaycastCheck() != 1 ? RaycastCheck() : 0;
+        if (distance <= 0.75f) return;
+        if (isUpper)
+        {
+            distance = (float)Math.Ceiling(distance);
+            skillAttack[(int)SkillCode.Upper].GetComponent<HitBox>().skillPercent = status.SkillPercent[(int)SkillCode.Upper] * (1 + (0.1f * distance / 2));
+        }
+        animator.SetTrigger("doAttack2");
+        rigidBody.AddForce(Vector3.down * jumpForce * 5, ForceMode.Impulse);
+    }
+
+    private void SkillBuf()
+    {
+        isAttack = true;
+        animator.SetTrigger("doAttack4");
+        status.CurrentHP += (int)status.Defense;
+        CoolTimeTrigger(3);
+        StartCoroutine(WaitForCooltime(skillControls[3].GetComponent<SkillControl>().coolTime, 3));
+        StartCoroutine(CoroutineBuf());
+    }
+
+    IEnumerator CoroutineBuf()
+    {
+        yield return new WaitForSeconds(5.0f);
+    }
+
+    private void SkillSwordGust()
+    {
+        isAttack = true;
+        animator.SetTrigger("doAttack5");
+        CoolTimeTrigger(0);
+        StartCoroutine(WaitForCooltime(skillControls[0].GetComponent<SkillControl>().coolTime, 0));
+    }
+
+    private void SpawnSwordGust()
+    {
+        GameObject instantSwordGust = Instantiate(swordGust, transform.position, playerBody.transform.rotation);
+        Rigidbody rigidGust = instantSwordGust.GetComponent<Rigidbody>();
+        rigidGust.velocity = playerBody.forward * 20;
+    }
+
+    private void SkillUpper()
+    {
+        isUpper = true;
+        animator.SetBool("isJump", true);
+        animator.SetTrigger("doAttack6");
+        CoolTimeTrigger(1);
+        StartCoroutine(WaitForCooltime(skillControls[1].GetComponent<SkillControl>().coolTime, 1));
+    }
+
+    private void SkiilWindmill()
+    {
+        isAttack3 = true;
+        animator.SetTrigger("doAttack3");
+        StartCoroutine(WindmillReady());
+        StartCoroutine(Windmill());
+        Invoke(nameof(SkillWindmillStop), 10f);
+    }
+
+    IEnumerator WindmillReady()
+    {
+        yield return new WaitForSeconds(0.5f);
+    }
+
+    IEnumerator Windmill()
+    {
+        WaitForSeconds waitWindmil = new WaitForSeconds(0.3f);
+        while (true)
+        {
+            if (!isAttack3) break;
+            skillAttack[(int)SkillCode.Windmill].enabled = !skillAttack[(int)SkillCode.Windmill].enabled;
+            yield return waitWindmil;
+        }
+    }
+
+    private void SkillWindmillStop()
+    {
+        if (isAttack3)
+        {
+            isAttack3 = false;
+            animator.SetTrigger("stopAttack3");
+            skillAttack[(int)SkillCode.Windmill].enabled = false;
+            CoolTimeTrigger(2);
+            StartCoroutine(WaitForCooltime(skillControls[3].GetComponent<SkillControl>().coolTime, 2));
+        }
+    }
+
+    private void CoolTimeTrigger(int num)
+    {
+        skillControls[num].GetComponent<SkillControl>().isUseSkill = true;
+        skillControls[num].GetComponent<SkillControl>().StartCooltime();
+    }
+
+    private void OnHit()
+    {
+        if (!isEnhanced)
+            stateMachine.ChangeState(StateName.HIT);
+    }
+
+    private void OnDie()
+    {
+        if (status.CurrentHP > 0) return;
+        stateMachine.ChangeState(StateName.DIE);
+    }
+
+    private IEnumerator Enhance()
     {
         animator.SetTrigger("doAirborne");
         DisableAllHitBox();
@@ -645,7 +680,7 @@ public class PlayerController : MonoBehaviour
         comboIndex = 0;
     }
 
-    void DisableAllHitBox()
+    private void DisableAllHitBox()
     {
         normalAttack.enabled = false;
         jumpAttack.enabled = false;
@@ -659,19 +694,6 @@ public class PlayerController : MonoBehaviour
         ishit = true;
         yield return new WaitForSeconds(1.0f);
         ishit = false;
-    }
-
-    private void OnDie()
-    {
-        if (status.CurrentHP > 0) return;
-
-        isDead = true;
-        animator.SetTrigger("doAirborne");
-        animator.SetBool("isDead", isDead);
-        DisableAllHitBox();
-        isAttack = false;
-        capsuleCollider.enabled = false;
-        rigidBody.useGravity = false;
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -688,33 +710,20 @@ public class PlayerController : MonoBehaviour
         if (other.gameObject.tag == "Arrow" || other.gameObject.tag == "Weapon")
         {
             if (!isEnhanced)
-            {
                 OnHit();
-            }
             return;
         }
-        
-        // 아이템 획득 관련 코드---------------------------------------
+
         IObjectItem clickInterface = other.GetComponent<IObjectItem>();
         if (clickInterface != null)
         {
             ItemData item = clickInterface.ClickItem();
-            Status itemStatus = clickInterface.GetStatus();
-
-            uiController.OpenMessagePanel(item.itemName, itemStatus);
-            //itemName.text = item.itemName;
-            //itemStatus.text = itemStat.status.ToString();
-
+            Status itemStat = clickInterface.GetStatus();
+            uiController.OpenMessagePanel(item.itemName, itemStat);
             itemPickup = clickInterface;
-            /*
-            inventory.AddItem(item);
-            clickInterface.OnPickup(); // 아이템 획득하면 오브젝트 파괴
-            Debug.Log($"{item.itemName}");
-            */
         }
-        // -----------------------------------------------------------
-
     }
+
     private void OnTriggerExit(Collider other)
     {
         IObjectItem clickInterface = other.GetComponent<IObjectItem>();
@@ -725,39 +734,22 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // 쿨타임 체크용 코루틴
     IEnumerator WaitForCooltime(float coolTime, int coolDownNum)
     {
         switch (coolDownNum)
         {
-            case 0:
-                cooldownswordGustSkill = true;
-                break;
-            case 1:
-                cooldownupperSkill = true;
-                break;
-            case 2:
-                cooldownwindmillSkill = true;
-                break;
-            case 3:
-                cooldownbufSkill = true;
-                break;
+            case 0: cooldownswordGustSkill = true; break;
+            case 1: cooldownupperSkill = true; break;
+            case 2: cooldownwindmillSkill = true; break;
+            case 3: cooldownbufSkill = true; break;
         }
         yield return new WaitForSeconds(coolTime);
         switch (coolDownNum)
         {
-            case 0:
-                cooldownswordGustSkill = false;
-                break;
-            case 1:
-                cooldownupperSkill = false;
-                break;
-            case 2:
-                cooldownwindmillSkill = false;
-                break;
-            case 3:
-                cooldownbufSkill = false;
-                break;
+            case 0: cooldownswordGustSkill = false; break;
+            case 1: cooldownupperSkill = false; break;
+            case 2: cooldownwindmillSkill = false; break;
+            case 3: cooldownbufSkill = false; break;
         }
     }
 }

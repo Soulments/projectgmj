@@ -1,6 +1,4 @@
-using CharcterController;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace CharacterController
 {

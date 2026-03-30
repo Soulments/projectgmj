@@ -1,10 +1,14 @@
-namespace CharcterController
+namespace CharacterController
 {
     public enum StateName
     {
-        MOVE = 100,
+        IDLE = 100,
+        MOVE,
+        JUMP,
         ATTACK,
         SKILL,
+        WINDMILL,
+        HIT,
         DIE,
     }
 }
