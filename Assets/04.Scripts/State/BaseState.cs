@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace CharcterController
+namespace CharacterController
 {
     public abstract class BaseState
     {
