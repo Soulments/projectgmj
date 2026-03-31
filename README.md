@@ -1,9 +1,8 @@
 # EternalSmash
 
 # 개인 수정용 브랜치
-## 작업 예정
-- fsm 추가
-- 주석 추가
+## 작업 내용
+- player 로직 state pattern 기반 FSM 구조
 - 기타 문제점 수정 및 리팩토링
 
 ## 게임 소개
